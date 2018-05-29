@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <meta name="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修" />
+  
+
+  
+  
+  
+  
+  
+  
+  <title>HITBCTF2018-reverse-hex | Invicsfate</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="reversehex下载hex文件，file一下，发现是文本文件，打开看了一下，暂时看不懂，binwalk一下，显示Intel hex file，google Intel hex 文件，根据hex维基百科，明白了文本文件的内容。之后各种google，发现了hex2bin这个windows hex转bin的工具。strings一下bin文件，发现关键内容arduino micro。 然后又是一顿go">
+<meta name="keywords" content="rev,CTF">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HITBCTF2018-reverse-hex">
+<meta property="og:url" content="http://Invicsfate.github.io/2018/04/13/HITBCTF2018-reverse-hex/index.html">
+<meta property="og:site_name" content="Invicsfate">
+<meta property="og:description" content="reversehex下载hex文件，file一下，发现是文本文件，打开看了一下，暂时看不懂，binwalk一下，显示Intel hex file，google Intel hex 文件，根据hex维基百科，明白了文本文件的内容。之后各种google，发现了hex2bin这个windows hex转bin的工具。strings一下bin文件，发现关键内容arduino micro。 然后又是一顿go">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://invicsfate.github.io/assert/hex_flag.png">
+<meta property="og:updated_time" content="2018-05-29T11:05:47.944Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="HITBCTF2018-reverse-hex">
+<meta name="twitter:description" content="reversehex下载hex文件，file一下，发现是文本文件，打开看了一下，暂时看不懂，binwalk一下，显示Intel hex file，google Intel hex 文件，根据hex维基百科，明白了文本文件的内容。之后各种google，发现了hex2bin这个windows hex转bin的工具。strings一下bin文件，发现关键内容arduino micro。 然后又是一顿go">
+<meta name="twitter:image" content="https://invicsfate.github.io/assert/hex_flag.png">
+  
+  
+    <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+  
+  <!-- baidu webmaster push -->
+  <script src='//push.zhanzhang.baidu.com/push.js'></script>
+</head>
+<body class="home blog custom-background custom-font-enabled single-author">
+  <div id="page" class="hfeed site">
+      <header id="masthead" class="site-header" role="banner">
+    <hgroup>
+      <h1 class="site-title">
+        <a href="/" title="Invicsfate" rel="home">Invicsfate</a>
+      </h1>
+      
+        <h2 class="site-description">
+          <a href="/" id="subtitle">bin选手一只，爱好二次元，最爱小姐姐(*^﹏^*)!</a>
+        </h2>
+      
+    </hgroup>
+
+    <nav id="site-navigation" class="main-navigation" role="navigation">
+            <button class="menu-toggle">菜单</button>
+            <a class="assistive-text" href="/#content" title="跳至内容">跳至内容</a><!--TODO-->
+            <div class="menu-main-container">
+                <ul id="menu-main" class="nav-menu">
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/">Home</a></li>
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/archives">Archives</a></li>
+                
+                </ul>
+            </div>
+    </nav>
+</header>
+      <div id="main" class="wrapper">
+        <div id="primary" class="site-content"><div id="content" role="main"><article id="post-HITBCTF2018-reverse-hex" class="post-HITBCTF2018-reverse-hex post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title article-title">
+      HITBCTF2018-reverse-hex
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/04/13/HITBCTF2018-reverse-hex/" data-id="cjhrl56qc0001xq3k7z2cqg9v" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h1 id="reverse"><a href="#reverse" class="headerlink" title="reverse"></a>reverse</h1><h2 id="hex"><a href="#hex" class="headerlink" title="hex"></a>hex</h2><p>下载hex文件，file一下，发现是文本文件，打开看了一下，暂时看不懂，binwalk一下，显示Intel hex file，google Intel hex 文件，根据<a href="https://en.wikipedia.org/wiki/Intel_HEX" target="_blank" rel="noopener">hex</a>维基百科，明白了文本文件的内容。之后各种google，发现了hex2bin这个windows hex转bin的工具。strings一下bin文件，发现关键内容arduino micro。</p>
+<p>然后又是一顿google，确定了arduino micro板子使用的是atmega32u4，编译器是arduino avr，于是乎，加载进ida，由于ida没有atmega32u4，我选择的是atmega32_L，阅读atmega32 datasheet指令集开始看代码。各种call表示看不懂啊，特别是关键的setup()和Loop函数。</p>
+<p>后来又是一顿google，找到了<a href="https://www.cybrary.it/0p3n/hacking-arduino-build-usb-payload/" target="_blank" rel="noopener">badusb</a>，了解了原来这是badusb，尝试着使用Arduino IDE自己编译文件来和题目二进制文件进行对比。理解了关键的函数Keyboard_Press，Keyboard_release和delay。于是乎，我们的目的只要搞懂这个badusb插上电脑以后，做了什么，大概就能得到flag了吧。</p>
+<p>附上部分关键处的汇编：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line">ROM:09F0 ldi     r22, 0x20 ; <span class="string">' '</span></span><br><span class="line">ROM:09F1 ldi     r24, 0x77 ; <span class="string">'w'</span></span><br><span class="line">ROM:09F2 ldi     r25, 1</span><br><span class="line">ROM:09F3 call    Keyboard_press</span><br><span class="line">ROM:09F5 ldi     r22, 0xF4</span><br><span class="line">ROM:09F6 ldi     r23, 1</span><br><span class="line">ROM:09F7 ldi     r24, 0</span><br><span class="line">ROM:09F8 ldi     r25, 0</span><br><span class="line">ROM:09F9 call    delay</span><br><span class="line">ROM:09FB ldi     r22, 0x20 ; <span class="string">' '</span></span><br><span class="line">ROM:09FC ldi     r24, 0x77 ; <span class="string">'w'</span></span><br><span class="line">ROM:09FD ldi     r25, 1</span><br><span class="line">ROM:09FE call    Keyboard_release</span><br><span class="line">ROM:0A00 ldi     r22, 0x88</span><br><span class="line">ROM:0A01 ldi     r23, 0x13</span><br><span class="line">ROM:0A02 ldi     r24, 0</span><br><span class="line">ROM:0A03 ldi     r25, 0</span><br><span class="line">ROM:0A04 call    delay</span><br><span class="line">ROM:0A06 ldi     r22, 0x20 ; <span class="string">' '</span></span><br><span class="line">ROM:0A07 ldi     r24, 0x77 ; <span class="string">'w'</span></span><br><span class="line">ROM:0A08 ldi     r25, 1</span><br><span class="line">ROM:0A09 call    Keyboard_press</span><br><span class="line">ROM:0A0B ldi     r22, 0xF4</span><br><span class="line">ROM:0A0C ldi     r23, 1</span><br><span class="line">ROM:0A0D ldi     r24, 0</span><br><span class="line">ROM:0A0E ldi     r25, 0</span><br><span class="line">ROM:0A0F call    delay</span><br><span class="line">ROM:0A11 ldi     r22, 0x20 ; <span class="string">' '</span></span><br><span class="line">ROM:0A12 ldi     r24, 0x77 ; <span class="string">'w'</span></span><br><span class="line">ROM:0A13 ldi     r25, 1</span><br><span class="line">ROM:0A14 call    Keyboard_release</span><br><span class="line">ROM:0A16 ldi     r22, 0x88</span><br><span class="line">ROM:0A17 ldi     r23, 0x13</span><br><span class="line">ROM:0A18 ldi     r24, 0</span><br><span class="line">ROM:0A19 ldi     r25, 0</span><br><span class="line">ROM:0A1A call    delay</span><br><span class="line">ROM:0A1C ldi     r22, 0x24 ; <span class="string">'$'</span></span><br><span class="line">ROM:0A1D ldi     r24, 0x77 ; <span class="string">'w'</span></span><br><span class="line">ROM:0A1E ldi     r25, 1</span><br><span class="line">ROM:0A1F call    Keyboard_press</span><br><span class="line">ROM:0A21 ldi     r22, 0xF4</span><br><span class="line">ROM:0A22 ldi     r23, 1</span><br><span class="line">ROM:0A23 ldi     r24, 0</span><br><span class="line">ROM:0A24 ldi     r25, 0</span><br><span class="line">ROM:0A25 call    delay</span><br><span class="line">ROM:0A27 ldi     r22, 0x24 ; <span class="string">'$'</span></span><br><span class="line">ROM:0A28 ldi     r24, 0x77 ; <span class="string">'w'</span></span><br><span class="line">ROM:0A29 ldi     r25, 1</span><br><span class="line">ROM:0A2A call    Keyboard_release</span><br><span class="line">ROM:0A2C ldi     r22, 0x88</span><br><span class="line">ROM:0A2D ldi     r23, 0x13</span><br><span class="line">ROM:0A2E ldi     r24, 0</span><br><span class="line">ROM:0A2F ldi     r25, 0</span><br><span class="line">ROM:0A30 call    delay</span><br><span class="line">ROM:0A32 ldi     r22, 0x23 ; <span class="string">'#'</span></span><br><span class="line">ROM:0A33 ldi     r24, 0x77 ; <span class="string">'w'</span></span><br><span class="line">ROM:0A34 ldi     r25, 1</span><br><span class="line">ROM:0A35 call    Keyboard_press</span><br><span class="line">ROM:0A37 ldi     r22, 0xF4</span><br><span class="line">ROM:0A38 ldi     r23, 1</span><br><span class="line">ROM:0A39 ldi     r24, 0</span><br><span class="line">ROM:0A3A ldi     r25, 0</span><br><span class="line">ROM:0A3B call    delay</span><br><span class="line">ROM:0A3D ldi     r22, 0x23 ; <span class="string">'#'</span></span><br><span class="line">ROM:0A3E ldi     r24, 0x77 ; <span class="string">'w'</span></span><br><span class="line">ROM:0A3F ldi     r25, 1</span><br><span class="line">ROM:0A40 call    Keyboard_release</span><br><span class="line">ROM:0A42 ldi     r22, 0x88</span><br><span class="line">ROM:0A43 ldi     r23, 0x13</span><br><span class="line">ROM:0A44 ldi     r24, 0</span><br><span class="line">ROM:0A45 ldi     r25, 0</span><br><span class="line">ROM:0A46 call    delay</span><br><span class="line">ROM:0A48 ldi     r22, 0x23 ; <span class="string">'#'</span></span><br><span class="line">ROM:0A49 ldi     r24, 0x77 ; <span class="string">'w'</span></span><br><span class="line">ROM:0A4A ldi     r25, 1</span><br><span class="line">ROM:0A4B call    Keyboard_press</span><br><span class="line">ROM:0A4D ldi     r22, 0xF4</span><br><span class="line">ROM:0A4E ldi     r23, 1</span><br><span class="line">ROM:0A4F ldi     r24, 0</span><br><span class="line">ROM:0A50 ldi     r25, 0</span><br><span class="line">ROM:0A51 call    delay</span><br><span class="line">ROM:0A53 ldi     r22, 0x23 ; <span class="string">'#'</span></span><br><span class="line">ROM:0A54 ldi     r24, 0x77 ; <span class="string">'w'</span></span><br><span class="line">ROM:0A55 ldi     r25, 1</span><br><span class="line">ROM:0A56 call    Keyboard_rel</span><br></pre></td></tr></table></figure>
+<p>直接获取所有的操作太累了，我选择idapython获取所有打印的字符，脚本如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment">#-*- coding:utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> idautils</span><br><span class="line"><span class="keyword">import</span> idaapi</span><br><span class="line"><span class="keyword">import</span> idc</span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">start = idc.SelStart()</span></span><br><span class="line"><span class="string">end = idc.SelEnd()</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">cur_addr = 0x94C</span></span><br><span class="line"><span class="string">for disass_addr in list(idautils.FuncItems(func)):</span></span><br><span class="line"><span class="string">	if idc.GetMnem(disass_addr) == 'ldi':</span></span><br><span class="line"><span class="string">		if idc.GetOpnd(disass_addr,1) == ' ':</span></span><br><span class="line"><span class="string">			</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line">str1 = <span class="string">''</span></span><br><span class="line">count = <span class="number">0</span></span><br><span class="line">cur_addr = <span class="number">0x94C</span></span><br><span class="line"><span class="keyword">for</span> disass_addr <span class="keyword">in</span> list(idautils.FuncItems(cur_addr)):</span><br><span class="line">	<span class="keyword">if</span> idc.GetMnem(disass_addr) == <span class="string">'ldi'</span>:</span><br><span class="line">		tmp = idc.GetOperandValue(disass_addr,<span class="number">1</span>)</span><br><span class="line">		<span class="keyword">if</span> tmp == ord(<span class="string">' '</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">' '</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">'$'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">'$'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">'#'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">'#'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">'&amp;'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">'&amp;'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">':'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">':'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">'|'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">'|'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">'!'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">'!'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">';'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">';'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">'@'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">'@'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">'.'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">'.'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">'%'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">'%'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">'`'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">'`'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == <span class="number">0xB0</span>:</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				<span class="keyword">print</span> str1</span><br><span class="line">				str1 = <span class="string">''</span></span><br><span class="line">				count = <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>最后得到打印出来的flag:flag{520}</p>
+<p><img src="https://invicsfate.github.io/assert/hex_flag.png" alt="flag"></p>
+<p>emmmmm，这个我实在是看不懂画了什么，从出图到得到flag，有差不多9个小时，感谢看出flag的@pinko大佬(第一行右移两位)，同时感谢客服大佬@Swing的耐心解答(还是想吐槽一下下:-( )</p>
+<p>google中的关键连接：</p>
+<p><a href="http://blog.leanote.com/post/sherlly/pwnhub-%E3%80%8A%E8%A1%80%E6%9C%88%E5%BD%92%E6%9D%A5%E3%80%8B-key-writeup" target="_blank" rel="noopener">pwnhub-key</a></p>
+<p><a href="https://www.cybrary.it/0p3n/hacking-arduino-build-usb-payload/" target="_blank" rel="noopener">badusb</a></p>
+<p><a href="https://www.arduino.cc/en/Main/Software" target="_blank" rel="noopener">arduino-IDE</a></p>
+<p><a href="https://github.com/Xyntax/BadUSB-code" target="_blank" rel="noopener">baduse-code</a></p>
+<p><a href="https://github.com/hak5darren/USB-Rubber-Ducky/wiki" target="_blank" rel="noopener">USB-Rubber-Ducky</a></p>
+<p><a href="http://bluereader.org/article/262324852" target="_blank" rel="noopener">pwnhub-key-bluereader</a></p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2018/04/13/HITBCTF2018-reverse-hex/">
+    <time datetime="2018-04-13T09:21:34.000Z" class="entry-date">
+        2018-04-13
+    </time>
+</a>
+    
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/reverse/">reverse</a>
+  </div>
+
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/">CTF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rev/">rev</a></li></ul>
+
+    </footer>
+</article>
+
+
+    
+<nav class="nav-single">
+    <h3 class="assistive-text">文章导航</h3>
+    
+        <span class="nav-previous"><a href="/2018/05/29/setUnhandleExceptionFilter-exploration/" rel="prev"><span class="meta-nav">←</span> setUnhandleExceptionFilter-exploration</a></span>
+    
+    
+        <span class="nav-next"><a href="/2018/03/20/Play-Rtsp-Stream-opencv2/" rel="next">Play Rtsp Stream-opencv2 <span class="meta-nav">→</span></a></span>
+    
+</nav><!-- .nav-single -->
+
+
+
+
+
+
+
+</div></div>
+        <div id="secondary" class="widget-area" role="complementary">
+  
+    <aside id="search" class="widget widget_search"><form role="search" method="get" accept-charset="utf-8" id="searchform" class="searchform" action="//google.com/search">
+    <div>
+        <input type="text" value="" name="s" id="s" />
+        <input type="submit" id="searchsubmit" value="搜索" />
+    </div>
+</form></aside>
+  
+    
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-content">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/XCTF2018/">XCTF2018</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hctf/">hctf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">6</span></li></ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget-content">
+      <ul>
+        
+          <li>
+            <a href="/2018/05/29/setUnhandleExceptionFilter-exploration/">setUnhandleExceptionFilter-exploration</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/13/HITBCTF2018-reverse-hex/">HITBCTF2018-reverse-hex</a>
+          </li>
+        
+          <li>
+            <a href="/2018/03/20/Play-Rtsp-Stream-opencv2/">Play Rtsp Stream-opencv2</a>
+          </li>
+        
+          <li>
+            <a href="/2018/01/16/Mi-4C动态调试so库/">Mi-4C动态调试so库</a>
+          </li>
+        
+          <li>
+            <a href="/2017/12/28/qemu环境搭建/">qemu环境搭建</a>
+          </li>
+        
+      </ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-content">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/">CTF</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PIL/">PIL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwnable-tw/">pwnable.tw</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rev/">rev</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing-kr/">reversing.kr</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windbg/">windbg</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/其他/">其他</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/工具/">工具</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂谈/">杂谈</a><span class="tag-list-count">3</span></li></ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-content tagcloud">
+      <a href="/tags/CTF/" style="font-size: 16.67px;">CTF</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/PIL/" style="font-size: 10px;">PIL</a> <a href="/tags/pwnable-tw/" style="font-size: 10px;">pwnable.tw</a> <a href="/tags/rev/" style="font-size: 20px;">rev</a> <a href="/tags/reversing-kr/" style="font-size: 10px;">reversing.kr</a> <a href="/tags/windbg/" style="font-size: 10px;">windbg</a> <a href="/tags/其他/" style="font-size: 10px;">其他</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/杂谈/" style="font-size: 13.33px;">杂谈</a>
+    </div>
+  </aside>
+
+  
+</div>
+      </div>
+      <footer id="colophon" role="contentinfo">
+    <p>&copy; 2018 Invicsfate
+    All rights reserved.</p>
+    <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></p>
+</footer>
+    <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+<script src="/js/navigation.js"></script>
+
+<div id="bg"></div>
+
+  </div>
+</body>
+</html>

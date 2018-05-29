@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <meta name="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修" />
+  
+
+  
+  
+  
+  
+  
+  
+  <title>whctf2018 | Invicsfate</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="(⊙﹏⊙)，记录下本辣鸡这次whctf自己做的题目，然后等待wxy191大佬解决wbeas这道题的侧信道攻击方法，希望快点出writeup。   miscpy-py-py首先是用uncompyle6反编译pyc文件，得到一个rc4的加密解密脚本，根据脚本解密得到提示The challenge is Steganography，是pyc隐写，百度到在pyc中隐藏payload的工具stegosaur">
+<meta name="keywords" content="CTF">
+<meta property="og:type" content="article">
+<meta property="og:title" content="whctf2018">
+<meta property="og:url" content="http://Invicsfate.github.io/2017/09/18/whctf2018/index.html">
+<meta property="og:site_name" content="Invicsfate">
+<meta property="og:description" content="(⊙﹏⊙)，记录下本辣鸡这次whctf自己做的题目，然后等待wxy191大佬解决wbeas这道题的侧信道攻击方法，希望快点出writeup。   miscpy-py-py首先是用uncompyle6反编译pyc文件，得到一个rc4的加密解密脚本，根据脚本解密得到提示The challenge is Steganography，是pyc隐写，百度到在pyc中隐藏payload的工具stegosaur">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://invicsfate.github.io/assert/MFC.png">
+<meta property="og:image" content="https://invicsfate.github.io/assert/EASYHOOK.png">
+<meta property="og:updated_time" content="2017-12-30T14:02:47.202Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="whctf2018">
+<meta name="twitter:description" content="(⊙﹏⊙)，记录下本辣鸡这次whctf自己做的题目，然后等待wxy191大佬解决wbeas这道题的侧信道攻击方法，希望快点出writeup。   miscpy-py-py首先是用uncompyle6反编译pyc文件，得到一个rc4的加密解密脚本，根据脚本解密得到提示The challenge is Steganography，是pyc隐写，百度到在pyc中隐藏payload的工具stegosaur">
+<meta name="twitter:image" content="https://invicsfate.github.io/assert/MFC.png">
+  
+  
+    <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+  
+  <!-- baidu webmaster push -->
+  <script src='//push.zhanzhang.baidu.com/push.js'></script>
+</head>
+<body class="home blog custom-background custom-font-enabled single-author">
+  <div id="page" class="hfeed site">
+      <header id="masthead" class="site-header" role="banner">
+    <hgroup>
+      <h1 class="site-title">
+        <a href="/" title="Invicsfate" rel="home">Invicsfate</a>
+      </h1>
+      
+        <h2 class="site-description">
+          <a href="/" id="subtitle">bin选手一只，爱好二次元，最爱小姐姐(*^﹏^*)!</a>
+        </h2>
+      
+    </hgroup>
+
+    <nav id="site-navigation" class="main-navigation" role="navigation">
+            <button class="menu-toggle">菜单</button>
+            <a class="assistive-text" href="/#content" title="跳至内容">跳至内容</a><!--TODO-->
+            <div class="menu-main-container">
+                <ul id="menu-main" class="nav-menu">
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/">Home</a></li>
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/archives">Archives</a></li>
+                
+                </ul>
+            </div>
+    </nav>
+</header>
+      <div id="main" class="wrapper">
+        <div id="primary" class="site-content"><div id="content" role="main"><article id="post-whctf2018" class="post-whctf2018 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title article-title">
+      whctf2018
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/18/whctf2018/" data-id="cjhrl56rm000pxq3khzoxds91" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <p>(⊙﹏⊙)，记录下本辣鸡这次whctf自己做的题目，然后等待wxy191大佬解决wbeas这道题的侧信道攻击方法，希望快点出writeup。  </p>
+<h1 id="misc"><a href="#misc" class="headerlink" title="misc"></a>misc</h1><h2 id="py-py-py"><a href="#py-py-py" class="headerlink" title="py-py-py"></a>py-py-py</h2><p>首先是用uncompyle6反编译pyc文件，得到一个rc4的加密解密脚本，根据脚本解密得到提示The challenge is Steganography，是pyc隐写，百度到在pyc中隐藏payload的工具stegosaurus。使用工具得到flag。  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line">fllag = <span class="string">'9474yeUMWODKruX7OFzD9oekO28+EqYCZHrUjWNm92NSU+eYXOPsRPEFrNMs7J+4qautoqOrvq28pLU='</span></span><br><span class="line"><span class="comment">#fllag = 'The challenge is Steganography'</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">crypto</span><span class="params">(string, op, public_key, expirytime)</span>:</span></span><br><span class="line">    ckey_lenth = <span class="number">4</span></span><br><span class="line">    public_key = public_key <span class="keyword">and</span> public_key <span class="keyword">or</span> <span class="string">''</span></span><br><span class="line">    key = hashlib.md5(public_key).hexdigest()</span><br><span class="line">    keya = hashlib.md5(key[<span class="number">0</span>:<span class="number">16</span>]).hexdigest()</span><br><span class="line">    keyb = hashlib.md5(key[<span class="number">16</span>:<span class="number">32</span>]).hexdigest()</span><br><span class="line">    keyc = ckey_lenth <span class="keyword">and</span> (op == <span class="string">'decode'</span> <span class="keyword">and</span> string[<span class="number">0</span>:ckey_lenth] <span class="keyword">or</span> hashlib.md5(str(time.time())).hexdigest()[<span class="number">32</span> - ckey_lenth:<span class="number">32</span>]) <span class="keyword">or</span> <span class="string">''</span></span><br><span class="line">    cryptkey = keya + hashlib.md5(keya + keyc).hexdigest()</span><br><span class="line">    key_lenth = len(cryptkey)</span><br><span class="line">    string = op == <span class="string">'decode'</span> <span class="keyword">and</span> base64.b64decode(string[<span class="number">4</span>:]) <span class="keyword">or</span> <span class="string">'0000000000'</span> + hashlib.md5(string + keyb).hexdigest()[<span class="number">0</span>:<span class="number">16</span>] + string</span><br><span class="line">    string_lenth = len(string)</span><br><span class="line">    result = <span class="string">''</span></span><br><span class="line">    box = list(range(<span class="number">256</span>))</span><br><span class="line">    randkey = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">255</span>):</span><br><span class="line">        randkey.append(ord(cryptkey[i % key_lenth]))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">255</span>):</span><br><span class="line">        j = <span class="number">0</span></span><br><span class="line">        j = (j + box[i] + randkey[i]) % <span class="number">256</span></span><br><span class="line">        tmp = box[i]</span><br><span class="line">        box[i] = box[j]</span><br><span class="line">        box[j] = tmp</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> xrange(string_lenth):</span><br><span class="line">        a = j = <span class="number">0</span></span><br><span class="line">        a = (a + <span class="number">1</span>) % <span class="number">256</span></span><br><span class="line">        j = (j + box[a]) % <span class="number">256</span></span><br><span class="line">        tmp = box[a]</span><br><span class="line">        box[a] = box[j]</span><br><span class="line">        box[j] = tmp</span><br><span class="line">        result += chr(ord(string[i]) ^ box[(box[a] + box[j]) % <span class="number">256</span>])</span><br><span class="line">    raw_input()</span><br><span class="line">    <span class="keyword">print</span> result,op</span><br><span class="line">    <span class="keyword">if</span> op == <span class="string">'decode'</span>:</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> result[<span class="number">0</span>:<span class="number">10</span>] == <span class="string">'0000000000'</span>:</span><br><span class="line">            <span class="keyword">if</span> int(result[<span class="number">0</span>:<span class="number">10</span>]) - int(time.time()) &gt; <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">if</span> result[<span class="number">10</span>:<span class="number">26</span>] == hashlib.md5(result[<span class="number">26</span>:] + keyb).hexdigest()[<span class="number">0</span>:<span class="number">16</span>]:</span><br><span class="line">                    <span class="keyword">print</span> result[<span class="number">26</span>:]</span><br><span class="line">                    <span class="keyword">return</span> result[<span class="number">26</span>:]</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="keyword">return</span> keyc + base64.b64encode(result)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">        flag = raw_input(<span class="string">'Please input your flag:'</span>)</span><br><span class="line">        <span class="keyword">if</span> flag == crypto(fllag, <span class="string">'decode'</span>,<span class="string">'ddd'</span>,<span class="number">0</span>):</span><br><span class="line">            print(<span class="string">'Success'</span>)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line"><span class="comment"># okay decompiling ../../5061c764-2ac4-4386-afd0-2f7a69139efa.pyc</span></span><br></pre></td></tr></table></figure>
+<p>flag: Flag{HiD3_Pal0ad_1n_Python}</p>
+<h1 id="REVERSE-amp-amp-Mobile"><a href="#REVERSE-amp-amp-Mobile" class="headerlink" title="REVERSE &amp;&amp; Mobile"></a>REVERSE &amp;&amp; Mobile</h1><h2 id="CrackMe"><a href="#CrackMe" class="headerlink" title="CrackMe"></a>CrackMe</h2><p>MFC程序，xspy或者Resource_Hacker定位关键函数，如下图：  </p>
+<p><img src="https://invicsfate.github.io/assert/MFC.png" alt="MFC"></p>
+<p>flag: The-Y3ll0w-turb4ns-Upri$ing</p>
+<h2 id="EASYHOOK"><a href="#EASYHOOK" class="headerlink" title="EASYHOOK"></a>EASYHOOK</h2><p>程序hook了writefile函数，找到hook的函数，即是关键函数，如下图，跑脚本，奇数位和偶数位的字符拼在一起就是flag。  </p>
+<p><img src="https://invicsfate.github.io/assert/EASYHOOK.png" alt="EASYHOOK"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment">#-*- coding:utf-8 -*-</span></span><br><span class="line"></span><br><span class="line">compare_table =[<span class="number">0x61</span>,<span class="number">0x6A</span>,<span class="number">0x79</span>,<span class="number">0x67</span>,<span class="number">0x6B</span>,<span class="number">0x46</span>,<span class="number">0x6D</span>,<span class="number">0x2E</span>,<span class="number">0x7F</span>,<span class="number">0x5F</span>,<span class="number">0x7E</span>,<span class="number">0x2D</span>,<span class="number">0x53</span>,<span class="number">0x56</span>,<span class="number">0x7B</span>,<span class="number">0x38</span>,<span class="number">0x6D</span>,<span class="number">0x4C</span>,<span class="number">0x6E</span>]</span><br><span class="line">test = [<span class="string">'f'</span>,<span class="string">'l'</span>,<span class="string">'a'</span>,<span class="string">'g'</span>,<span class="string">'&#123;'</span>,<span class="string">'H'</span>,<span class="string">'o'</span>,<span class="string">'0'</span>,<span class="string">'k'</span>,<span class="string">'_'</span>,<span class="string">'w'</span>,<span class="string">'1'</span>,<span class="string">'t'</span>,<span class="string">'h'</span>,<span class="string">'_'</span>,<span class="string">'F'</span>,<span class="string">'u'</span>,<span class="string">'n'</span>,<span class="string">'&#125;'</span>]</span><br><span class="line">ans = <span class="string">''</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">19</span>):</span><br><span class="line">	<span class="keyword">for</span> ch <span class="keyword">in</span> range(<span class="number">32</span>,<span class="number">127</span>):</span><br><span class="line">		<span class="keyword">if</span> i == <span class="number">18</span>:</span><br><span class="line">			tmp = ch ^ <span class="number">0x13</span></span><br><span class="line">			<span class="keyword">if</span> tmp == compare_table[<span class="number">18</span>]:</span><br><span class="line">				ans += chr(ch)</span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			<span class="keyword">if</span> (i % <span class="number">2</span>): <span class="comment">#偶数位</span></span><br><span class="line">				temp = ch - i</span><br><span class="line">				<span class="keyword">if</span>((i ^ temp) == compare_table[i]):</span><br><span class="line">					ans += chr(ch)</span><br><span class="line">					<span class="keyword">break</span></span><br><span class="line">			<span class="keyword">else</span>: <span class="comment">#奇数位</span></span><br><span class="line">				<span class="keyword">print</span> chr(compare_table[i] ^ i),</span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line">					</span><br><span class="line">					</span><br><span class="line"><span class="keyword">print</span> ans</span><br><span class="line"><span class="keyword">print</span> <span class="string">''</span>.join(test)</span><br></pre></td></tr></table></figure>
+<h2 id="BABYRE-200"><a href="#BABYRE-200" class="headerlink" title="BABYRE 200"></a>BABYRE 200</h2><p>程序在开始之前解密了加密的函数，即统统异或0xc，编写IDC脚本手动还原代码</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;idc.idc&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> a = <span class="number">0x600b00</span>;</span><br><span class="line">    <span class="keyword">auto</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i=<span class="number">0</span>; i&lt;<span class="number">0xb5</span>;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        PatchByte(a+i,Byte(a+i)^<span class="number">0xc</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>得到check代码，check非常简单，即将输入的字符与其字符串下标异或后与已知字符串对比。写脚本得到flag。</p>
+<p>flag: flag{n1c3_j0b}</p>
+<h2 id="FINDMYMORSE"><a href="#FINDMYMORSE" class="headerlink" title="FINDMYMORSE"></a>FINDMYMORSE</h2><p>看了半天java代码，什么都没发现，看native层，有个main函数，搜索字符串，找到”Congratulations! You got the right sequence”位置，对程序进行分析，上网查阅了几个不认识的androidAPI，关于MouseEvent的getAction操作，mouse_down是0，mouse_up是1，那么gettimeofday在mouse_down时记录一次时间，在mouse_up中记录一次时间，两次的差值和一个临界值比较，这个临界值我也没管，反正最终导致后面和硬编码的比特位异或，每次异或的值要为0。硬编码字符串的选择规则如下：<br>一共循环224次，28个字节，4个为一组，间隔7字节，每次把每一组的4个字节的比特位按照从低到高循环取位的原则，重新得到一个比特位字符串。猜测第一个字符位’f’，和得到得到新比特位字符串比较，发现是7个比特位组成一个字符，于是得到flag。  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment">#-*- coding:utf-8 -*-</span></span><br><span class="line"></span><br><span class="line">compare_table = [<span class="number">0xA7</span>,<span class="number">0xD6</span>,<span class="number">0x61</span>,<span class="number">0xB5</span>,<span class="number">0x6E</span>,<span class="number">0xBB</span>,<span class="number">0xBA</span>,<span class="number">0xE3</span>,<span class="number">0xA9</span>,<span class="number">0xDD</span>,<span class="number">0xC4</span>,<span class="number">0x77</span>,<span class="number">0x6F</span>,<span class="number">0xEE</span>,<span class="number">0xEC</span>,<span class="number">0xFF</span>,<span class="number">0x62</span>,<span class="number">0xC3</span>,<span class="number">0xCF</span>,<span class="number">0xDA</span>,<span class="number">0x53</span>,<span class="number">0xCE</span>,<span class="number">0xFF</span>,<span class="number">0x71</span>,<span class="number">0x71</span>,<span class="number">0x14</span>,<span class="number">0xFF</span>,<span class="number">0xF2</span>]</span><br><span class="line"></span><br><span class="line">right_Sequence = <span class="string">''</span></span><br><span class="line">ans = <span class="string">''</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> num <span class="keyword">in</span> range(<span class="number">224</span>):</span><br><span class="line">	tmp = <span class="number">7</span> * (num % <span class="number">4</span>) + num / <span class="number">32</span></span><br><span class="line">	mov_bit = (num / <span class="number">4</span>) % <span class="number">8</span></span><br><span class="line">	bit = (compare_table[tmp] &gt;&gt; mov_bit) &amp; <span class="number">1</span></span><br><span class="line">	right_Sequence += chr(bit + <span class="number">0x30</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> right_Sequence</span><br><span class="line"></span><br><span class="line"><span class="comment">#for i in range(len(right_Sequence)):</span></span><br><span class="line"><span class="comment">#print bin(ord('f'))</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(right_Sequence)/<span class="number">7</span>):</span><br><span class="line">	tmp = right_Sequence[i*<span class="number">7</span>:i*<span class="number">7</span>+<span class="number">7</span>]</span><br><span class="line">	ans += chr(int(tmp,<span class="number">2</span>))</span><br><span class="line"><span class="keyword">print</span> ans</span><br></pre></td></tr></table></figure>
+<p>flag: flag{no7_tHE_Re@L_MoRsE_/o/2z2z}</p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2017/09/18/whctf2018/">
+    <time datetime="2017-09-18T15:32:34.000Z" class="entry-date">
+        2017-09-18
+    </time>
+</a>
+    
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/XCTF2018/">XCTF2018</a>
+  </div>
+
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/">CTF</a></li></ul>
+
+    </footer>
+</article>
+
+
+    
+<nav class="nav-single">
+    <h3 class="assistive-text">文章导航</h3>
+    
+        <span class="nav-previous"><a href="/2017/09/30/Win7x64-DLL-Remote-Injection-Hide-Process/" rel="prev"><span class="meta-nav">←</span> Win7x64-DLL-Remote-Injection-Hide-Process</a></span>
+    
+    
+        <span class="nav-next"><a href="/2017/09/18/reversing-kr/" rel="next">reversing.kr <span class="meta-nav">→</span></a></span>
+    
+</nav><!-- .nav-single -->
+
+
+
+
+
+
+
+</div></div>
+        <div id="secondary" class="widget-area" role="complementary">
+  
+    <aside id="search" class="widget widget_search"><form role="search" method="get" accept-charset="utf-8" id="searchform" class="searchform" action="//google.com/search">
+    <div>
+        <input type="text" value="" name="s" id="s" />
+        <input type="submit" id="searchsubmit" value="搜索" />
+    </div>
+</form></aside>
+  
+    
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-content">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/XCTF2018/">XCTF2018</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hctf/">hctf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">6</span></li></ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget-content">
+      <ul>
+        
+          <li>
+            <a href="/2018/05/29/setUnhandleExceptionFilter-exploration/">setUnhandleExceptionFilter-exploration</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/13/HITBCTF2018-reverse-hex/">HITBCTF2018-reverse-hex</a>
+          </li>
+        
+          <li>
+            <a href="/2018/03/20/Play-Rtsp-Stream-opencv2/">Play Rtsp Stream-opencv2</a>
+          </li>
+        
+          <li>
+            <a href="/2018/01/16/Mi-4C动态调试so库/">Mi-4C动态调试so库</a>
+          </li>
+        
+          <li>
+            <a href="/2017/12/28/qemu环境搭建/">qemu环境搭建</a>
+          </li>
+        
+      </ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-content">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/">CTF</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PIL/">PIL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwnable-tw/">pwnable.tw</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rev/">rev</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing-kr/">reversing.kr</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windbg/">windbg</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/其他/">其他</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/工具/">工具</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂谈/">杂谈</a><span class="tag-list-count">3</span></li></ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-content tagcloud">
+      <a href="/tags/CTF/" style="font-size: 16.67px;">CTF</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/PIL/" style="font-size: 10px;">PIL</a> <a href="/tags/pwnable-tw/" style="font-size: 10px;">pwnable.tw</a> <a href="/tags/rev/" style="font-size: 20px;">rev</a> <a href="/tags/reversing-kr/" style="font-size: 10px;">reversing.kr</a> <a href="/tags/windbg/" style="font-size: 10px;">windbg</a> <a href="/tags/其他/" style="font-size: 10px;">其他</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/杂谈/" style="font-size: 13.33px;">杂谈</a>
+    </div>
+  </aside>
+
+  
+</div>
+      </div>
+      <footer id="colophon" role="contentinfo">
+    <p>&copy; 2018 Invicsfate
+    All rights reserved.</p>
+    <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></p>
+</footer>
+    <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+<script src="/js/navigation.js"></script>
+
+<div id="bg"></div>
+
+  </div>
+</body>
+</html>

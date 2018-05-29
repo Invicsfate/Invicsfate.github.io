@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <meta name="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修" />
+  
+
+  
+  
+  
+  
+  
+  
+  <title>几种可作为工具使用的常用注入姿势 | Invicsfate</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="转眼国庆假期已经过去了两天，又对游戏安全感兴趣的我，就来复习复习注入姿势好了，个人认为作为工具使用还比较方便的注入方法。注入的方式很多书籍都谈到了，诸如《逆向工程核心原理》《Windows核心编程》，网站也有很多，像腾讯的游戏安全实验室就有专门介绍的，网上相关的博客介绍也很多，我也是从这些地方学到的。   消息钩子这种方式仅适用于GUI程序，而且要确定钩取的消息，还是觉得不太方便。23333，功能">
+<meta name="keywords" content="rev">
+<meta property="og:type" content="article">
+<meta property="og:title" content="几种可作为工具使用的常用注入姿势">
+<meta property="og:url" content="http://Invicsfate.github.io/2017/10/02/几种可作为工具使用常用注入姿势/index.html">
+<meta property="og:site_name" content="Invicsfate">
+<meta property="og:description" content="转眼国庆假期已经过去了两天，又对游戏安全感兴趣的我，就来复习复习注入姿势好了，个人认为作为工具使用还比较方便的注入方法。注入的方式很多书籍都谈到了，诸如《逆向工程核心原理》《Windows核心编程》，网站也有很多，像腾讯的游戏安全实验室就有专门介绍的，网上相关的博客介绍也很多，我也是从这些地方学到的。   消息钩子这种方式仅适用于GUI程序，而且要确定钩取的消息，还是觉得不太方便。23333，功能">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2017-12-30T14:02:47.202Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="几种可作为工具使用的常用注入姿势">
+<meta name="twitter:description" content="转眼国庆假期已经过去了两天，又对游戏安全感兴趣的我，就来复习复习注入姿势好了，个人认为作为工具使用还比较方便的注入方法。注入的方式很多书籍都谈到了，诸如《逆向工程核心原理》《Windows核心编程》，网站也有很多，像腾讯的游戏安全实验室就有专门介绍的，网上相关的博客介绍也很多，我也是从这些地方学到的。   消息钩子这种方式仅适用于GUI程序，而且要确定钩取的消息，还是觉得不太方便。23333，功能">
+  
+  
+    <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+  
+  <!-- baidu webmaster push -->
+  <script src='//push.zhanzhang.baidu.com/push.js'></script>
+</head>
+<body class="home blog custom-background custom-font-enabled single-author">
+  <div id="page" class="hfeed site">
+      <header id="masthead" class="site-header" role="banner">
+    <hgroup>
+      <h1 class="site-title">
+        <a href="/" title="Invicsfate" rel="home">Invicsfate</a>
+      </h1>
+      
+        <h2 class="site-description">
+          <a href="/" id="subtitle">bin选手一只，爱好二次元，最爱小姐姐(*^﹏^*)!</a>
+        </h2>
+      
+    </hgroup>
+
+    <nav id="site-navigation" class="main-navigation" role="navigation">
+            <button class="menu-toggle">菜单</button>
+            <a class="assistive-text" href="/#content" title="跳至内容">跳至内容</a><!--TODO-->
+            <div class="menu-main-container">
+                <ul id="menu-main" class="nav-menu">
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/">Home</a></li>
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/archives">Archives</a></li>
+                
+                </ul>
+            </div>
+    </nav>
+</header>
+      <div id="main" class="wrapper">
+        <div id="primary" class="site-content"><div id="content" role="main"><article id="post-几种可作为工具使用常用注入姿势" class="post-几种可作为工具使用常用注入姿势 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title article-title">
+      几种可作为工具使用的常用注入姿势
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/10/02/几种可作为工具使用常用注入姿势/" data-id="cjhrl56rv0015xq3kyh8l13np" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <p>转眼国庆假期已经过去了两天，又对游戏安全感兴趣的我，就来复习复习注入姿势好了，个人认为作为工具使用还比较方便的注入方法。注入的方式很多书籍都谈到了，诸如《逆向工程核心原理》《Windows核心编程》，网站也有很多，像腾讯的游戏安全实验室就有专门介绍的，网上相关的博客介绍也很多，我也是从这些地方学到的。  </p>
+<h2 id="消息钩子"><a href="#消息钩子" class="headerlink" title="消息钩子"></a>消息钩子</h2><h3 id="这种方式仅适用于GUI程序，而且要确定钩取的消息，还是觉得不太方便。23333，功能是键盘按下，弹窗。现在好多程序都防着钩子了，感觉没什么用。"><a href="#这种方式仅适用于GUI程序，而且要确定钩取的消息，还是觉得不太方便。23333，功能是键盘按下，弹窗。现在好多程序都防着钩子了，感觉没什么用。" class="headerlink" title="这种方式仅适用于GUI程序，而且要确定钩取的消息，还是觉得不太方便。23333，功能是键盘按下，弹窗。现在好多程序都防着钩子了，感觉没什么用。"></a>这种方式仅适用于GUI程序，而且要确定钩取的消息，还是觉得不太方便。23333，功能是键盘按下，弹窗。现在好多程序都防着钩子了，感觉没什么用。</h3><h4 id="Message-Hook-cpp"><a href="#Message-Hook-cpp" class="headerlink" title="Message_Hook.cpp"></a>Message_Hook.cpp</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;conio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>	DEF_DLL_NAME		<span class="meta-string">"My_Hook_Dll.dll"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>	DEF_HOOKSTART		<span class="meta-string">"HookStart"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>	DEF_HOOKSTOP		<span class="meta-string">"HookStop"</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(*PFN_HOOKSTART)</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(*PFN_HOOKSTOP)</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	HMODULE			hDll = <span class="literal">NULL</span>;</span><br><span class="line">	PFN_HOOKSTART	HookStart = <span class="literal">NULL</span>;</span><br><span class="line">	PFN_HOOKSTOP	HookStop = <span class="literal">NULL</span>;</span><br><span class="line">	<span class="keyword">char</span>			ch = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	hDll = LoadLibraryA(DEF_DLL_NAME);</span><br><span class="line">    <span class="keyword">if</span>( hDll == <span class="literal">NULL</span> )</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"LoadLibrary(%s) failed!!! [%d]"</span>, DEF_DLL_NAME, GetLastError());</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">	HookStart = (PFN_HOOKSTART)GetProcAddress(hDll, DEF_HOOKSTART);</span><br><span class="line">	HookStop = (PFN_HOOKSTOP)GetProcAddress(hDll, DEF_HOOKSTOP);</span><br><span class="line"></span><br><span class="line">	HookStart();</span><br><span class="line"></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"press 'q' to quit!\n"</span>);</span><br><span class="line">	<span class="keyword">while</span>( _getch() != <span class="string">'q'</span> )	;</span><br><span class="line"></span><br><span class="line">	HookStop();</span><br><span class="line">	FreeLibrary(hDll);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="dllmain-cpp"><a href="#dllmain-cpp" class="headerlink" title="dllmain.cpp"></a>dllmain.cpp</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// dllmain.cpp : 定义 DLL 应用程序的入口点。</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"stdafx.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEF_PROCESS_NAME <span class="meta-string">"notepad.exe"</span></span></span><br><span class="line"></span><br><span class="line">HINSTANCE g_hInstance = <span class="literal">NULL</span>;</span><br><span class="line">HHOOK g_hHook = <span class="literal">NULL</span>;</span><br><span class="line">HWND g_hWnd = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line"><span class="function">BOOL WINAPI <span class="title">DllMain</span><span class="params">(HINSTANCE hinstDLL, DWORD dwReason, LPVOID lpvReserved)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">switch</span>( dwReason )</span><br><span class="line">	&#123;</span><br><span class="line">        <span class="keyword">case</span> DLL_PROCESS_ATTACH:</span><br><span class="line">			g_hInstance = hinstDLL;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">case</span> DLL_PROCESS_DETACH:</span><br><span class="line">			<span class="keyword">break</span>;	</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">LRESULT CALLBACK <span class="title">KeyboardProc</span><span class="params">(<span class="keyword">int</span> nCode, WPARAM wParam, LPARAM lParam)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> szPath[MAX_PATH] = &#123;<span class="number">0</span>,&#125;;</span><br><span class="line">	<span class="keyword">char</span> *p = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>( nCode &gt;= <span class="number">0</span> )</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">// bit 31 : 0 =&gt; press, 1 =&gt; release</span></span><br><span class="line">		<span class="keyword">if</span>( !(lParam &amp; <span class="number">0x80000000</span>) )</span><br><span class="line">		&#123;</span><br><span class="line">			GetModuleFileNameA(<span class="literal">NULL</span>, szPath, MAX_PATH);</span><br><span class="line">			p = <span class="built_in">strrchr</span>(szPath, <span class="string">'\\'</span>);</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span>( !_stricmp(p + <span class="number">1</span>, DEF_PROCESS_NAME) )</span><br><span class="line">				MessageBoxA(<span class="literal">NULL</span>,<span class="string">"Inject successful!"</span>,<span class="string">"Congratulations!"</span>,MB_OK);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> CallNextHookEx(g_hHook, nCode, wParam, lParam);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">	__declspec(dllexport) <span class="function"><span class="keyword">void</span> <span class="title">HookStart</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		g_hHook = SetWindowsHookEx(WH_KEYBOARD, KeyboardProc, g_hInstance, <span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	__declspec(dllexport) <span class="function"><span class="keyword">void</span> <span class="title">HookStop</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">if</span>( g_hHook )</span><br><span class="line">		&#123;</span><br><span class="line">			UnhookWindowsHookEx(g_hHook);</span><br><span class="line">			g_hHook = <span class="literal">NULL</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="远程注入"><a href="#远程注入" class="headerlink" title="远程注入"></a>远程注入</h2><h3 id="原理什么的就不讲了，直接上代码，功能也是完成一个弹窗，具体要做什么的时候，修改一下就好了。"><a href="#原理什么的就不讲了，直接上代码，功能也是完成一个弹窗，具体要做什么的时候，修改一下就好了。" class="headerlink" title="原理什么的就不讲了，直接上代码，功能也是完成一个弹窗，具体要做什么的时候，修改一下就好了。"></a>原理什么的就不讲了，直接上代码，功能也是完成一个弹窗，具体要做什么的时候，修改一下就好了。</h3><h4 id="dllmain-cpp-1"><a href="#dllmain-cpp-1" class="headerlink" title="dllmain.cpp"></a>dllmain.cpp</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"stdafx.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">BOOL APIENTRY <span class="title">DllMain</span><span class="params">( HMODULE hModule,</span></span></span><br><span class="line"><span class="function"><span class="params">                       DWORD  ul_reason_for_call,</span></span></span><br><span class="line"><span class="function"><span class="params">                       LPVOID lpReserved</span></span></span><br><span class="line"><span class="function"><span class="params">					 )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">switch</span> (ul_reason_for_call)</span><br><span class="line">	&#123;</span><br><span class="line">	<span class="keyword">case</span> DLL_PROCESS_ATTACH:</span><br><span class="line">		MessageBoxA(<span class="literal">NULL</span>,<span class="string">"Injection Success!"</span>,<span class="string">"Congratulations!"</span>,MB_OK);</span><br><span class="line">	<span class="keyword">case</span> DLL_THREAD_ATTACH:</span><br><span class="line">	<span class="keyword">case</span> DLL_THREAD_DETACH:</span><br><span class="line">	<span class="keyword">case</span> DLL_PROCESS_DETACH:</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Injection-cpp"><a href="#Injection-cpp" class="headerlink" title="Injection.cpp"></a>Injection.cpp</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">BOOL <span class="title">SetPrivilege</span><span class="params">(LPCTSTR lpszPrivilege,BOOL bEnablePrivilege)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	TOKEN_PRIVILEGES tp;</span><br><span class="line">	HANDLE hToken;</span><br><span class="line">	LUID luid;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(!OpenProcessToken(GetCurrentProcess(),TOKEN_ADJUST_PRIVILEGES,&amp;hToken))</span><br><span class="line">	&#123;</span><br><span class="line">		wprintf(<span class="string">L"OpenProcessToken Failed!CODE(%u)\n"</span>,GetLastError());</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span>(!LookupPrivilegeValue(<span class="literal">NULL</span>,lpszPrivilege,&amp;luid))</span><br><span class="line">	&#123;</span><br><span class="line">		wprintf(<span class="string">L"LookupPrivilegeValue Failed!CODE(%u)\n"</span>,GetLastError());</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line">	tp.PrivilegeCount=<span class="number">1</span>;</span><br><span class="line">	tp.Privileges[<span class="number">0</span>].Luid=luid;</span><br><span class="line">	<span class="keyword">if</span>(bEnablePrivilege)</span><br><span class="line">	&#123;</span><br><span class="line">		tp.Privileges[<span class="number">0</span>].Attributes=SE_PRIVILEGE_ENABLED;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		tp.Privileges[<span class="number">0</span>].Attributes=<span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//Enable the privilege开启或关闭权限</span></span><br><span class="line">	<span class="keyword">if</span>(!AdjustTokenPrivileges(hToken,FALSE,&amp;tp,<span class="keyword">sizeof</span>(TOKEN_PRIVILEGES),(PTOKEN_PRIVILEGES)<span class="literal">NULL</span>,(PDWORD)<span class="literal">NULL</span>))</span><br><span class="line">	&#123;</span><br><span class="line">		wprintf(<span class="string">L"AdjustTokenPrivileges Failed!CODE(%u)\n"</span>,GetLastError());</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line">	CloseHandle(hToken);</span><br><span class="line">	<span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">BOOL <span class="title">Remotethread_Injection</span><span class="params">(<span class="keyword">int</span> PID,<span class="keyword">char</span> *pDllName)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	HANDLE hProcess;</span><br><span class="line">	DWORD dwDllNameLen = <span class="built_in">strlen</span>(pDllName) + <span class="number">2</span>;</span><br><span class="line">	BYTE *pBufaddr = <span class="literal">NULL</span>;</span><br><span class="line">	HANDLE hRemoteThread = <span class="literal">NULL</span>;</span><br><span class="line">	PTHREAD_START_ROUTINE pfnRemoteThreadProc = <span class="literal">NULL</span>;</span><br><span class="line">	__try</span><br><span class="line">	&#123;</span><br><span class="line">		hProcess = OpenProcess(PROCESS_ALL_ACCESS,FALSE,(DWORD)PID);</span><br><span class="line">		<span class="keyword">if</span>(!hProcess)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"OpenProcess Error!code(%d)\n"</span>,GetLastError());</span><br><span class="line">			<span class="keyword">return</span> FALSE;</span><br><span class="line">		&#125;</span><br><span class="line">		pBufaddr = (BYTE *)VirtualAllocEx(hProcess,<span class="literal">NULL</span>,dwDllNameLen,MEM_COMMIT,PAGE_READWRITE);</span><br><span class="line">		<span class="keyword">if</span>(!pBufaddr)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"VirtualAllocEx Error!code(%d)\n"</span>,GetLastError());</span><br><span class="line">			CloseHandle(hProcess);</span><br><span class="line">			<span class="keyword">return</span> FALSE;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span>(!WriteProcessMemory(hProcess,pBufaddr,pDllName,dwDllNameLen,<span class="literal">NULL</span>))</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"WriteProcessMemory Error!code(%d)\n"</span>,GetLastError());</span><br><span class="line">			VirtualFreeEx(hProcess,(PVOID)pBufaddr,<span class="number">0</span>,MEM_RELEASE);</span><br><span class="line">			CloseHandle(hProcess);</span><br><span class="line">			<span class="keyword">return</span> FALSE;</span><br><span class="line">		&#125;</span><br><span class="line">		pfnRemoteThreadProc = (PTHREAD_START_ROUTINE)GetProcAddress((HMODULE)LoadLibraryA(<span class="string">"kernel32.dll"</span>),<span class="string">"LoadLibraryA"</span>);</span><br><span class="line">		<span class="keyword">if</span>(!pfnRemoteThreadProc)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"GetProcAddress Error!code(%d)\n"</span>,GetLastError());</span><br><span class="line">			VirtualFreeEx(hProcess,(PVOID)pBufaddr,<span class="number">0</span>,MEM_RELEASE);</span><br><span class="line">			CloseHandle(hProcess);</span><br><span class="line">			<span class="keyword">return</span> FALSE;</span><br><span class="line">		&#125;</span><br><span class="line">		hRemoteThread = CreateRemoteThread(hProcess,<span class="literal">NULL</span>,<span class="number">0</span>,pfnRemoteThreadProc,(PVOID)pBufaddr,<span class="number">0</span>,<span class="literal">NULL</span>);</span><br><span class="line">		<span class="keyword">if</span>(!hRemoteThread)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"CreateRemoteThreadEx Error!code(%d)\n"</span>,GetLastError());</span><br><span class="line">			VirtualFreeEx(hProcess,(PVOID)pBufaddr,<span class="number">0</span>,MEM_RELEASE);</span><br><span class="line">			CloseHandle(hProcess);</span><br><span class="line">			<span class="keyword">return</span> FALSE;</span><br><span class="line">		&#125;</span><br><span class="line">		WaitForSingleObject(hRemoteThread,INFINITE);</span><br><span class="line">	&#125;</span><br><span class="line">	__finally</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(hRemoteThread)</span><br><span class="line">		&#123;</span><br><span class="line">			CloseHandle(hRemoteThread);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span>(pBufaddr)</span><br><span class="line">		&#123;</span><br><span class="line">			VirtualFreeEx(hProcess,(PVOID)pBufaddr,<span class="number">0</span>,MEM_RELEASE);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span>(hProcess)</span><br><span class="line">		&#123;</span><br><span class="line">			CloseHandle(hProcess);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc,<span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD PID = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">if</span>(!argv[<span class="number">1</span>])</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"USAGE: %s &lt;dll_path&gt;\n"</span>,argv[<span class="number">0</span>]);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"Please Input process PID(大于100):\n"</span>);</span><br><span class="line">	<span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;PID);</span><br><span class="line">	<span class="keyword">if</span>(!SetPrivilege(SE_DEBUG_NAME,TRUE))</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span>(Remotethread_Injection(PID,argv[<span class="number">1</span>]))</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"Inject Successful!\n"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我常用的就是这两种，其他的注入方式还有DLL劫持，就是大家最熟悉的替换dll名称啦;还有挂起进程注入，先让要运行的程序挂起，再让注入的线程挂起，最后先恢复程序，再恢复线程，代码过程和远程注入基本相似，最大的区别就是挂起标识位要修改;除此以外，还有APC注入，修改输入表等骚操作。23333。emmmmmm，差不多就这些吧。  </p>
+<p>要好好想想接下来5天要怎么有意义的度过了，23333。</p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2017/10/02/几种可作为工具使用常用注入姿势/">
+    <time datetime="2017-10-02T14:21:34.000Z" class="entry-date">
+        2017-10-02
+    </time>
+</a>
+    
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/工具/">工具</a>
+  </div>
+
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rev/">rev</a></li></ul>
+
+    </footer>
+</article>
+
+
+    
+<nav class="nav-single">
+    <h3 class="assistive-text">文章导航</h3>
+    
+        <span class="nav-previous"><a href="/2017/10/20/改错注册表之后。。。/" rel="prev"><span class="meta-nav">←</span> 改错注册表之后。。。</a></span>
+    
+    
+        <span class="nav-next"><a href="/2017/09/30/Win7x64-DLL-Remote-Injection-Hide-Process/" rel="next">Win7x64-DLL-Remote-Injection-Hide-Process <span class="meta-nav">→</span></a></span>
+    
+</nav><!-- .nav-single -->
+
+
+
+
+
+
+
+</div></div>
+        <div id="secondary" class="widget-area" role="complementary">
+  
+    <aside id="search" class="widget widget_search"><form role="search" method="get" accept-charset="utf-8" id="searchform" class="searchform" action="//google.com/search">
+    <div>
+        <input type="text" value="" name="s" id="s" />
+        <input type="submit" id="searchsubmit" value="搜索" />
+    </div>
+</form></aside>
+  
+    
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-content">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/XCTF2018/">XCTF2018</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hctf/">hctf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">6</span></li></ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget-content">
+      <ul>
+        
+          <li>
+            <a href="/2018/05/29/setUnhandleExceptionFilter-exploration/">setUnhandleExceptionFilter-exploration</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/13/HITBCTF2018-reverse-hex/">HITBCTF2018-reverse-hex</a>
+          </li>
+        
+          <li>
+            <a href="/2018/03/20/Play-Rtsp-Stream-opencv2/">Play Rtsp Stream-opencv2</a>
+          </li>
+        
+          <li>
+            <a href="/2018/01/16/Mi-4C动态调试so库/">Mi-4C动态调试so库</a>
+          </li>
+        
+          <li>
+            <a href="/2017/12/28/qemu环境搭建/">qemu环境搭建</a>
+          </li>
+        
+      </ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-content">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/">CTF</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PIL/">PIL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwnable-tw/">pwnable.tw</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rev/">rev</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing-kr/">reversing.kr</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windbg/">windbg</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/其他/">其他</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/工具/">工具</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂谈/">杂谈</a><span class="tag-list-count">3</span></li></ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-content tagcloud">
+      <a href="/tags/CTF/" style="font-size: 16.67px;">CTF</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/PIL/" style="font-size: 10px;">PIL</a> <a href="/tags/pwnable-tw/" style="font-size: 10px;">pwnable.tw</a> <a href="/tags/rev/" style="font-size: 20px;">rev</a> <a href="/tags/reversing-kr/" style="font-size: 10px;">reversing.kr</a> <a href="/tags/windbg/" style="font-size: 10px;">windbg</a> <a href="/tags/其他/" style="font-size: 10px;">其他</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/杂谈/" style="font-size: 13.33px;">杂谈</a>
+    </div>
+  </aside>
+
+  
+</div>
+      </div>
+      <footer id="colophon" role="contentinfo">
+    <p>&copy; 2018 Invicsfate
+    All rights reserved.</p>
+    <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></p>
+</footer>
+    <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+<script src="/js/navigation.js"></script>
+
+<div id="bg"></div>
+
+  </div>
+</body>
+</html>
