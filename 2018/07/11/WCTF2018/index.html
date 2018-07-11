@@ -13,18 +13,20 @@
   
   
   
-  <title>Archives: 2018/3 | Invicsfate</title>
+  <title>WCTF2018 | Invicsfate</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Invicsfate">
-<meta property="og:url" content="http://Invicsfate.github.io/archives/2018/03/index.html">
+  <meta name="description" content="第一次近距离感受到了巨佬们的气场，产生了对大师赛巨佬们的敬佩之情，体会到了菜鸡和鹏鸟之间的差距，除了膜，似乎已经没有其他能描述我对巨佬们的敬佩。WCTF的赛题质量之高，设计思路巧妙，可以说每一道题目都能get到实实在在的东西，相当的有意思。本场比赛仅做出truth一题，简单记录一下学习笔记。 truth.net的程序逆向，静态分析三次矩阵求逆即可得到flag，然而Is it real flag?真">
+<meta name="keywords" content="CTF">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WCTF2018">
+<meta property="og:url" content="http://Invicsfate.github.io/2018/07/11/WCTF2018/index.html">
 <meta property="og:site_name" content="Invicsfate">
-<meta property="og:description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
+<meta property="og:description" content="第一次近距离感受到了巨佬们的气场，产生了对大师赛巨佬们的敬佩之情，体会到了菜鸡和鹏鸟之间的差距，除了膜，似乎已经没有其他能描述我对巨佬们的敬佩。WCTF的赛题质量之高，设计思路巧妙，可以说每一道题目都能get到实实在在的东西，相当的有意思。本场比赛仅做出truth一题，简单记录一下学习笔记。 truth.net的程序逆向，静态分析三次矩阵求逆即可得到flag，然而Is it real flag?真">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-07-11T15:07:06.766Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Invicsfate">
-<meta name="twitter:description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
+<meta name="twitter:title" content="WCTF2018">
+<meta name="twitter:description" content="第一次近距离感受到了巨佬们的气场，产生了对大师赛巨佬们的敬佩之情，体会到了菜鸡和鹏鸟之间的差距，除了膜，似乎已经没有其他能描述我对巨佬们的敬佩。WCTF的赛题质量之高，设计思路巧妙，可以说每一道题目都能get到实实在在的东西，相当的有意思。本场比赛仅做出truth一题，简单记录一下学习笔记。 truth.net的程序逆向，静态分析三次矩阵求逆即可得到flag，然而Is it real flag?真">
   
   
     <link rel="icon" href="/css/images/favicon.ico">
@@ -65,51 +67,76 @@
     </nav>
 </header>
       <div id="main" class="wrapper">
-        <div id="primary" class="site-content"><div id="content" role="main">
+        <div id="primary" class="site-content"><div id="content" role="main"><article id="post-WCTF2018" class="post-WCTF2018 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
   
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="post type-post status-publish format-standard hentry archive-type-post">
-  <header class="entry-header">
-      
-  
-    <h1 class="entry-title">
-      <a class="archive-article-title" href="/2018/03/20/Play-Rtsp-Stream-opencv2/">Play Rtsp Stream-opencv2</a>
+    <h1 class="entry-title article-title">
+      WCTF2018
     </h1>
   
 
-  </header>
-  <footer class="entry-meta">
-    <a href="/2018/03/20/Play-Rtsp-Stream-opencv2/">
-    <time datetime="2018-03-20T11:57:34.000Z" class="entry-date">
-        2018-03-20
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/11/WCTF2018/" data-id="cjjh92s0b0004ua3kt5v7tx09" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <p>第一次近距离感受到了巨佬们的气场，产生了对大师赛巨佬们的敬佩之情，体会到了菜鸡和鹏鸟之间的差距，除了膜，似乎已经没有其他能描述我对巨佬们的敬佩。WCTF的赛题质量之高，设计思路巧妙，可以说每一道题目都能get到实实在在的东西，相当的有意思。本场比赛仅做出truth一题，简单记录一下学习笔记。</p>
+<h2 id="truth"><a href="#truth" class="headerlink" title="truth"></a>truth</h2><p>.net的程序逆向，静态分析三次矩阵求逆即可得到flag，然而Is it real flag?真的会这么简单么？</p>
+<p>正确的思路：</p>
+<ol>
+<li>resources中修改了func2中的代码，但是诸如dnspy之类调试工具无法调试代码。</li>
+<li>windbg调试.net程序，见微软官方的如何使用windbg调试托管代码 <a href="https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/debugging-managed-code" target="_blank" rel="noopener">Debugging Managed Code</a></li>
+<li>成功载入SOS debugging extension和mscordacwks.dll，去调试托管代码，!bmpd下断点，使用方法见!sos.help。</li>
+</ol>
+<p>以下操作均在windbg已经能够正确载入符号的前提下进行。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sxe ld:clr </span><br><span class="line">g</span><br><span class="line">.reload /f</span><br><span class="line">.cordll -ve -u -l</span><br><span class="line">!lmv -mclr</span><br><span class="line">!sos.help</span><br><span class="line">!bmpd WCTF2018Rev_Release.exe WCTF2018Rev.Properties.Resources..cctor <span class="comment">#执行时需要先让程序跑起来，g一下</span></span><br></pre></td></tr></table></figure>
+<p>成功下断点运行以后，都是以前windbg调试的方法了，撸汇编就行了，程序进行了两次代码的自解密，然后写逆算法，求到flag。</p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2018/07/11/WCTF2018/">
+    <time datetime="2018-07-11T07:20:34.000Z" class="entry-date">
+        2018-07-11
     </time>
 </a>
     
   <span class="article-delim">&#8226;</span>
   <div class="article-category">
-  <a class="article-category-link" href="/categories/工具/">工具</a>
+  <a class="article-category-link" href="/categories/reverse/">reverse</a>
   </div>
 
     
   <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/其他/">其他</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/">CTF</a></li></ul>
 
     </footer>
 </article>
-  
-  
-    </div></section>
-  
+
+
+    
+<nav class="nav-single">
+    <h3 class="assistive-text">文章导航</h3>
+    
+    
+        <span class="nav-next"><a href="/2018/05/29/setUnhandleExceptionFilter-exploration/" rel="next">setUnhandleExceptionFilter-exploration <span class="meta-nav">→</span></a></span>
+    
+</nav><!-- .nav-single -->
+
+
+
+
+
+
 
 </div></div>
         <div id="secondary" class="widget-area" role="complementary">
