@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="Invicsfate">
 <meta property="og:description" content="第一次近距离感受到了巨佬们的气场，产生了对大师赛巨佬们的敬佩之情，体会到了菜鸡和鹏鸟之间的差距，除了膜，似乎已经没有其他能描述我对巨佬们的敬佩。WCTF的赛题质量之高，设计思路巧妙，可以说每一道题目都能get到实实在在的东西，相当的有意思。本场比赛仅做出truth一题，简单记录一下学习笔记。 truth.net的程序逆向，静态分析三次矩阵求逆即可得到flag，然而Is it real flag?真">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-07-11T15:07:06.766Z">
+<meta property="og:updated_time" content="2018-07-11T15:18:47.395Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="WCTF2018">
 <meta name="twitter:description" content="第一次近距离感受到了巨佬们的气场，产生了对大师赛巨佬们的敬佩之情，体会到了菜鸡和鹏鸟之间的差距，除了膜，似乎已经没有其他能描述我对巨佬们的敬佩。WCTF的赛题质量之高，设计思路巧妙，可以说每一道题目都能get到实实在在的东西，相当的有意思。本场比赛仅做出truth一题，简单记录一下学习笔记。 truth.net的程序逆向，静态分析三次矩阵求逆即可得到flag，然而Is it real flag?真">
@@ -82,7 +82,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/11/WCTF2018/" data-id="cjjh92s0b0004ua3kt5v7tx09" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/11/WCTF2018/" data-id="cjjh9s026000abu3kpp1wab8b" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -97,7 +97,7 @@
 <li>成功载入SOS debugging extension和mscordacwks.dll，去调试托管代码，!bmpd下断点，使用方法见!sos.help。</li>
 </ol>
 <p>以下操作均在windbg已经能够正确载入符号的前提下进行。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sxe ld:clr </span><br><span class="line">g</span><br><span class="line">.reload /f</span><br><span class="line">.cordll -ve -u -l</span><br><span class="line">!lmv -mclr</span><br><span class="line">!sos.help</span><br><span class="line">!bmpd WCTF2018Rev_Release.exe WCTF2018Rev.Properties.Resources..cctor <span class="comment">#执行时需要先让程序跑起来，g一下</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sxe ld:clr </span><br><span class="line">g</span><br><span class="line">.reload /f</span><br><span class="line">.cordll -ve -u -l</span><br><span class="line">!lmv -mclr</span><br><span class="line">!sos.help</span><br><span class="line">!bpmd WCTF2018Rev_Release.exe WCTF2018Rev.Properties.Resources..cctor <span class="comment">#执行时需要先让程序跑起来，g一下</span></span><br></pre></td></tr></table></figure>
 <p>成功下断点运行以后，都是以前windbg调试的方法了，撸汇编就行了，程序进行了两次代码的自解密，然后写逆算法，求到flag。</p>
 
       
