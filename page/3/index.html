@@ -67,6 +67,80 @@
       <div id="main" class="wrapper">
         <div id="primary" class="site-content"><div id="content" role="main">
   
+    <article id="post-PIL-python-imaging-library" class="post-PIL-python-imaging-library post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2017/08/20/PIL-python-imaging-library/">PIL-python-imaging-library</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/20/PIL-python-imaging-library/" data-id="cjjnztsdu0005783kg0pt59aw" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <p>越来越觉得PIL的重要性，决定认认真真地学上一两天，嗯~ o(<em>￣▽￣</em>)o!  </p>
+<h1 id="PIL"><a href="#PIL" class="headerlink" title="PIL"></a>PIL</h1><p>内容基本都是从文档上来的。<br><a href="http://effbot.org/imagingbook/introduction.htm" target="_blank" rel="noopener">文档链接</a><br>下面这个网站对PIL的介绍很详细，想了解更多可以看这个。<br><a href="http://blog.csdn.net/column/details/pythonpil.html" target="_blank" rel="noopener">PIL</a></p>
+<h2 id="使用Image类"><a href="#使用Image类" class="headerlink" title="使用Image类"></a>使用Image类</h2><h3 id="从文件载入-或者句柄载入"><a href="#从文件载入-或者句柄载入" class="headerlink" title="从文件载入,或者句柄载入"></a>从文件载入,或者句柄载入</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Image</span><br><span class="line">im = Image.open(<span class="string">"lena.ppm"</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Image</span><br><span class="line">fp = open(<span class="string">"lena.ppm"</span>,<span class="string">"rb"</span>)</span><br><span class="line">im = Image.open(fp)</span><br></pre></td></tr></table></figure>
+<h3 id="查看一些对象属性"><a href="#查看一些对象属性" class="headerlink" title="查看一些对象属性"></a>查看一些对象属性</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">print</span> im.format,im.size,im.mode</span><br><span class="line">PPM (<span class="number">512</span>,<span class="number">512</span>) RGB</span><br></pre></td></tr></table></figure>
+<p>mode如果是L，代表灰度图像，RGB是彩色图像，CMYK是pre-press图像，这个图像是啥，我还不太清楚。  </p>
+<h3 id="显示图像"><a href="#显示图像" class="headerlink" title="显示图像"></a>显示图像</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">im.show()</span><br></pre></td></tr></table></figure>
+<h2 id="对图像进行读写"><a href="#对图像进行读写" class="headerlink" title="对图像进行读写"></a>对图像进行读写</h2><h3 id="保存图像"><a href="#保存图像" class="headerlink" title="保存图像"></a>保存图像</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">im.save(outfile,format,options...)</span><br></pre></td></tr></table></figure>
+<p>format如果省略，则python自动按插件识别结果保存。如果没有安装扩展插件，需要明确保存格式。  </p>
+<h3 id="保存为jpeg格式"><a href="#保存为jpeg格式" class="headerlink" title="保存为jpeg格式"></a>保存为jpeg格式</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os,sys</span><br><span class="line"><span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> infile <span class="keyword">in</span> sys.argv[<span class="number">1</span>:]:</span><br><span class="line">	f,e = os.path.splitext(infile)</span><br><span class="line">	outfile = f + <span class="string">".jpg"</span></span><br><span class="line">	<span class="keyword">if</span> outfile != infile:</span><br><span class="line">		<span class="keyword">try</span>:</span><br><span class="line">			image.open(infile).save(outfile)</span><br><span class="line">		<span class="keyword">except</span> IOError:</span><br><span class="line">			<span class="keyword">print</span> <span class="string">"cannot convert"</span>,infile</span><br></pre></td></tr></table></figure>
+<p>上述代码将把命令行读入的所有指定文件保存为jpg格式，不能保存的抛出异常。  </p>
+<h3 id="图像缩放"><a href="#图像缩放" class="headerlink" title="图像缩放"></a>图像缩放</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">size = <span class="number">128</span>,<span class="number">128</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> infile <span class="keyword">in</span> sys.argv[<span class="number">1</span>:]:</span><br><span class="line">	outfile = os.path.splitext(infile)[<span class="number">0</span>] + <span class="string">".thumbnail"</span></span><br><span class="line">	<span class="keyword">try</span>:</span><br><span class="line">		im = Image.open(infile)</span><br><span class="line">		im.thumbnail(size)</span><br><span class="line">		im.save(outfile,<span class="string">"jpeg"</span>)</span><br><span class="line">	<span class="keyword">except</span>:</span><br><span class="line">		<span class="keyword">print</span> <span class="string">"cannot create thumbnail for"</span>,infile</span><br></pre></td></tr></table></figure>
+<h2 id="截取，粘贴，融合图像"><a href="#截取，粘贴，融合图像" class="headerlink" title="截取，粘贴，融合图像"></a>截取，粘贴，融合图像</h2><h3 id="截取图像的一部分"><a href="#截取图像的一部分" class="headerlink" title="截取图像的一部分"></a>截取图像的一部分</h3><p>使用crop方法从一张图片上截取子矩形  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">box = (<span class="number">100</span>,<span class="number">100</span>,<span class="number">400</span>,<span class="number">400</span>)</span><br><span class="line">region = im.crop(box)</span><br></pre></td></tr></table></figure>
+<p>从左上角到右下角  </p>
+<h3 id="旋转180，再贴回去"><a href="#旋转180，再贴回去" class="headerlink" title="旋转180，再贴回去"></a>旋转180，再贴回去</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">region = region.transpose(Image.ROTATE_180)</span><br><span class="line">im.paste(region,box)</span><br></pre></td></tr></table></figure>
+<h3 id="滚动图像-交换图像位置"><a href="#滚动图像-交换图像位置" class="headerlink" title="滚动图像(交换图像位置)"></a>滚动图像(交换图像位置)</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">roll</span><span class="params">(image,delta)</span>:</span></span><br><span class="line"></span><br><span class="line">	xsize,ysize = image.size</span><br><span class="line">	</span><br><span class="line">	delta = delta % xsize</span><br><span class="line">	<span class="keyword">if</span> delta == <span class="number">0</span>: <span class="keyword">return</span> image</span><br><span class="line">	</span><br><span class="line">	part1 = image.crop((<span class="number">0</span>,<span class="number">0</span>,delta,ysize))</span><br><span class="line">	part2 = image.crop((delta,<span class="number">0</span>,xsize,ysize))</span><br><span class="line">	image.paste(part2,(<span class="number">0</span>,<span class="number">0</span>,xsize - delta,ysize))</span><br><span class="line">	image.paste(part1,(xsize - delta,<span class="number">0</span>,xsize,ysize))</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> image</span><br></pre></td></tr></table></figure>
+<h3 id="分割RGB"><a href="#分割RGB" class="headerlink" title="分割RGB"></a>分割RGB</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">r,g,b = im.split()</span><br><span class="line">im = Image.merge(<span class="string">"RGB"</span>,(b,g,r))</span><br></pre></td></tr></table></figure>
+<h2 id="几何变换"><a href="#几何变换" class="headerlink" title="几何变换"></a>几何变换</h2><h3 id="简单变换"><a href="#简单变换" class="headerlink" title="简单变换"></a>简单变换</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">out = im.resize(<span class="number">128</span>,<span class="number">128</span>)</span><br><span class="line">out = im.rotate(<span class="number">45</span>) <span class="comment">#逆时针旋转</span></span><br></pre></td></tr></table></figure>
+<h3 id="变换图像"><a href="#变换图像" class="headerlink" title="变换图像"></a>变换图像</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">out = im.transpose(Image.FLIP_LEFT_RIGHT) <span class="comment">#水平翻转</span></span><br><span class="line">out = im.transpose(Image.FLIP_TOP_BOTTOM) <span class="comment">#垂直翻转</span></span><br><span class="line">out = im.transpose(Image.ROTATE_90)</span><br><span class="line">out = im.transpose(Image.ROTATE_180)</span><br><span class="line">out = im.transpose(Image.ROTATE_270)</span><br></pre></td></tr></table></figure>
+<h3 id="颜色变换-在不同mode下转换"><a href="#颜色变换-在不同mode下转换" class="headerlink" title="颜色变换(在不同mode下转换)"></a>颜色变换(在不同mode下转换)</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">im = Image.open(<span class="string">"lena.ppm"</span>).convert(<span class="string">"L"</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="滤镜"><a href="#滤镜" class="headerlink" title="滤镜"></a>滤镜</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ImageFilter</span><br><span class="line">out = im.filter(ImageFilter.DETAIL)</span><br></pre></td></tr></table></figure>
+<p>有很多滤镜的功能，在ImageFilter模块里，具体可以参考文档。<br><a href="http://effbot.org/imagingbook/imagefilter.htm" target="_blank" rel="noopener">ImageFilter</a></p>
+<h3 id="点操作-提取不同通道像素"><a href="#点操作-提取不同通道像素" class="headerlink" title="点操作(提取不同通道像素)"></a>点操作(提取不同通道像素)</h3><h3 id="读取每一帧"><a href="#读取每一帧" class="headerlink" title="读取每一帧"></a>读取每一帧</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">im = Image.open(<span class="string">"animation.gif"</span>)</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">	im.seek(im.tell() + <span class="number">1</span>)</span><br><span class="line">	im.save(str(im.tell()) + <span class="string">".jpg"</span>)</span><br><span class="line"><span class="keyword">except</span> EOFError:</span><br><span class="line">	<span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2017/08/20/PIL-python-imaging-library/">
+    <time datetime="2017-08-20T14:10:11.000Z" class="entry-date">
+        2017-08-20
+    </time>
+</a>
+    
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/Python/">Python</a>
+  </div>
+
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PIL/">PIL</a></li></ul>
+
+    </footer>
+</article>
+
+
+
+
+
+
+  
     <article id="post-个人博客建成" class="post-个人博客建成 post type-post status-publish format-standard hentry">
     <!---->
 
@@ -82,7 +156,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/18/个人博客建成/" data-id="cjjh9s02x0015bu3kwfgg5r4i" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/18/个人博客建成/" data-id="cjjnztsf80014783kbnycml7y" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -142,7 +216,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/18/Git-Learning/" data-id="cjjh9s01q0000bu3km8hgbd42" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/18/Git-Learning/" data-id="cjjnztsde0000783k2hut9dx3" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -222,7 +296,7 @@
   <aside class="widget">
     <h3 class="widget-title">Categories</h3>
     <div class="widget-content">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/XCTF2018/">XCTF2018</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hctf/">hctf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/XCTF2018/">XCTF2018</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hctf/">hctf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">6</span></li></ul>
     </div>
   </aside>
 
@@ -232,6 +306,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget-content">
       <ul>
+        
+          <li>
+            <a href="/2018/07/16/QCTF-xman/">QCTF-xman</a>
+          </li>
         
           <li>
             <a href="/2018/07/11/WCTF2018/">WCTF2018</a>
@@ -249,10 +327,6 @@
             <a href="/2018/03/20/Play-Rtsp-Stream-opencv2/">Play Rtsp Stream-opencv2</a>
           </li>
         
-          <li>
-            <a href="/2018/01/16/Mi-4C动态调试so库/">Mi-4C动态调试so库</a>
-          </li>
-        
       </ul>
     </div>
   </aside>
@@ -262,7 +336,7 @@
   <aside class="widget">
     <h3 class="widget-title">Tags</h3>
     <div class="widget-content">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/">CTF</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PIL/">PIL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwnable-tw/">pwnable.tw</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rev/">rev</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing-kr/">reversing.kr</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windbg/">windbg</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/其他/">其他</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/工具/">工具</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂谈/">杂谈</a><span class="tag-list-count">3</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/">CTF</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PIL/">PIL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwnable-tw/">pwnable.tw</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rev/">rev</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing-kr/">reversing.kr</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windbg/">windbg</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/其他/">其他</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/工具/">工具</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂谈/">杂谈</a><span class="tag-list-count">3</span></li></ul>
     </div>
   </aside>
 
@@ -271,7 +345,7 @@
   <aside class="widget">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget-content tagcloud">
-      <a href="/tags/CTF/" style="font-size: 16.67px;">CTF</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/PIL/" style="font-size: 10px;">PIL</a> <a href="/tags/pwnable-tw/" style="font-size: 10px;">pwnable.tw</a> <a href="/tags/rev/" style="font-size: 20px;">rev</a> <a href="/tags/reversing-kr/" style="font-size: 10px;">reversing.kr</a> <a href="/tags/windbg/" style="font-size: 10px;">windbg</a> <a href="/tags/其他/" style="font-size: 10px;">其他</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/杂谈/" style="font-size: 13.33px;">杂谈</a>
+      <a href="/tags/CTF/" style="font-size: 16.67px;">CTF</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/PIL/" style="font-size: 10px;">PIL</a> <a href="/tags/pwn/" style="font-size: 10px;">pwn</a> <a href="/tags/pwnable-tw/" style="font-size: 10px;">pwnable.tw</a> <a href="/tags/rev/" style="font-size: 20px;">rev</a> <a href="/tags/reversing-kr/" style="font-size: 10px;">reversing.kr</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/windbg/" style="font-size: 10px;">windbg</a> <a href="/tags/其他/" style="font-size: 10px;">其他</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/杂谈/" style="font-size: 13.33px;">杂谈</a>
     </div>
   </aside>
 
