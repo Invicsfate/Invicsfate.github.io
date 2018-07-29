@@ -67,6 +67,60 @@
       <div id="main" class="wrapper">
         <div id="primary" class="site-content"><div id="content" role="main">
   
+    <article id="post-getKernel32" class="post-getKernel32 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2017/10/26/getKernel32/">获取kernel32基地址</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/10/26/getKernel32/" data-id="cjk6jo371000ows3k8kgqd9dl" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <p>从InMemoryOrderModuleList地址上获取kernel32.dll的基地址，原理如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">xor ebx, ebx </span><br><span class="line">mov ebx, fs:[ <span class="number">0x30</span> ]       ;PEB</span><br><span class="line">mov ebx, [ ebx + <span class="number">0x0C</span> ]    ;PEB-&gt;Ldr</span><br><span class="line">mov ebx, [ ebx + <span class="number">0x14</span> ]    ;PEB-&gt;Ldr.InMemoryOrderModuleList.Flink (<span class="number">1</span>st entry)</span><br><span class="line">mov ebx, [ ebx ]           ;<span class="function">next <span class="title">entry</span> <span class="params">(<span class="number">2</span>nd entry)</span></span></span><br><span class="line">mov ebx, [ ebx ]           ;entry (3rd entry)</span><br><span class="line">mov ebx, [ ebx + <span class="number">0x10</span> ]    ;<span class="function">base <span class="title">address</span> <span class="params">(kernel32.dll)</span></span></span><br></pre></td></tr></table></figure>
+<p>获取kernel32基地址以后，就可以从EAT获取GetProcAddress地址以及其他函数地址，下面程序以获得FindFirstFile地址为例，在EAT中搜索FindFirstFile地址的时候没有采用直接比较字符串名称的方法，而是对字符串名称作运算，根据运算结果来进行比较。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;Windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> win10x64 1</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> win10x64</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> kernel32Value 0x6E2BCA17</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">elif</span> defined(win7x64)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> kernel32Value 0x8FECD63F</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">HANDLE</span> <span class="params">(*myFindFirstFile)</span><span class="params">(LPCTSTR lpFileName,LPWIN32_FIND_DATA lpFindFileData)</span></span>; </span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">findPEB</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD pebValue;</span><br><span class="line">	__asm</span><br><span class="line">	&#123;</span><br><span class="line">		mov eax,fs:[<span class="number">0x30</span>]</span><br><span class="line">		mov pebValue,eax</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> pebValue;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">calValue1</span><span class="params">(WORD *a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD v1,v3;</span><br><span class="line">	v3 = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span>(*a1)</span><br><span class="line">	&#123;</span><br><span class="line">		v1 = (WORD)*a1;</span><br><span class="line">		++a1;</span><br><span class="line">		v3 = v1 + ((v3 &lt;&lt; <span class="number">19</span>) | ((<span class="keyword">unsigned</span> __int64)v3 &gt;&gt; <span class="number">13</span>));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> v3;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">calValue2</span><span class="params">(BYTE *a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD v1,v3;</span><br><span class="line">	v3 = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span>(*a1)</span><br><span class="line">	&#123;</span><br><span class="line">		v1 = *a1++;</span><br><span class="line">		v3 = v1 + ((v3 &lt;&lt; <span class="number">19</span>) | ((<span class="keyword">unsigned</span> __int64)v3 &gt;&gt; <span class="number">13</span>));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> v3;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">findKernel32</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD pebValue = findPEB();</span><br><span class="line">	</span><br><span class="line">	DWORD v1 = *(DWORD *)(pebValue + <span class="number">12</span>);</span><br><span class="line">	DWORD *v3 = *(DWORD **)(v1 + <span class="number">20</span>);</span><br><span class="line">	DWORD *v4 = *(DWORD **)(v1 + <span class="number">20</span>);</span><br><span class="line">	<span class="keyword">do</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(calValue1((WORD *)v3[<span class="number">10</span>]) == kernel32Value)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">return</span> v3[<span class="number">4</span>];</span><br><span class="line">		&#125;</span><br><span class="line">		v3 = (DWORD *)*v3;</span><br><span class="line">	&#125; <span class="keyword">while</span> (v3 &amp;&amp; v3 != v4);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">findGetProcAddress</span><span class="params">(DWORD kernel32Addr,DWORD funcValue)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD exportTable,addressOfFunctions,addressOfNames,addressOfNameOrdinals,numberOfNames;</span><br><span class="line">	exportTable = (*(DWORD *)(*(DWORD *)(kernel32Addr + <span class="number">60</span>) + kernel32Addr + <span class="number">120</span>) + kernel32Addr);</span><br><span class="line">	addressOfFunctions = *(DWORD *)(exportTable + <span class="number">0x1c</span>) + kernel32Addr;</span><br><span class="line">	addressOfNames = *(DWORD *)(exportTable + <span class="number">0x20</span>) + kernel32Addr;</span><br><span class="line">	addressOfNameOrdinals = *(DWORD *)(exportTable + <span class="number">0x24</span>) + kernel32Addr;</span><br><span class="line"></span><br><span class="line">	numberOfNames = *(DWORD *)(exportTable + <span class="number">0x18</span>);</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;numberOfNames;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(calValue2((BYTE *)(*(DWORD *)(addressOfNames + <span class="number">4</span> * i) + kernel32Addr)) == funcValue)</span><br><span class="line">			<span class="keyword">return</span> *(DWORD *)(addressOfFunctions + <span class="number">4</span> * *(WORD *)(addressOfNameOrdinals + <span class="number">2</span> * i)) + kernel32Addr;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc,<span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD kernel32Addr;</span><br><span class="line">	myFindFirstFile findFirstFileAddr;</span><br><span class="line">	kernel32Addr = findKernel32();</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"kernel32Addr:%X\n"</span>,kernel32Addr);</span><br><span class="line">	HMODULE hKernel32 = GetModuleHandleA(<span class="string">"kernel32.dll"</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"hKernel32:%X\n"</span>,hKernel32);</span><br><span class="line">	findFirstFileAddr = (myFindFirstFile)findGetProcAddress(kernel32Addr,<span class="number">0x63D6C065</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"findFirstFileAddr:%p\n"</span>,findFirstFileAddr);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"FindFirstFile:%p\n"</span>,GetProcAddress(hKernel32,<span class="string">"FindFirstFileA"</span>));</span><br><span class="line">	system(<span class="string">"pause"</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2017/10/26/getKernel32/">
+    <time datetime="2017-10-26T02:52:57.000Z" class="entry-date">
+        2017-10-26
+    </time>
+</a>
+    
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/reverse/">reverse</a>
+  </div>
+
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rev/">rev</a></li></ul>
+
+    </footer>
+</article>
+
+
+
+
+
+
+  
     <article id="post-改错注册表之后。。。" class="post-改错注册表之后。。。 post type-post status-publish format-standard hentry">
     <!---->
 
@@ -82,7 +136,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/10/20/改错注册表之后。。。/" data-id="cjk0xtxdf001njc3ktdl5mikb" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/10/20/改错注册表之后。。。/" data-id="cjk6jo37p001rws3khulr07dp" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -132,7 +186,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/10/02/几种可作为工具使用常用注入姿势/" data-id="cjk0xtxdc001fjc3krpeyvuny" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/10/02/几种可作为工具使用常用注入姿势/" data-id="cjk6jo37m001mws3kxb99il45" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -189,7 +243,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/30/Win7x64-DLL-Remote-Injection-Hide-Process/" data-id="cjk0xtxds0028jc3ku5xjjo5u" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/30/Win7x64-DLL-Remote-Injection-Hide-Process/" data-id="cjk6jo398002bws3kcpmuznkw" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -241,7 +295,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/18/whctf2018/" data-id="cjk0xtxd30012jc3ku72h3jyo" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/18/whctf2018/" data-id="cjk6jo3790014ws3k2jghl6fb" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -308,7 +362,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/18/reversing-kr/" data-id="cjk0xtxe5002gjc3k60131k3o" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/18/reversing-kr/" data-id="cjk6jo39v002jws3kfecn5j46" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -426,7 +480,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/12/babyvm/" data-id="cjk0xtxcs000fjc3k8kzwdb6l" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/12/babyvm/" data-id="cjk6jo34i000bws3k51adi47v" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -489,7 +543,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/02/简单的基于壳的变形壳工具/" data-id="cjk0xtxdt0029jc3kftdzj6rj" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/02/简单的基于壳的变形壳工具/" data-id="cjk6jo39c002cws3k52nb0axx" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -543,7 +597,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/我的内心久久不能平静/" data-id="cjk0xtxdd001kjc3kk6cpimop" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/我的内心久久不能平静/" data-id="cjk6jo37h001ews3kvo9164i8" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -591,7 +645,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/win32和MFC逆向总结/" data-id="cjk0xtxd40015jc3klmrlf4ef" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/win32和MFC逆向总结/" data-id="cjk6jo37e001bws3kpgxvhxly" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -637,74 +691,6 @@
 
 
   
-    <article id="post-windbg" class="post-windbg post type-post status-publish format-standard hentry">
-    <!---->
-
-      <header class="entry-header">
-        
-        
-  
-    <h1 class="entry-title">
-      <a class="article-title" href="/2017/09/01/windbg/">windbg</a>
-    </h1>
-  
-
-        
-        <div class="comments-link">
-            
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/windbg/" data-id="cjk0xtxd60018jc3kw84fu3ze" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
-
-    <div class="entry-content">
-      
-        <h2 id="windbg配置符号表"><a href="#windbg配置符号表" class="headerlink" title="windbg配置符号表"></a>windbg配置符号表</h2><h3 id="环境-winxp-sp3-win7"><a href="#环境-winxp-sp3-win7" class="headerlink" title="环境:winxp sp3/win7"></a>环境:winxp sp3/win7</h3><p>将安装windbg的目录添加进环境变量，默认安装路径是C:\Program Files\Debugging Tools for Windows (x86)，如果是默认安装，就把这个目录添加进path环境变量。<br>新建环境变量_NT_SYMBOL_PATH，值为</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SRV*c:\Symbols* http:<span class="comment">//msdl.microsoft.com/download/symbols</span></span><br></pre></td></tr></table></figure>
-<p>启动windbg载入可执行文件时，windbg就会在C盘下建立一个Symbols文件夹，从微软服务器获取相应符号表。也可以离线下载在Symbols文件夹里。<br><a href="https://developer.microsoft.com/en-us/windows/hardware/download-symbols" target="_blank" rel="noopener">Download-Symbol</a><br>尝试打开一个可执行文件，windbg显示如下信息</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Symbol search path is: SRV*c:\Symbols* http:<span class="comment">//msdl.microsoft.com/download/symbols</span></span><br></pre></td></tr></table></figure>
-<h2 id="windbg双机调试"><a href="#windbg双机调试" class="headerlink" title="windbg双机调试"></a>windbg双机调试</h2><p>google搜索或者必应国外版搜索ida windbg debug kernel就有文档提供参考，远程连接linux等主机使用的是网络链接的ip，而windbg调试内核则是使用的串口，网上也有很多这方面的资料。说一下自己是怎么调试的:<br>ida + VirtualKD + windbg:在主机安装VirtualKD，VirtualKD里的target目录复制到虚拟机下，启动target目录里的vminstall.exe，这时候虚拟机重启会有一个调试选项，打开主机安装VirtualKD的位置，启动vmmon或者vmmon64，选中对应的虚拟机，同时注意pipe名称，比如kd_winxp，一会儿会用到。<br>如果使用windbg调试，只需要发送windbg的快捷方式到桌面，修改属性-&gt;目标，windbg.exe后面加上 -k com:port=\.\pipe\kd_winxp,pipe，这个kd_winxp就是vmmon里的管道名称，运行windbg，连接即可成功，进入内核模式，ctrl + break中断，输入命令。<br>如果使用ida调试，打开ida，Debugger-&gt;attach-&gt;windbg debugger，管道名称同上，com:port=\.\pipe\kd_winxp,pipe，设置options，在specific options里面更换成kernel mode，同时指定windbg安装目录，新版ida要在ida目录下的cfg-&gt;ida.cfg的669行，更改信息如下(我的主机):  </p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DBGTOOLS = <span class="string">"C:\\Program Files (x86)\\Debugging Tools for Windows (x86)"</span>; <span class="comment">//设置windbg安装的目录</span></span><br></pre></td></tr></table></figure>
-<p>以上都设置好以后，点击ok，等待一会就好了。如果长时间处于reconnect状态，连接不上，ida假死，就是串口设置的问题了，这个问题网上搜索一下就好，如果设置的是serial port1，串口是serial port2就会有问题，虚拟机就把打印机移除就好。  </p>
-<h2 id="windbg常用命令"><a href="#windbg常用命令" class="headerlink" title="windbg常用命令"></a>windbg常用命令</h2><p>g 运行</p>
-<p>bp + address 设置断点<br>bl 显示已经设定的断点<br>bu DriverName!DriverEntry 驱动入口下断点<br>bc 清除断点<br>ba r/w 1/2/4 address 在address处下内存访问断点，读，写<br>bp $exentry 伪寄存器$exentry,记录程序入口点  </p>
-<p>ld kernel32 加载kernel32模块的符号<br>lm 显示所有模块<br>ln 显示最近操作过的模块  </p>
-<p>db/dw/dd/dq address 查看某地址处1,2,4,8字节<br>dd address L100 L100这种写法通用,查看从address开始的100个4字节<br>dt nt!_EPROCESS 查看结构  </p>
-<p>eb/ew/ed/eq/ef/ep address Values 修改某地址处值  </p>
-<p>.kill 杀死调试进程<br>.restart 重新调试  </p>
-<p>k(n) 显示调用堆栈  </p>
-<p>u 反汇编地址处代码  </p>
-<p>? 0x33 + 0x44 运行后将得到计算和  </p>
-<p>s -b/w/d/q/a/u range target 搜索内存，从某地址处搜索target<br>s -a 0x400000 L10000 “wrong” 搜索ascii的”wrong”  </p>
-<h2 id="windbg进入驱动入口"><a href="#windbg进入驱动入口" class="headerlink" title="windbg进入驱动入口"></a>windbg进入驱动入口</h2><p>对于无符号的驱动程序，bu DriverName!DriverEntry这种方法下断行不通，从nt!IopLoadDriver某处下断，然后进入DriverEntry，下断的位置因操作系统的不同而不同<br>Windows XP SP2：nt!IopLoadDriver+0x669<br>Windows XP SP3：nt!IopLoadDriver+0x66A<br>Win7 32 professional: nt!IopLoadDriver+0x7e9(不一定准确，本机某一次测试是这个位置)<br><a href="http://myvs01.blog.163.com/blog/static/1853340902011866365973/" target="_blank" rel="noopener">如何让WinDbg断在驱动的入口处</a>  </p>
-
-      
-    </div><!-- .entry-content -->
-
-    <footer class="entry-meta">
-    <a href="/2017/09/01/windbg/">
-    <time datetime="2017-09-01T09:46:11.000Z" class="entry-date">
-        2017-09-01
-    </time>
-</a>
-    
-  <span class="article-delim">&#8226;</span>
-  <div class="article-category">
-  <a class="article-category-link" href="/categories/工具/">工具</a>
-  </div>
-
-    
-  <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/windbg/">windbg</a></li></ul>
-
-    </footer>
-</article>
-
-
-
-
-
-
-  
   
     <nav id="pagination">
       <nav id="page-nav">
@@ -729,7 +715,7 @@
   <aside class="widget">
     <h3 class="widget-title">Categories</h3>
     <div class="widget-content">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/XCTF2018/">XCTF2018</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hctf/">hctf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/XCTF2018/">XCTF2018</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hctf/">hctf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">6</span></li></ul>
     </div>
   </aside>
 
@@ -739,6 +725,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget-content">
       <ul>
+        
+          <li>
+            <a href="/2018/07/29/pwn-house-of-spirit/">pwn-house of spirit</a>
+          </li>
         
           <li>
             <a href="/2018/07/25/pwn-unlink/">pwn-unlink</a>
@@ -754,10 +744,6 @@
         
           <li>
             <a href="/2018/05/29/setUnhandleExceptionFilter-exploration/">setUnhandleExceptionFilter-exploration</a>
-          </li>
-        
-          <li>
-            <a href="/2018/04/13/HITBCTF2018-reverse-hex/">HITBCTF2018-reverse-hex</a>
           </li>
         
       </ul>

