@@ -67,6 +67,67 @@
       <div id="main" class="wrapper">
         <div id="primary" class="site-content"><div id="content" role="main">
   
+    <article id="post-win32和MFC逆向总结" class="post-win32和MFC逆向总结 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2017/09/01/win32和MFC逆向总结/">win32和MFC逆向总结</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/win32和MFC逆向总结/" data-id="cjk8ghrme001cxk3kjvvjv7ob" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <p>win32和MFC的程序逆向已经是以前的东西，这次翻出来，进行一下总结，理论性的东西也快忘了，hhhhh，熟悉下也好。<br>前提:程序既没有加壳，也没有混淆，就是直接使用(正常)编译器编译好的程序。  </p>
+<h2 id="win32程序"><a href="#win32程序" class="headerlink" title="win32程序"></a>win32程序</h2><p>先说一下win32程序逆向，win32程序分为两种：1.CUI控制台类型 2.GUI窗口类型。  </p>
+<h3 id="CUI控制台类型"><a href="#CUI控制台类型" class="headerlink" title="CUI控制台类型"></a>CUI控制台类型</h3><p>这类的题目，程序的关键代码一般都比较好定位，由于ida打开就是main函数，只要找到输入输出，确定程序流，一步一步逆向下就好。常用手段:1.根据程序的输入和输出的字符串，使用字符串进行定位，ida的alt + A可以切换搜索字符串类型，比如ascii和unicode。 2.在导入表里寻找类似scanf和printf的输入输出函数。  </p>
+<h3 id="GUI窗口类型"><a href="#GUI窗口类型" class="headerlink" title="GUI窗口类型"></a>GUI窗口类型</h3><p>GUI类型的题目，比CUI控制台定位要复杂些。手段:1.同CUI程序，搜索字符串 2.定位导入表的函数，如果有弹窗，定位MessageBox;如果有文本框，定位GetDlgItem，GetDlgItemText，GetWindowText等函数; 3.当然了，前面的方法都只能治标不治本，最重要的就是对WM_COMMAND消息下断，WM_COMMAND = 0x111，即273，ida使用alt + I搜索0x111。因为win32的窗口程序是自己自定义的，窗口函数也是由自己来写的，所有的按钮点击等操作的msg = WM_COMMAND,后面的参数诸如wParam保存的是控件的ID。下面是win32程序的一个大概框架:  </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> WINAPI <span class="title">WinMain</span><span class="params">(HINSTANCE hInstance,HINSTANCE hPreInstance,LPSTR CmdLine,<span class="keyword">int</span> nCmdShow)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	WNDCLASSEX wc = &#123; &#125;;  </span><br><span class="line">    wc.cbSize = <span class="keyword">sizeof</span>(WNDCLASSEX);  </span><br><span class="line">    wc.hbrBackground = (HBRUSH)COLOR_WINDOW;  </span><br><span class="line">    wc.hInstance = hInstance;  </span><br><span class="line">    wc.lpfnWndProc = (WNDPROC)WindowProc;  </span><br><span class="line">    wc.lpszClassName = lps_cl;  </span><br><span class="line">    wc.style = CS_HREDRAW | CS_VREDRAW;  </span><br><span class="line">    RegisterClassEx(&amp;wc); </span><br><span class="line">	hwnd=CreateWindowEx(WS_EX_WINDOWEDGE,  </span><br><span class="line">                    lps_cl,  </span><br><span class="line">                    wd_text,  </span><br><span class="line">                    WS_OVERLAPPEDWINDOW,  </span><br><span class="line">                    <span class="number">700</span>,  </span><br><span class="line">                    <span class="number">500</span>,  </span><br><span class="line">                    <span class="number">500</span>,  </span><br><span class="line">                    <span class="number">100</span>,  </span><br><span class="line">                    <span class="literal">NULL</span>,  </span><br><span class="line">                    <span class="literal">NULL</span>,  </span><br><span class="line">                    hInstance,  </span><br><span class="line">                    <span class="literal">NULL</span>);  </span><br><span class="line">	<span class="keyword">if</span>(hwnd == <span class="literal">NULL</span>) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">	ShowWindow(hwnd,nCmdShow);</span><br><span class="line">	UpdateWindow(hwnd); </span><br><span class="line">	hg_app = hInstance;</span><br><span class="line">	<span class="comment">//上面的示例代码是窗口的创建</span></span><br><span class="line"></span><br><span class="line">	MSG msg;</span><br><span class="line">	<span class="keyword">while</span>(GetMessage(&amp;msg,<span class="literal">NULL</span>,<span class="number">0</span>,<span class="number">0</span>))</span><br><span class="line">	&#123;</span><br><span class="line">		TranslateMessage(&amp;msg);</span><br><span class="line">		DispatchMessage(&amp;msg);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	<span class="comment">//上面是win32消息处理的三个必须且固定的函数，消息Dispatch给对应的窗口处理函数(回调函数)</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**************窗口回调函数***********/</span></span><br><span class="line"><span class="function">LRESULT CALLBACK <span class="title">WindowProc</span><span class="params">(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="keyword">switch</span>(msg)  </span><br><span class="line">    &#123;  </span><br><span class="line">    <span class="keyword">case</span> WM_DESTROY:  </span><br><span class="line">        PostQuitMessage(<span class="number">0</span>);  </span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;  </span><br><span class="line">    <span class="keyword">case</span> WM_CREATE:  </span><br><span class="line">        &#123;  </span><br><span class="line">			edit_input=CreateWindow(<span class="string">L"edit"</span>,<span class="literal">NULL</span>, WS_CHILD | WS_VISIBLE | WS_BORDER,  </span><br><span class="line">            <span class="number">35</span>, <span class="number">20</span>, <span class="number">350</span>, <span class="number">25</span>, hwnd, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">            check_Button=CreateWindow(<span class="string">L"Button"</span>, <span class="string">L"check"</span>, WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,  </span><br><span class="line">                <span class="number">400</span>, <span class="number">20</span>, <span class="number">50</span>, <span class="number">25</span>, hwnd, (HMENU)IDB_ONE, hg_app, <span class="literal">NULL</span>);   </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;  </span><br><span class="line">	<span class="keyword">case</span> WM_COMMAND:</span><br><span class="line">        &#123;  </span><br><span class="line">            <span class="keyword">switch</span>(LOWORD(wParam))  </span><br><span class="line">            &#123;  </span><br><span class="line">            <span class="keyword">case</span> IDB_ONE:  </span><br><span class="line">				hThread=(HANDLE)_beginthreadex(<span class="literal">NULL</span>,<span class="number">0</span>,&amp;FirstThreadFunc,<span class="literal">NULL</span>,<span class="number">0</span>,&amp;threadID1);</span><br><span class="line">                <span class="keyword">break</span>;  </span><br><span class="line">            <span class="keyword">case</span> IDB_TWO:  </span><br><span class="line">				MessageBox(hwnd,<span class="string">L"You are failed!"</span>,<span class="string">L"FAIL"</span>,MB_OK | MB_ICONINFORMATION);</span><br><span class="line">				exit_fun();</span><br><span class="line">                <span class="keyword">break</span>;  </span><br><span class="line">            <span class="keyword">case</span> IDB_THREE:  </span><br><span class="line">				MessageBox(hwnd,<span class="string">L"Only a little!"</span>,<span class="string">L"FAIL"</span>,MB_OK | MB_ICONINFORMATION);</span><br><span class="line">				exit_fun();</span><br><span class="line">                <span class="keyword">break</span>; </span><br><span class="line">			<span class="keyword">case</span> IDB_FOUR:</span><br><span class="line">				MessageBox(hwnd,<span class="string">L"Just a little bit!"</span>,<span class="string">L"FAIL"</span>,MB_OK | MB_ICONINFORMATION);</span><br><span class="line">				exit_fun();</span><br><span class="line">			<span class="keyword">case</span> IDB_FIVE:	</span><br><span class="line">				MessageBox(hwnd,<span class="string">L"Succeed!"</span>,<span class="string">L"Congratulation!"</span>,MB_OK | MB_ICONINFORMATION);</span><br><span class="line">            <span class="keyword">default</span>:  </span><br><span class="line">                <span class="keyword">break</span>;  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;  </span><br><span class="line">    <span class="keyword">default</span>:  </span><br><span class="line">        <span class="keyword">return</span> DefWindowProc(hwnd,msg,wParam,lParam);  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>有兴趣进一步学习的同学可以看看windows系统的消息机制相关内容，参考书籍《windows核心编程》《深入浅出MFC》。</p>
+<h2 id="MFC程序"><a href="#MFC程序" class="headerlink" title="MFC程序"></a>MFC程序</h2><p>这几个链接我觉得讲MFC程序逆向讲的很好了，原理什么的也讲的很清楚。<br><a href="http://blog.csdn.net/SilverMagic/article/details/40621107" target="_blank" rel="noopener">使用IDA定位基于MFC的CrackMe的按钮函数—–理论篇</a><br><a href="http://blog.csdn.net/SilverMagic/article/details/40622413" target="_blank" rel="noopener">使用IDA定位基于MFC的CrackMe的按钮函数—–实践篇(一)</a><br><a href="http://blog.csdn.net/SilverMagic/article/details/40623299" target="_blank" rel="noopener">使用IDA定位基于MFC的CrackMe的按钮函数—–实践篇(二)</a><br>我总结的大概也不会比这个好了，233333。在win32中窗口过程标准的消息处理变成了找消息映射表，对，就是这个消息映射表，我们来看一下它的结构。  </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">AFX_MSGMAP</span>  </span></span><br><span class="line"><span class="class">&#123;</span>  </span><br><span class="line">    <span class="keyword">const</span> AFX_MSGMAP* (PASCAL* pfnGetBaseMap)();  </span><br><span class="line">    <span class="keyword">const</span> AFX_MSGMAP_ENTRY* lpEntries;  </span><br><span class="line">&#125;;  </span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">AFX_MSGMAP_ENTRY</span>  </span></span><br><span class="line"><span class="class">&#123;</span>  </span><br><span class="line">    UINT nMessage;  </span><br><span class="line">    UINT nCode;  </span><br><span class="line">    UINT nID;  </span><br><span class="line">    UINT nLastID;  </span><br><span class="line">    UINT_PTR nSig;  </span><br><span class="line">    AFX_PMSG pfn;  </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>实际上，MFC程序的每个按钮怎么处理，都有一个函数控制，写过MFC程序的应该都知道，这个处理函数就是AFX_PMSG pfn，指向对应消息，对应控件ID的消息处理函数，而一个MFC程序有很多这样的消息处理函数，我们只要找到AFX_MSGMAP消息映射表，然后定位lpEntries指针所指位置，这个位置一般就在指针下面，hhhhh，紧接着就是数个AFX_MSGMAP_ENTRY结构，我们只要根据控件的ID，找到相应的消息处理函数，进入就是关键代码了。<br>说了这么多，还不如耐心看上面的三个链接，看了就懂了，大概就是这么个道理。因此，我一般定位MFC程序，先使用Resource_hacker打开程序，查看相应控件的ID，在ida里alt + I，输入ID值，查看所有出现的位置，可能会有很多地方，千万别被吓到了，那个关键位置其实一眼就看出来啦，找到.rdata段的地方，自己试试就知道了。定位关键代码也就完成了。<br>当然了，你也可以选择使用工具来定位，xspy，相信不少伙伴都在用这个工具，我习惯使用资源查找的方法了，所以就没用了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我知道的大概就那么多，许多地方可能含糊不清，仅仅是一个总结，有兴趣的朋友可以查阅相关资料进行学习，我的总结只是起个抛砖引玉的作用罢了！</p>
+<p>-</p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2017/09/01/win32和MFC逆向总结/">
+    <time datetime="2017-09-01T13:21:24.000Z" class="entry-date">
+        2017-09-01
+    </time>
+</a>
+    
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/reverse/">reverse</a>
+  </div>
+
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/">CTF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rev/">rev</a></li></ul>
+
+    </footer>
+</article>
+
+
+
+
+
+
+  
     <article id="post-windbg" class="post-windbg post type-post status-publish format-standard hentry">
     <!---->
 
@@ -82,7 +143,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/windbg/" data-id="cjk6jo37b0017ws3k6t4qttm7" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/windbg/" data-id="cjk8ghrmg001exk3kvjnfqvyi" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -150,7 +211,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/23/pwnable-tw-hacknote/" data-id="cjk6jo373000tws3k1ik7oo5r" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/23/pwnable-tw-hacknote/" data-id="cjk8ghrm7000xxk3klf3bzom7" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -200,7 +261,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/20/PIL-python-imaging-library/" data-id="cjk6jo3490005ws3krdw552t6" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/20/PIL-python-imaging-library/" data-id="cjk8ghrlj0005xk3kjrn50n3w" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -274,7 +335,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/18/个人博客建成/" data-id="cjk6jo37k001jws3kzp9k4eg8" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/18/个人博客建成/" data-id="cjk8ghrmh001jxk3krgit9o3g" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -334,7 +395,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/18/Git-Learning/" data-id="cjk6jo33p0000ws3kl2t5abzc" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/18/Git-Learning/" data-id="cjk8ghrkv0000xk3k7iag49eq" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -414,7 +475,7 @@
   <aside class="widget">
     <h3 class="widget-title">Categories</h3>
     <div class="widget-content">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/XCTF2018/">XCTF2018</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hctf/">hctf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">6</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/XCTF2018/">XCTF2018</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hctf/">hctf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">6</span></li></ul>
     </div>
   </aside>
 
@@ -424,6 +485,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget-content">
       <ul>
+        
+          <li>
+            <a href="/2018/07/30/pwn-extend/">pwn-extend</a>
+          </li>
         
           <li>
             <a href="/2018/07/29/pwn-house-of-spirit/">pwn-house of spirit</a>
@@ -439,10 +504,6 @@
         
           <li>
             <a href="/2018/07/11/WCTF2018/">WCTF2018</a>
-          </li>
-        
-          <li>
-            <a href="/2018/05/29/setUnhandleExceptionFilter-exploration/">setUnhandleExceptionFilter-exploration</a>
           </li>
         
       </ul>
