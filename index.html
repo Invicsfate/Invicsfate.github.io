@@ -67,6 +67,67 @@
       <div id="main" class="wrapper">
         <div id="primary" class="site-content"><div id="content" role="main">
   
+    <article id="post-CS1-6-透视分析" class="post-CS1-6-透视分析 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2018/08/23/CS1-6-透视分析/">CS1.6-opengl简单透视分析</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/23/CS1-6-透视分析/" data-id="cjl6bnj9g00002e3kxgot8qlx" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <p>好奇，想看一下老游戏CS1.6是怎么做透视的(虽然已经过时)，下载了个CS1.6游戏以及一个透视作弊器，透视作弊器名为CS2008.exe，以及一个动态链接库fxin.dll。</p>
+<h2 id="分析CS2008-exe"><a href="#分析CS2008-exe" class="headerlink" title="分析CS2008.exe"></a>分析CS2008.exe</h2><p><img src="https://invicsfate.github.io/assert/CS1.6-1.png" alt="CS1.6-1"></p>
+<p>Hook了glBegin函数，如果追求速度的话，可以直接运行作弊器，然后attach上程序，glBegin函数下断，即可找到关键代码，这里我想先静态分析一下程序流程，看一看HookApiA里面具体是怎么操作的。</p>
+<p>打开fxin.dll</p>
+<p><img src="https://invicsfate.github.io/assert/CS1.6-2.png" alt="CS1.6-2"></p>
+<p>关键的函数之一sub_600027A0实现堆上一些关键数据的排列，程序申请了一个堆，把CS2008.exe中的final_execute函数(实现透视函数)放在了堆末，从偏移554以后开始。从堆的42-554之间放的是动态链接库sub_600027A0处的函数，实现的是真正跳转到final_execute函数的代码，以及unhook等操作。堆的1-42字节存储一些关键数据，比如glBegin地址处原5字节等。</p>
+<p>在sub_60004120函数中遍历进程，寻找目标，然后使用sub_60002B60的函数实现修改glBegin开头的5个字节。</p>
+<p>当程序调用glBegin函数时，会跳转到sub_600027A0函数，执行final_execute函数。使用od看一看程序的流程是否如此。下断glBegin：</p>
+<p><img src="https://invicsfate.github.io/assert/CS1.6-3.png" alt="CS1.6-3"></p>
+<p>ctrl+f9返回调用glBegin的地方，应当是unhook以后，正常执行glBegin的位置，也就是sub_600027A0函数。</p>
+<p><img src="https://invicsfate.github.io/assert/CS1.6-4.png" alt="CS1.6-4"></p>
+<p>在final_execute函数中，实现透视功能靠的是glDisable函数</p>
+<p><img src="https://invicsfate.github.io/assert/CS1.6-5.png" alt="CS1.6-5"></p>
+<p>功能分析完以后，去网上查了查opengl透视，果然很早的时候就有文章分析了，CS1.6作为一款”过去式”的FPS游戏，是我接触的第一款FPS游戏，它的作弊方式在如今的FPS游戏中早已过时，不过，依然是我童年时候的美好回忆啊！</p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2018/08/23/CS1-6-透视分析/">
+    <time datetime="2018-08-23T08:19:34.000Z" class="entry-date">
+        2018-08-23
+    </time>
+</a>
+    
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/reverse/">reverse</a>
+  </div>
+
+    
+    </footer>
+</article>
+
+
+
+
+
+
+  
     <article id="post-Cheat-Engine" class="post-Cheat-Engine post type-post status-publish format-standard hentry">
     <!---->
 
@@ -82,7 +143,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/12/Cheat-Engine/" data-id="cjkqn9bbw0000qa3kr37zf34b" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/12/Cheat-Engine/" data-id="cjl6bnja4000g2e3klff126qo" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -153,7 +214,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/30/pwn-extend/" data-id="cjkqn9bck000hqa3kusk4j8b9" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/30/pwn-extend/" data-id="cjl6bnjae000k2e3ke91pqioe" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -203,7 +264,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/29/pwn-house-of-spirit/" data-id="cjkqn9bd8000wqa3k12tgm5sp" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/29/pwn-house-of-spirit/" data-id="cjl6bnjah000n2e3km0ch8e64" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -258,7 +319,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/25/pwn-unlink/" data-id="cjkqn9bfa002hqa3k4q7by2ta" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/25/pwn-unlink/" data-id="cjl6bnjak000r2e3kvqwiemr6" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -322,7 +383,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/16/QCTF-xman/" data-id="cjkqn9bca0006qa3ktik2pcjh" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/16/QCTF-xman/" data-id="cjl6bnj9v00062e3ktaas8lve" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -390,7 +451,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/11/WCTF2018/" data-id="cjkqn9bcc0008qa3k50vga0gi" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/11/WCTF2018/" data-id="cjl6bnj9x00082e3kkfdafdp8" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -451,7 +512,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/05/29/setUnhandleExceptionFilter-exploration/" data-id="cjkqn9bdg0010qa3k10bvv1d4" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/05/29/setUnhandleExceptionFilter-exploration/" data-id="cjl6bnjb3001h2e3kq7klm1yy" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -538,7 +599,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/04/13/HITBCTF2018-reverse-hex/" data-id="cjkqn9bd2000pqa3kar0aymn2" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/04/13/HITBCTF2018-reverse-hex/" data-id="cjl6bnjau00132e3kecwkq3sy" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -605,7 +666,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/03/20/Play-Rtsp-Stream-opencv2/" data-id="cjkqn9bc80005qa3kwmtsg530" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/03/20/Play-Rtsp-Stream-opencv2/" data-id="cjl6bnj9t00052e3kdrkvxwb3" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -642,60 +703,6 @@
 
 
   
-    <article id="post-Mi-4C动态调试so库" class="post-Mi-4C动态调试so库 post type-post status-publish format-standard hentry">
-    <!---->
-
-      <header class="entry-header">
-        
-        
-  
-    <h1 class="entry-title">
-      <a class="article-title" href="/2018/01/16/Mi-4C动态调试so库/">Mi-4C动态调试so库</a>
-    </h1>
-  
-
-        
-        <div class="comments-link">
-            
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/01/16/Mi-4C动态调试so库/" data-id="cjkqn9bc20001qa3klg9h3xpg" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
-
-    <div class="entry-content">
-      
-        <p>调试环境：IDA6.8<br>手机：小米4C<br>系统版本：android 7.0</p>
-<p>小米4C稳定版刷成开发版后，开启安全中心-&gt;应用管理-&gt;授权-&gt;开启root权限，ida远程attach要调试的程序，出现：<br>The debugger could not attach to the selected process.<br>This can perhaps indicate the process was just terminated,or that you don’t have the necessary privileges.</p>
-<p>解决办法：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">getenforce <span class="comment">#查看selinux状态</span></span><br><span class="line">setenforce 0 <span class="comment">#临时关闭selinux</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div><!-- .entry-content -->
-
-    <footer class="entry-meta">
-    <a href="/2018/01/16/Mi-4C动态调试so库/">
-    <time datetime="2018-01-16T06:48:34.000Z" class="entry-date">
-        2018-01-16
-    </time>
-</a>
-    
-  <span class="article-delim">&#8226;</span>
-  <div class="article-category">
-  <a class="article-category-link" href="/categories/reverse/">reverse</a>
-  </div>
-
-    
-  <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rev/">rev</a></li></ul>
-
-    </footer>
-</article>
-
-
-
-
-
-
-  
   
     <nav id="pagination">
       <nav id="page-nav">
@@ -720,7 +727,7 @@
   <aside class="widget">
     <h3 class="widget-title">Categories</h3>
     <div class="widget-content">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/XCTF2018/">XCTF2018</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hctf/">hctf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/XCTF2018/">XCTF2018</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hctf/">hctf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">7</span></li></ul>
     </div>
   </aside>
 
@@ -730,6 +737,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget-content">
       <ul>
+        
+          <li>
+            <a href="/2018/08/23/CS1-6-透视分析/">CS1.6-opengl简单透视分析</a>
+          </li>
         
           <li>
             <a href="/2018/08/12/Cheat-Engine/">Cheat-Engine</a>
@@ -745,10 +756,6 @@
         
           <li>
             <a href="/2018/07/25/pwn-unlink/">pwn-unlink</a>
-          </li>
-        
-          <li>
-            <a href="/2018/07/16/QCTF-xman/">QCTF-xman</a>
           </li>
         
       </ul>

@@ -13,18 +13,25 @@
   
   
   
-  <title>Archives: 2018/8 | Invicsfate</title>
+  <title>CS1.6-opengl简单透视分析 | Invicsfate</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Invicsfate">
-<meta property="og:url" content="http://Invicsfate.github.io/archives/2018/08/index.html">
+  <meta name="description" content="好奇，想看一下老游戏CS1.6是怎么做透视的(虽然已经过时)，下载了个CS1.6游戏以及一个透视作弊器，透视作弊器名为CS2008.exe，以及一个动态链接库fxin.dll。 分析CS2008.exe Hook了glBegin函数，如果追求速度的话，可以直接运行作弊器，然后attach上程序，glBegin函数下断，即可找到关键代码，这里我想先静态分析一下程序流程，看一看HookApiA里面具体">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CS1.6-opengl简单透视分析">
+<meta property="og:url" content="http://Invicsfate.github.io/2018/08/23/CS1-6-透视分析/index.html">
 <meta property="og:site_name" content="Invicsfate">
-<meta property="og:description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
+<meta property="og:description" content="好奇，想看一下老游戏CS1.6是怎么做透视的(虽然已经过时)，下载了个CS1.6游戏以及一个透视作弊器，透视作弊器名为CS2008.exe，以及一个动态链接库fxin.dll。 分析CS2008.exe Hook了glBegin函数，如果追求速度的话，可以直接运行作弊器，然后attach上程序，glBegin函数下断，即可找到关键代码，这里我想先静态分析一下程序流程，看一看HookApiA里面具体">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="https://invicsfate.github.io/assert/CS1.6-1.png">
+<meta property="og:image" content="https://invicsfate.github.io/assert/CS1.6-2.png">
+<meta property="og:image" content="https://invicsfate.github.io/assert/CS1.6-3.png">
+<meta property="og:image" content="https://invicsfate.github.io/assert/CS1.6-4.png">
+<meta property="og:image" content="https://invicsfate.github.io/assert/CS1.6-5.png">
+<meta property="og:updated_time" content="2018-08-23T08:45:01.972Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Invicsfate">
-<meta name="twitter:description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
+<meta name="twitter:title" content="CS1.6-opengl简单透视分析">
+<meta name="twitter:description" content="好奇，想看一下老游戏CS1.6是怎么做透视的(虽然已经过时)，下载了个CS1.6游戏以及一个透视作弊器，透视作弊器名为CS2008.exe，以及一个动态链接库fxin.dll。 分析CS2008.exe Hook了glBegin函数，如果追求速度的话，可以直接运行作弊器，然后attach上程序，glBegin函数下断，即可找到关键代码，这里我想先静态分析一下程序流程，看一看HookApiA里面具体">
+<meta name="twitter:image" content="https://invicsfate.github.io/assert/CS1.6-1.png">
   
   
     <link rel="icon" href="/css/images/favicon.ico">
@@ -65,30 +72,46 @@
     </nav>
 </header>
       <div id="main" class="wrapper">
-        <div id="primary" class="site-content"><div id="content" role="main">
+        <div id="primary" class="site-content"><div id="content" role="main"><article id="post-CS1-6-透视分析" class="post-CS1-6-透视分析 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
   
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="post type-post status-publish format-standard hentry archive-type-post">
-  <header class="entry-header">
-      
-  
-    <h1 class="entry-title">
-      <a class="archive-article-title" href="/2018/08/23/CS1-6-透视分析/">CS1.6-opengl简单透视分析</a>
+    <h1 class="entry-title article-title">
+      CS1.6-opengl简单透视分析
     </h1>
   
 
-  </header>
-  <footer class="entry-meta">
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/23/CS1-6-透视分析/" data-id="cjl6bnj9g00002e3kxgot8qlx" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <p>好奇，想看一下老游戏CS1.6是怎么做透视的(虽然已经过时)，下载了个CS1.6游戏以及一个透视作弊器，透视作弊器名为CS2008.exe，以及一个动态链接库fxin.dll。</p>
+<h2 id="分析CS2008-exe"><a href="#分析CS2008-exe" class="headerlink" title="分析CS2008.exe"></a>分析CS2008.exe</h2><p><img src="https://invicsfate.github.io/assert/CS1.6-1.png" alt="CS1.6-1"></p>
+<p>Hook了glBegin函数，如果追求速度的话，可以直接运行作弊器，然后attach上程序，glBegin函数下断，即可找到关键代码，这里我想先静态分析一下程序流程，看一看HookApiA里面具体是怎么操作的。</p>
+<p>打开fxin.dll</p>
+<p><img src="https://invicsfate.github.io/assert/CS1.6-2.png" alt="CS1.6-2"></p>
+<p>关键的函数之一sub_600027A0实现堆上一些关键数据的排列，程序申请了一个堆，把CS2008.exe中的final_execute函数(实现透视函数)放在了堆末，从偏移554以后开始。从堆的42-554之间放的是动态链接库sub_600027A0处的函数，实现的是真正跳转到final_execute函数的代码，以及unhook等操作。堆的1-42字节存储一些关键数据，比如glBegin地址处原5字节等。</p>
+<p>在sub_60004120函数中遍历进程，寻找目标，然后使用sub_60002B60的函数实现修改glBegin开头的5个字节。</p>
+<p>当程序调用glBegin函数时，会跳转到sub_600027A0函数，执行final_execute函数。使用od看一看程序的流程是否如此。下断glBegin：</p>
+<p><img src="https://invicsfate.github.io/assert/CS1.6-3.png" alt="CS1.6-3"></p>
+<p>ctrl+f9返回调用glBegin的地方，应当是unhook以后，正常执行glBegin的位置，也就是sub_600027A0函数。</p>
+<p><img src="https://invicsfate.github.io/assert/CS1.6-4.png" alt="CS1.6-4"></p>
+<p>在final_execute函数中，实现透视功能靠的是glDisable函数</p>
+<p><img src="https://invicsfate.github.io/assert/CS1.6-5.png" alt="CS1.6-5"></p>
+<p>功能分析完以后，去网上查了查opengl透视，果然很早的时候就有文章分析了，CS1.6作为一款”过去式”的FPS游戏，是我接触的第一款FPS游戏，它的作弊方式在如今的FPS游戏中早已过时，不过，依然是我童年时候的美好回忆啊！</p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
     <a href="/2018/08/23/CS1-6-透视分析/">
     <time datetime="2018-08-23T08:19:34.000Z" class="entry-date">
         2018-08-23
@@ -103,38 +126,22 @@
     
     </footer>
 </article>
-  
-    
-    
-    <article class="post type-post status-publish format-standard hentry archive-type-post">
-  <header class="entry-header">
-      
-  
-    <h1 class="entry-title">
-      <a class="archive-article-title" href="/2018/08/12/Cheat-Engine/">Cheat-Engine</a>
-    </h1>
-  
 
-  </header>
-  <footer class="entry-meta">
-    <a href="/2018/08/12/Cheat-Engine/">
-    <time datetime="2018-08-12T07:30:34.000Z" class="entry-date">
-        2018-08-12
-    </time>
-</a>
-    
-  <span class="article-delim">&#8226;</span>
-  <div class="article-category">
-  <a class="article-category-link" href="/categories/工具/">工具</a>
-  </div>
 
     
-    </footer>
-</article>
-  
-  
-    </div></section>
-  
+<nav class="nav-single">
+    <h3 class="assistive-text">文章导航</h3>
+    
+    
+        <span class="nav-next"><a href="/2018/08/12/Cheat-Engine/" rel="next">Cheat-Engine <span class="meta-nav">→</span></a></span>
+    
+</nav><!-- .nav-single -->
+
+
+
+
+
+
 
 </div></div>
         <div id="secondary" class="widget-area" role="complementary">
