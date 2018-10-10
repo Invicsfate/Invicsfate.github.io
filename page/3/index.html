@@ -67,6 +67,69 @@
       <div id="main" class="wrapper">
         <div id="primary" class="site-content"><div id="content" role="main">
   
+    <article id="post-babyvm" class="post-babyvm post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2017/09/12/babyvm/">0ctf2018</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/12/babyvm/" data-id="cjn2kj2rh001cy03krnbmfpgi" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h2 id="babyvm"><a href="#babyvm" class="headerlink" title="babyvm"></a>babyvm</h2><p>第一次做类似的题，记录一下解题思路：</p>
+<p>既然是vm，必须要找到dispatcher，找到dispatcher之后，先看其初始化的过程，即dispatcher往上的内容<br>尽量理解。而后便是分发函数的部分，从case0-case1F逐次慢慢理解，可以先跳过case2。在长时间的理解<br>之后，我们发现初始化的两个函数得到的值在相与3，以及右移2位相与8之后得到两个变量，记为tmp1,tmp2<br>。通过tmp1,和tmp2我们可以索引到一个值，这个值和程序的处理十分重要，或者说程序的处理就是由这个<br>值确定的。联系堆栈式虚拟机的操作，我们可以得到一下猜想：</p>
+<ol>
+<li>v229是esp</li>
+<li>每一次从while(1)开始的包含那两个函数的整套操作就是一次取栈顶值，并且v229–操作就是pop操作</li>
+<li>0x13FD132C0处的函数就是push操作</li>
+<li>0-0xffff的空间就是vm.bin的范围</li>
+<li>v225是pc<br>根据我们的猜想，我们得到程序每次pop出栈顶的值，进行分析，根据分析的结果进行相关操作。<br>从而我们得到case0-case1f的猜想：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> 0:</span><br><span class="line">	<span class="built_in">exit</span></span><br><span class="line"><span class="keyword">case</span> 1:</span><br><span class="line">	pop eax;push 2;jmp (eax&amp;0x3fffffff)+1</span><br><span class="line"><span class="keyword">case</span> 2:</span><br><span class="line">	进行函数调用，得到flag</span><br><span class="line"><span class="keyword">case</span> 5:</span><br><span class="line">	pop eax;jmp (eax&amp;0x3fffffff)+1</span><br><span class="line"><span class="keyword">case</span> 6:</span><br><span class="line">	pop eax;pop ebx;jmp (ebx&amp;0x3fffffff)+1</span><br><span class="line"><span class="keyword">case</span> 7:</span><br><span class="line">	push 0</span><br><span class="line"><span class="keyword">case</span> 8:</span><br><span class="line">	push 1</span><br><span class="line"><span class="keyword">case</span> 0xD:</span><br><span class="line">	push offset;offset = 4 || 2 || 1 byte</span><br><span class="line"><span class="keyword">case</span> 0xE:</span><br><span class="line">	push offset;offset = 4 || 2 || 1 byte no | 0x80000000</span><br><span class="line"><span class="keyword">case</span> 0xF:</span><br><span class="line">	v10 = eax;pop eax</span><br><span class="line"><span class="keyword">case</span> 0x10:</span><br><span class="line">	push [esp]</span><br><span class="line"><span class="keyword">case</span> 0x11:</span><br><span class="line">	push(~[esp])</span><br><span class="line"><span class="keyword">case</span> 0x12:</span><br><span class="line">	pop eax;pop ebx;push eax+ebx pc+=1</span><br><span class="line"><span class="keyword">case</span> 0x13:</span><br><span class="line">	pop eax;pop ebx;push eax-ebx pc+=1</span><br><span class="line"><span class="keyword">case</span> 0x14:</span><br><span class="line">	pop eax;pop ebx;push eax*ebx pc+=1</span><br><span class="line"><span class="keyword">case</span> 0x15:</span><br><span class="line">	pop eax;pop ebx;push eax/ebx pc+=1</span><br><span class="line"><span class="keyword">case</span> 0x16:</span><br><span class="line">	pop eax;pop ebx;push eax%ebx pc+=1</span><br><span class="line"><span class="keyword">case</span> 0x17:</span><br><span class="line">	pop eax;pop ebx;push 3 pc+=1</span><br><span class="line"><span class="keyword">case</span> 0x18:</span><br><span class="line">	pop eax;pop ebx;push eax&amp;ebx pc+=1</span><br><span class="line"><span class="keyword">case</span> 0x19:</span><br><span class="line">	pop eax;pop ebx;push eax|ebx pc+=1</span><br><span class="line"><span class="keyword">case</span> 0x1A:</span><br><span class="line"><span class="keyword">case</span> 0x1B:</span><br><span class="line"><span class="keyword">case</span> 0x1C:</span><br><span class="line"><span class="keyword">case</span> 0x1D:</span><br><span class="line"><span class="keyword">case</span> 0x1E:</span><br><span class="line">	pop eax;pop ebx;push 3 pc+=1</span><br><span class="line"><span class="keyword">case</span> 0x1F:</span><br><span class="line">	pop eax;pop ebx;push 3 pc+=1</span><br><span class="line">default:</span><br><span class="line">	next_instruction</span><br></pre></td></tr></table></figure>
+<p>根据CreateFile，ReadFile，puts的顺序写如下shellcode(右侧伪代码):</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">8D 50 00 00 00 //push 0x80000050</span><br><span class="line">0E 03 //push 3</span><br><span class="line">0E ff // push 0xff</span><br><span class="line">8D 50 00 00 00 //push 0x80000050</span><br><span class="line">0E 80 // push 0x80</span><br><span class="line">8E 01 00 00 00 //push 0x00000001</span><br><span class="line">8D 40 00 00 00 //push 0x80000040</span><br><span class="line">07 // push 0</span><br><span class="line">02 // CreateFile pop 0;pop 0x80000040;pop 0x00000001;pop 0x80</span><br><span class="line">08 // push 1</span><br><span class="line">02 // ReadFile pop 1;pop hFile;pop 0x80000050;pop 0xff</span><br><span class="line">02 // puts pop 3;pop 0x80000050</span><br><span class="line">00 // <span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
+<p>得到flag<br><img src="https://invicsfate.github.io/assert/babyvm_flag.png" alt="flag"></p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2017/09/12/babyvm/">
+    <time datetime="2017-09-12T09:21:34.000Z" class="entry-date">
+        2017-09-12
+    </time>
+</a>
+    
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/CTF/">CTF</a>
+  </div>
+
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reverse/">reverse</a></li></ul>
+
+    </footer>
+</article>
+
+
+
+
+
+
+  
     <article id="post-简单的基于壳的变形壳工具" class="post-简单的基于壳的变形壳工具 post type-post status-publish format-standard hentry">
     <!---->
 
@@ -82,7 +145,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/02/简单的基于壳的变形壳工具/" data-id="cjl6bnjc9002l2e3khbyvqgsu" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/02/简单的基于壳的变形壳工具/" data-id="cjn2kj2s60026y03kjmm4taqc" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -105,60 +168,12 @@
     
   <span class="article-delim">&#8226;</span>
   <div class="article-category">
-  <a class="article-category-link" href="/categories/工具/">工具</a>
+  <a class="article-category-link" href="/categories/Tools/">Tools</a>
   </div>
 
     
   <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/">CTF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rev/">rev</a></li></ul>
-
-    </footer>
-</article>
-
-
-
-
-
-
-  
-    <article id="post-我的内心久久不能平静" class="post-我的内心久久不能平静 post type-post status-publish format-standard hentry">
-    <!---->
-
-      <header class="entry-header">
-        
-        
-  
-    <h1 class="entry-title">
-      <a class="article-title" href="/2017/09/01/我的内心久久不能平静/">我的内心久久不能平静</a>
-    </h1>
-  
-
-        
-        <div class="comments-link">
-            
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/我的内心久久不能平静/" data-id="cjl6bnjba001t2e3kv5wtn3p8" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
-
-    <div class="entry-content">
-      
-        <h1 id="学安全的内心感受"><a href="#学安全的内心感受" class="headerlink" title="学安全的内心感受"></a>学安全的内心感受</h1><h2 id="过去"><a href="#过去" class="headerlink" title="过去"></a>过去</h2><p>我是大二下开始正式接触的安全，现在已经快有一年半了吧，犹记得当年CTF浪潮正袭卷全国，各地CTF比赛兴起，XCTF也才刚办了一届，那时的自己还是个菜鸡，然而CTF的火爆也势不可挡，产生了许多有质量的题目，题目的难度也正处于慢慢提升中。当然，如果自己早一年半接触，或许就是抓住了CTF的龙头了吧，哈哈哈！面对已经火爆的CTF比赛，和逐渐提升难度的比赛，其实对刚入门的自己可以说是不友好的，又恰逢乌云关闭，多么好的一个学习网站，来不及看，就关了，桑心！作为一只逆向起家的辣鸡，一直在CTF里挣扎！</p>
-<h2 id="现在"><a href="#现在" class="headerlink" title="现在"></a>现在</h2><p>CTF的火爆又已经持续了一年多了，自己确实也成长了不少，但是CTF的难度依然在不断增强，可以说，自己依然在CTF比赛中挣扎，作为一只挣扎的辣鸡，可以说，过程依然很痛苦！各式各样的CTF如雨后春笋般拔地而起，各地各方也都开始举办CTF比赛，东西多了，品质自然良莠不齐。学了一年的自己也渐渐感觉越到后面越难精进，经常都会产生失落感，可以说是陷入了难以精进的泥淖，扑腾两下，又掉下去了。哈哈，同时也发现CTF确实和现实场景差距有些大了，在真正工作的时候，给你一个大项目，让你去逆向，你能很快地摸清思路，找的入手点么？答案，至少在我个人看来是否定的。<br>CTF与真实环境相去甚远，这是一个无法回避的问题。著名的比赛方也都在不断探索新的，更能适应社会的，更接近工作的CTF。另一方面，我看到了人工智能的逐渐崛起，个人感觉似乎已经是大势所趋，无法避免。CTF的形式也开始发生变化，不管是即将举行的XCTF第二届总决赛，还是i春秋9月的RHG robot ctf比赛，亦或是x-nuca的新比赛形式，说不定比赛的总决赛又是机器人呢？都要求团队开发一套漏洞分析和利用框架。智能化的安全攻防时代已经难以避免。一个实验室的师兄也调侃自己说：”搞人工智能的童鞋天天和我说，你们迟早会被取代的。”哈哈，说实话，我也挺认可这种想法的。你可能会说那也有人工智能的安全存在啊，确实，但是漏洞攻防也已经开始朝智能化的方向发展了，或许你听过Mirai病毒发起的DDOS攻击，你就不会奇怪了。</p>
-<h2 id="未来"><a href="#未来" class="headerlink" title="未来"></a>未来</h2><p>说实话，我真为自己的前途感到惶恐，开发真不是自己的强项，哈哈，这时候也只能强颜欢笑了。物联网的攻防早已经开启，现在每隔一段时间，就有数据统计还有多少智能设备存在弱口令之类的漏洞，或许大家都有一套攻击框架吧，hhhhhhh，工控的攻防也已经开始，随着智能化的开始，机器时代究竟会不会到来呢？希望自己不会失业，orz!haha!</p>
-
-      
-    </div><!-- .entry-content -->
-
-    <footer class="entry-meta">
-    <a href="/2017/09/01/我的内心久久不能平静/">
-    <time datetime="2017-09-01T15:29:57.000Z" class="entry-date">
-        2017-09-01
-    </time>
-</a>
-    
-    
-  <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/杂谈/">杂谈</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PE/">PE</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reverse/">reverse</a></li></ul>
 
     </footer>
 </article>
@@ -184,7 +199,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/win32和MFC逆向总结/" data-id="cjl6bnjb1001d2e3kunxceitf" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/win32和MFC逆向总结/" data-id="cjn2kj2rg0019y03kek7eif2i" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -214,12 +229,12 @@
     
   <span class="article-delim">&#8226;</span>
   <div class="article-category">
-  <a class="article-category-link" href="/categories/reverse/">reverse</a>
+  <a class="article-category-link" href="/categories/others/">others</a>
   </div>
 
     
   <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/">CTF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rev/">rev</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reverse/">reverse</a></li></ul>
 
     </footer>
 </article>
@@ -245,7 +260,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/windbg/" data-id="cjl6bnjaw00172e3kdqtq0m6h" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/windbg/" data-id="cjn2kj2rl001ly03kfyouom1b" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -282,12 +297,12 @@
     
   <span class="article-delim">&#8226;</span>
   <div class="article-category">
-  <a class="article-category-link" href="/categories/工具/">工具</a>
+  <a class="article-category-link" href="/categories/others/">others</a>
   </div>
 
     
   <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/windbg/">windbg</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reverse/">reverse</a></li></ul>
 
     </footer>
 </article>
@@ -313,7 +328,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/23/pwnable-tw-hacknote/" data-id="cjl6bnjam000u2e3kofu68r7q" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/23/pwnable-tw-hacknote/" data-id="cjn2kj2ra000vy03kf9sllyb9" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -335,10 +350,13 @@
     
   <span class="article-delim">&#8226;</span>
   <div class="article-category">
-  <a class="article-category-link" href="/categories/pwn/">pwn</a>
+  <a class="article-category-link" href="/categories/CTF/">CTF</a>
   </div>
 
     
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
+
     </footer>
 </article>
 
@@ -363,7 +381,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/20/PIL-python-imaging-library/" data-id="cjl6bnj9r00032e3kliz123hj" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/20/PIL-python-imaging-library/" data-id="cjn2kj2qo0008y03kz82dvmi9" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -406,13 +424,10 @@
     
   <span class="article-delim">&#8226;</span>
   <div class="article-category">
-  <a class="article-category-link" href="/categories/Python/">Python</a>
+  <a class="article-category-link" href="/categories/others/">others</a>
   </div>
 
     
-  <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PIL/">PIL</a></li></ul>
-
     </footer>
 </article>
 
@@ -437,13 +452,13 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/18/个人博客建成/" data-id="cjl6bnjb5001l2e3k6jhja4b9" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/18/个人博客建成/" data-id="cjn2kj2rk001iy03kq879jecd" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
     <div class="entry-content">
       
-        <p>作为一条bin狗，搭建一个静态网站真是不容易，搞得都有些害怕web了！<br>先是使用jekyll + Github Pages的方法搭建，windows上搭建jekyll失败，换成Ubuntu，总算是安装好了jekyll，更换主题以后，修改配置，背景时，被搞晕了，找的主题没一个符合我这个菜鸟的，可能是自己太菜，配置不好……<br>后来幸得师兄提醒，换了Hexo + Github Pages，Hexo果然适合我这种啥web都不懂的菜鸟，总算是会配置一下了……心累！<br>配置环境还是官方文档简单靠谱!<br><a href="https://hexo.io/docs/" target="_blank" rel="noopener">Hexo</a><br><a href="http://jekyllcn.com/" target="_blank" rel="noopener">jekyll</a>  </p>
+        <p>使用jekyll + Github Pages的方法搭建，windows上搭建jekyll失败，换成Ubuntu，总算是安装好了jekyll，更换主题以后，修改配置，背景时，被搞晕了，找的主题没一个符合我这个菜鸟的，可能是自己太菜，配置不好……<br>后来幸得师兄提醒，换了Hexo + Github Pages，Hexo果然适合我这种啥web都不懂的菜鸟，总算是会配置一下了……心累！<br>配置环境还是官方文档简单靠谱!<br><a href="https://hexo.io/docs/" target="_blank" rel="noopener">Hexo</a><br><a href="http://jekyllcn.com/" target="_blank" rel="noopener">jekyll</a>  </p>
 <p>找到了用hexo无法部署到github上的原因，真的好鸡冻！hexo还是和jekyll在部署到github上不同的，jekyll使用git的push操作，而hexo则是hexo generate一下，生成静态页面，然后再hexo deploy，就部署到github上了。  </p>
 <p>昨天的b萌Chtholly对战英莉莉输了，嘛，虽然预计在情理之中，额，还是挺不开心的！最后，欢迎柯朵莉回家<em>^_^</em><br><img src="https://invicsfate.github.io/css/images/Chtholly1.jpg" alt="柯朵莉"></p>
 <h2 id="hexo用法"><a href="#hexo用法" class="headerlink" title="hexo用法"></a>hexo用法</h2><h3 id="hexo部署到远程仓库"><a href="#hexo部署到远程仓库" class="headerlink" title="hexo部署到远程仓库"></a>hexo部署到远程仓库</h3><p>配置根目录下_config.yml，修改如下:<br>deploy:<br>  type: git<br>  repo: <a href="mailto:git@github.com" target="_blank" rel="noopener">git@github.com</a>:Your_github_name/Your_github_name.github.io.git<br>  branch: master  </p>
@@ -469,10 +484,12 @@
     </time>
 </a>
     
-    
   <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/杂谈/">杂谈</a></li></ul>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/others/">others</a>
+  </div>
 
+    
     </footer>
 </article>
 
@@ -497,7 +514,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/18/Git-Learning/" data-id="cjl6bnj9m00012e3kfxenssik" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/18/Git-Learning/" data-id="cjn2kj2ql0005y03kekevjo12" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -537,13 +554,10 @@
     
   <span class="article-delim">&#8226;</span>
   <div class="article-category">
-  <a class="article-category-link" href="/categories/工具/">工具</a>
+  <a class="article-category-link" href="/categories/others/">others</a>
   </div>
 
     
-  <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
-
     </footer>
 </article>
 
@@ -577,7 +591,7 @@
   <aside class="widget">
     <h3 class="widget-title">Categories</h3>
     <div class="widget-content">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/XCTF2018/">XCTF2018</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hctf/">hctf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">7</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GameSecurity/">GameSecurity</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/IOT/">IOT</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/others/">others</a><span class="category-list-count">9</span></li></ul>
     </div>
   </aside>
 
@@ -589,23 +603,23 @@
       <ul>
         
           <li>
+            <a href="/2018/10/09/绕过某摄像头校验机制软刷固件/">绕过某摄像头校验机制软刷固件</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/09/pwn-unlink/">pwn-unlink</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/09/pwn-house-of-spirit/">pwn-house of spirit</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/09/pwn-extend/">pwn-extend</a>
+          </li>
+        
+          <li>
             <a href="/2018/08/23/CS1-6-透视分析/">CS1.6-opengl简单透视分析</a>
-          </li>
-        
-          <li>
-            <a href="/2018/08/12/Cheat-Engine/">Cheat-Engine</a>
-          </li>
-        
-          <li>
-            <a href="/2018/07/30/pwn-extend/">pwn-extend</a>
-          </li>
-        
-          <li>
-            <a href="/2018/07/29/pwn-house-of-spirit/">pwn-house of spirit</a>
-          </li>
-        
-          <li>
-            <a href="/2018/07/25/pwn-unlink/">pwn-unlink</a>
           </li>
         
       </ul>
@@ -617,7 +631,7 @@
   <aside class="widget">
     <h3 class="widget-title">Tags</h3>
     <div class="widget-content">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/">CTF</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PIL/">PIL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rev/">rev</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reversing-kr/">reversing.kr</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windbg/">windbg</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/其他/">其他</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/工具/">工具</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂谈/">杂谈</a><span class="tag-list-count">3</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/PE/">PE</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firmware/">firmware</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reverse/">reverse</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </aside>
 
@@ -626,7 +640,7 @@
   <aside class="widget">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget-content tagcloud">
-      <a href="/tags/CTF/" style="font-size: 16.67px;">CTF</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/PIL/" style="font-size: 10px;">PIL</a> <a href="/tags/pwn/" style="font-size: 10px;">pwn</a> <a href="/tags/rev/" style="font-size: 20px;">rev</a> <a href="/tags/reversing-kr/" style="font-size: 10px;">reversing.kr</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/windbg/" style="font-size: 10px;">windbg</a> <a href="/tags/其他/" style="font-size: 10px;">其他</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/杂谈/" style="font-size: 13.33px;">杂谈</a>
+      <a href="/tags/PE/" style="font-size: 13.33px;">PE</a> <a href="/tags/firmware/" style="font-size: 13.33px;">firmware</a> <a href="/tags/pwn/" style="font-size: 16.67px;">pwn</a> <a href="/tags/reverse/" style="font-size: 20px;">reverse</a> <a href="/tags/web/" style="font-size: 10px;">web</a>
     </div>
   </aside>
 
