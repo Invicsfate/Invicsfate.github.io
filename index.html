@@ -67,6 +67,76 @@
       <div id="main" class="wrapper">
         <div id="primary" class="site-content"><div id="content" role="main">
   
+    <article id="post-某游戏cg素材解包" class="post-某游戏cg素材解包 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2019/08/24/某游戏cg素材解包/">某游戏cg素材解包</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/08/24/某游戏cg素材解包/" data-id="cjzoftu74001p4x3kmre7ptm0" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <p>解包某游戏素材，玩完觉得cg差几张，决定解开来看看是否少了cg。</p>
+<h2 id="查看打包文件"><a href="#查看打包文件" class="headerlink" title="查看打包文件"></a>查看打包文件</h2><p>当前目录下的文件格式除了exe,dll以外就是类型为NPK的文件，NPK文件必为打包文件无疑，010 Editor查看文件格式，如下图(截取的开头部分)：</p>
+<p><img src="https://invicsfate.github.io/assert/GameUnpack1.png" alt="GameUnpack1"></p>
+<p>根据文件头部上网搜索相关资料和工具(尝试过可能有用的arc_unpacker工具等)，无解。那就只能逆向解包啦！</p>
+<p>推测负责解包的exe，并进行逆向分析，找到程序试图解包一个名为system.npk的文件。找到头部签名比对部分：</p>
+<p><img src="https://invicsfate.github.io/assert/GameUnpack2.png" alt="GameUnpack2"></p>
+<p>接着往下分析程序，大致了解(猜测)了NPK文件的结构以及使用的加密算法AES256-cbc：</p>
+<p><img src="https://invicsfate.github.io/assert/GameUnpack3.png" alt="GameUnpack3"></p>
+<p>图中黄色部分为签名，蓝色部分AES256的向量IV，绿色部分是加密的需要用到的该NPK文件中的所有文件的描述结构，大小为红色部分0xD460，绿色部分往下也就是0xD480往后就是加密的所有文件了。</p>
+<p>通过AES256-cbc算法解密0xD460大小的文件描述结构，密钥硬编码在程序中，即可得到该NPK中加密的文件描述结构。解密出的一个文件描述结构如下图：</p>
+<p><img src="https://invicsfate.github.io/assert/GameUnpack4.png" alt="GameUnpack4"></p>
+<p>如上图所示，黑色框起来的部分为一个png文件的解密描述结构，总共有0xD460大小的文件描述结构。程序中会根据计算机是否支持AES-NI指令集，而选择使用AES-NI指令集的方式进行解密，还是另外一种<br><a href="https://github.com/cisco/libsrtp/blob/master/crypto/cipher/aes.c" target="_blank" rel="noopener">github上的某AES</a>进行解密。<br>AES解密部分截图如下：</p>
+<p><img src="https://invicsfate.github.io/assert/GameUnpack5.png" alt="GameUnpack5"></p>
+<p><img src="https://invicsfate.github.io/assert/GameUnpack6.png" alt="GameUnpack6"></p>
+<p>接下来，要做的就是解密文件了，一个png文件的解密描述结构中重要的就是蓝色部分，代表该png在npk文件中的起始地址，绿色部分代表该png文件的大小。在程序如何解密setting.ini文件的部分，如下图：</p>
+<p><img src="https://invicsfate.github.io/assert/GameUnpack7.png" alt="GameUnpack7"></p>
+<p>发现了是使用同样的解密算法AES256-cbc进行解密，并且IV和密钥相同。故写脚本提取出所有的png图片，一气呵成！</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto <span class="keyword">import</span> Random</span><br><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getIV</span><span class="params">(content)</span>:</span></span><br><span class="line">	aes256IV = content[<span class="number">8</span>:<span class="number">24</span>]</span><br><span class="line">	<span class="keyword">return</span> aes256IV</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getSecretKey</span><span class="params">(uiAesKey)</span>:</span></span><br><span class="line">	aesKey = <span class="string">""</span></span><br><span class="line">	<span class="keyword">for</span> ch <span class="keyword">in</span> uiAesKey:</span><br><span class="line">		ch = struct.pack(<span class="string">"&lt;I"</span>,ch)</span><br><span class="line">		aesKey += ch</span><br><span class="line">	<span class="keyword">return</span> aesKey</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">decrypt</span><span class="params">(encrypted, passphrase)</span>:</span></span><br><span class="line">  IV = encrypted[:<span class="number">16</span>]</span><br><span class="line">  cipher = AES.new(passphrase,AES.MODE_CBC,IV)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> cipher.decrypt(encrypted[<span class="number">16</span>:])</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">encrypt</span><span class="params">(decrypted, passphrase)</span>:</span></span><br><span class="line"></span><br><span class="line">  plaintext=AES.new(passphrase,AES.MODE_ECB)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> plaintext.encrypt(decrypted)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">analysisCGHeader</span><span class="params">(cg_content,cgPosition_content,aesIV,aesKey)</span>:</span></span><br><span class="line"></span><br><span class="line">	rename = <span class="string">"Invicsfate"</span></span><br><span class="line">	renameIndex = <span class="number">0</span></span><br><span class="line">	position = <span class="number">0x0</span></span><br><span class="line">	<span class="keyword">while</span> (position &lt;= <span class="number">0xD450</span>):</span><br><span class="line">		cipher = <span class="string">""</span></span><br><span class="line"></span><br><span class="line">		position += <span class="number">1</span></span><br><span class="line">		fileNameLength = cgPosition_content[position:position+<span class="number">2</span>]</span><br><span class="line">		position += <span class="number">2</span></span><br><span class="line">		fileNameLength = struct.unpack(<span class="string">"&lt;H"</span>,fileNameLength)[<span class="number">0</span>]</span><br><span class="line">		fileName = cgPosition_content[position:position+fileNameLength]</span><br><span class="line">		position += fileNameLength</span><br><span class="line"></span><br><span class="line">		position += <span class="number">4</span></span><br><span class="line">		position += <span class="number">32</span></span><br><span class="line">		position += <span class="number">4</span></span><br><span class="line">		pngPosition = cgPosition_content[position:position+<span class="number">4</span>]</span><br><span class="line">		pngPosition = struct.unpack(<span class="string">"&lt;I"</span>,pngPosition)[<span class="number">0</span>]</span><br><span class="line">		position += <span class="number">4</span></span><br><span class="line">		position += <span class="number">4</span></span><br><span class="line">		pngSize = cgPosition_content[position:position+<span class="number">4</span>]</span><br><span class="line">		pngSize = struct.unpack(<span class="string">"&lt;I"</span>,pngSize)[<span class="number">0</span>]</span><br><span class="line">		position += <span class="number">4</span></span><br><span class="line">		position += <span class="number">8</span></span><br><span class="line"></span><br><span class="line">		cipher += aesIV</span><br><span class="line">		cipher += cg_content[pngPosition:pngPosition+pngSize]</span><br><span class="line"></span><br><span class="line">		length = len(cipher)</span><br><span class="line">		pundding=length%<span class="number">16</span></span><br><span class="line">		<span class="keyword">if</span> (pundding):</span><br><span class="line">			cipher += ((<span class="number">16</span> - pundding) * <span class="string">'\x00'</span>)</span><br><span class="line">		pngContent = decrypt(cipher, aesKey)</span><br><span class="line"></span><br><span class="line">		fileDictory = fileName[:fileName.rindex(<span class="string">'/'</span>)]</span><br><span class="line">		isReadable = fileName[fileName.rindex(<span class="string">'/'</span>)+<span class="number">1</span>:fileName.rindex(<span class="string">'/'</span>)+<span class="number">2</span>]</span><br><span class="line"></span><br><span class="line">		isExists = os.path.exists(fileDictory)</span><br><span class="line">		<span class="keyword">if</span> isExists:</span><br><span class="line">			<span class="keyword">if</span> ((ord(isReadable) &lt; <span class="number">0x20</span>) <span class="keyword">or</span> (ord(isReadable) &gt; <span class="number">0x7E</span>)):<span class="comment">#处理不可见文件名</span></span><br><span class="line">				fileName = fileDictory + <span class="string">"/"</span> + rename + str(renameIndex) + <span class="string">".png"</span></span><br><span class="line">			savePng = open(fileName,<span class="string">"wb"</span>)</span><br><span class="line">			savePng.write(pngContent)</span><br><span class="line">			savePng.close()</span><br><span class="line">			renameIndex += <span class="number">1</span></span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			<span class="keyword">if</span> ((ord(isReadable) &lt; <span class="number">0x20</span>) <span class="keyword">or</span> (ord(isReadable) &gt; <span class="number">0x7E</span>)):<span class="comment">#处理不可见文件名</span></span><br><span class="line">				fileName = fileDictory + <span class="string">"/"</span> + rename + str(renameIndex) + <span class="string">".png"</span></span><br><span class="line">			os.makedirs(fileDictory)</span><br><span class="line">			savePng = open(fileName,<span class="string">"wb"</span>)</span><br><span class="line">			savePng.write(pngContent)</span><br><span class="line">			savePng.close()</span><br><span class="line">			renameIndex += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">	</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">cg_fp = open(<span class="string">"cg.npk"</span>,<span class="string">'rb'</span>)</span><br><span class="line">cg_content = cg_fp.read()</span><br><span class="line"></span><br><span class="line">aesIV = getIV(cg_content)</span><br><span class="line"></span><br><span class="line">uiAesKey = [<span class="number">0x3C1FB7D0</span>,<span class="number">0xCFCE244E</span>,<span class="number">0x1DA9EEDD</span>,<span class="number">0x3240B024</span>,<span class="number">0x33E5A329</span>,<span class="number">0x8251290D</span>,<span class="number">0xC9D65160</span>,<span class="number">0x54AFF54A</span>]</span><br><span class="line">aesKey = getSecretKey(uiAesKey)</span><br><span class="line"></span><br><span class="line">cgPosition_fp = open(<span class="string">"testNPKCG"</span>,<span class="string">'rb'</span>)</span><br><span class="line"></span><br><span class="line">cgPosition_content = cgPosition_fp.read()</span><br><span class="line"></span><br><span class="line">cgPosition_fp.close()</span><br><span class="line"></span><br><span class="line">analysisCGHeader(cg_content,cgPosition_content,aesIV,aesKey)</span><br><span class="line"></span><br><span class="line">cg_fp.close()</span><br></pre></td></tr></table></figure>
+<p>其中cg.npk是存储cg相关的npk文件，testNPKCG是解密出来的0xD460大小的文件描述结构。</p>
+<p>该游戏目录下其他的npk文件，比如font.npk，system.npk等等都是使用该种模式加密，用同样的方式可以获取到所有npk文件的内容。</p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2019/08/24/某游戏cg素材解包/">
+    <time datetime="2019-08-23T17:30:22.000Z" class="entry-date">
+        2019-08-24
+    </time>
+</a>
+    
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/GameSecurity/">GameSecurity</a>
+  </div>
+
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reverse/">reverse</a></li></ul>
+
+    </footer>
+</article>
+
+
+
+
+
+
+  
     <article id="post-打包小工具" class="post-打包小工具 post type-post status-publish format-standard hentry">
     <!---->
 
@@ -82,7 +152,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/05/31/打包小工具/" data-id="cjz24ma3u002mjc3kpx4opnfj" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/05/31/打包小工具/" data-id="cjzoftubh002p4x3kgpuw8j0s" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -135,7 +205,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/绕过某摄像头校验机制软刷固件/" data-id="cjz24m9s0001pjc3kx262pu1d" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/绕过某摄像头校验机制软刷固件/" data-id="cjzoftu78001s4x3kzcjnmcvc" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -210,7 +280,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-unlink/" data-id="cjz24m9ob000xjc3kiy81tkmy" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-unlink/" data-id="cjzoftu5e000x4x3k8bt4qbwm" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -277,7 +347,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-house-of-spirit/" data-id="cjz24m9o3000tjc3k060h1jbg" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-house-of-spirit/" data-id="cjzoftu58000t4x3kq3j4rvu3" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -335,7 +405,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-extend/" data-id="cjz24m9np000rjc3klez7vhfz" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-extend/" data-id="cjzoftu4w000r4x3kxofslc7z" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -388,7 +458,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/23/CS1-6-透视分析/" data-id="cjz24m9ep0000jc3k9w5kn9wq" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/23/CS1-6-透视分析/" data-id="cjzoftu1f00004x3k5ikjx515" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -452,7 +522,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/12/Cheat-Engine/" data-id="cjz24m9fr0001jc3k1olyyf12" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/12/Cheat-Engine/" data-id="cjzoftu1w00014x3k7sfepm2k" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -523,7 +593,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/16/QCTF-xman/" data-id="cjz24m9l6000ejc3kik2k0ub1" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/16/QCTF-xman/" data-id="cjzoftu3q000e4x3kmpxqdwki" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -591,7 +661,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/11/WCTF2018/" data-id="cjz24m9m6000gjc3krmvha44k" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/11/WCTF2018/" data-id="cjzoftu49000g4x3kdnp64j3k" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -637,93 +707,6 @@
 
 
   
-    <article id="post-setUnhandleExceptionFilter-exploration" class="post-setUnhandleExceptionFilter-exploration post type-post status-publish format-standard hentry">
-    <!---->
-
-      <header class="entry-header">
-        
-        
-  
-    <h1 class="entry-title">
-      <a class="article-title" href="/2018/05/29/setUnhandleExceptionFilter-exploration/">setUnhandleExceptionFilter-exploration</a>
-    </h1>
-  
-
-        
-        <div class="comments-link">
-            
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/05/29/setUnhandleExceptionFilter-exploration/" data-id="cjz24m9py0018jc3kjk1igyty" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
-
-    <div class="entry-content">
-      
-        <p>​    自己用过很多次setUnhandleExceptionFilter出过题目了，题目的思路通常都是突然来一个异常，使得程序最终跳转到setUnhandleExceptionFilter的自定义异常函数中。当然，在调试状态下，如果在自定义异常函数中下断是没法直接到达的，原始是存在系统反调试。</p>
-<p>​    对于怎么绕过，自己一直都没有亲自去调试，只依稀有个印象-程序存在系统反调试。</p>
-<p>​    下面我们就来探究一下怎么绕过系统反调试，到达setUnhandleExceptionFilter的自定义异常函数。实验代码如下，实验工具x64dbg，如果没有某个库的符号，需要进行下载，便于动态调试。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">LONG _<span class="function">stdcall <span class="title">MyUnhandledExceptionFilter</span><span class="params">(_EXCEPTION_POINTERS *pExceptionInfo)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	MessageBox(<span class="literal">NULL</span>, <span class="string">L"UnhandleExceptionFileter"</span>,<span class="string">L"exception"</span>, MB_OK);</span><br><span class="line">	ExitProcess(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"Hello World!\n"</span>);</span><br><span class="line">	<span class="keyword">int</span> a = <span class="number">0</span>, b = <span class="number">100</span>, c;</span><br><span class="line">	SetUnhandledExceptionFilter(MyUnhandledExceptionFilter);</span><br><span class="line">	c = a + b;</span><br><span class="line">	c /= a;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>​    在将要产生异常的地方下断，便于我们调试。</p>
-<p><img src="https://invicsfate.github.io/assert/exception1.png" alt="exception1"></p>
-<p>​    同时将seh链的所有异常处理函数下断，我们已经只有在执行了seh链异常处理函数以后才会执行setUnhandledExceptionFilter注册的函数。</p>
-<p><img src="https://invicsfate.github.io/assert/exception2.png" alt="exception2"></p>
-<p>​    异常处理函数从上到下执行，顺序依次是0x00FB6140-&gt;0x00FB3D70-&gt;0x77CF9FD0。</p>
-<p>​    发生异常以后，我们来到第一处seh异常处理函数0x00FB6140。</p>
-<p><img src="https://invicsfate.github.io/assert/exception3.png" alt="exception3"></p>
-<p>​    实现Jmp以后，我们继续F8执行，来到如下图的位置：</p>
-<p><img src="https://invicsfate.github.io/assert/exception4.png" alt="exception4"></p>
-<p>​    程序首先执行RtlIsValidHandler判断我们的下一出seh是否合法，然后调用RtlExecuteHandlerForException跳转到我们下一出seh函数地址，其中的第5个参数就是我们的下一处异常处理函数地址0x00FB3D70。我们接着进入RtlExecuteHandlerForException，看看他是怎么实现跳转的。</p>
-<p><img src="https://invicsfate.github.io/assert/exception5.png" alt="exception5"></p>
-<p>​    继续执行。</p>
-<p><img src="https://invicsfate.github.io/assert/exception6.png" alt="exception6"></p>
-<p>​    通过mov ecx,dword ptr ss:[ebp+18]将第五个参数即我们下一处seh函数地址给了ecx，然后调用。</p>
-<p>​    我们来到第二处异常函数地址0x00FB3D70处，第二处进入第三处的调用过程基本一致。</p>
-<p><img src="https://invicsfate.github.io/assert/exception7.png" alt="exception7"></p>
-<p>​    我们单步到达上一次到达的RtlIsValidHandler处：</p>
-<p><img src="https://invicsfate.github.io/assert/exception8.png" alt="exception8"></p>
-<p>​    同理到达第三处，进入except_handler4_common：</p>
-<p><img src="https://invicsfate.github.io/assert/exception9.png" alt="exception9"></p>
-<p>​    进入CallFilterFunc函数：</p>
-<p><img src="https://invicsfate.github.io/assert/exception10.png" alt="exception10"></p>
-<p>​    进入第一个call ecx:</p>
-<p><img src="https://invicsfate.github.io/assert/exception11.png" alt="exception11"></p>
-<p>​    <img src="https://invicsfate.github.io/assert/exception12.png" alt="exception12"></p>
-<p>​    在上图中，将RtlpUnhandleExceptionFilter带入函数RtlDecodePointer中解析，得到了UnhandlerExceptionFilter的函数地址，最后赋值给了esi，然后调用。</p>
-<p>​    在UnhandlerExceptionFilter函数中，我们通过单步过掉不重要的函数以后，发现了一个可疑函数BasepIsDebugPortPresent，进入，找到了关键的反调试点，如下图：</p>
-<p><img src="https://invicsfate.github.io/assert/exception13.png" alt="exception13"></p>
-<p>​    如果处于调试中，esi的值会自加1，然后赋值给eax，返回。我们只需要将返回值改为0即可。</p>
-<p>​    emmmm，然后我们就能顺利到达最后我们自己创建的那个异常处理函数了。</p>
-<p><img src="https://invicsfate.github.io/assert/exception14.png" alt="exception14"></p>
-<p><img src="https://invicsfate.github.io/assert/exception15.png" alt="exception15"></p>
-<p>​    如上图，以后遇到类似的反调试，只需要在NtQueryInformationProcess函数下断就好了。如果写插件绕过，我们可以通过hook BasepIsDebugPortPresent(kernelbase.dll)函数，让其直接返回0即可。</p>
-
-      
-    </div><!-- .entry-content -->
-
-    <footer class="entry-meta">
-    <a href="/2018/05/29/setUnhandleExceptionFilter-exploration/">
-    <time datetime="2018-05-29T11:11:34.000Z" class="entry-date">
-        2018-05-29
-    </time>
-</a>
-    
-  <span class="article-delim">&#8226;</span>
-  <div class="article-category">
-  <a class="article-category-link" href="/categories/others/">others</a>
-  </div>
-
-    
-  <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reverse/">reverse</a></li></ul>
-
-    </footer>
-</article>
-
-
-
-
-
-
-  
   
     <nav id="pagination">
       <nav id="page-nav">
@@ -748,7 +731,7 @@
   <aside class="widget">
     <h3 class="widget-title">Categories</h3>
     <div class="widget-content">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GameSecurity/">GameSecurity</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/IOT/">IOT</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/others/">others</a><span class="category-list-count">8</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GameSecurity/">GameSecurity</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/IOT/">IOT</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/others/">others</a><span class="category-list-count">8</span></li></ul>
     </div>
   </aside>
 
@@ -758,6 +741,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget-content">
       <ul>
+        
+          <li>
+            <a href="/2019/08/24/某游戏cg素材解包/">某游戏cg素材解包</a>
+          </li>
         
           <li>
             <a href="/2019/05/31/打包小工具/">打包解包小工具</a>
@@ -775,10 +762,6 @@
             <a href="/2018/10/09/pwn-house-of-spirit/">pwn-house of spirit</a>
           </li>
         
-          <li>
-            <a href="/2018/10/09/pwn-extend/">pwn-extend</a>
-          </li>
-        
       </ul>
     </div>
   </aside>
@@ -788,7 +771,7 @@
   <aside class="widget">
     <h3 class="widget-title">Tags</h3>
     <div class="widget-content">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/PE/">PE</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firmware/">firmware</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reverse/">reverse</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/PE/">PE</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firmware/">firmware</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reverse/">reverse</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </aside>
 
