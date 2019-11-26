@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="Invicsfate">
 <meta property="og:description" content="windbg配置符号表环境:winxp sp3/win7将安装windbg的目录添加进环境变量，默认安装路径是C:\Program Files\Debugging Tools for Windows (x86)，如果是默认安装，就把这个目录添加进path环境变量。新建环境变量_NT_SYMBOL_PATH，值为 1SRV*c:\Symbols* http://msdl.microsoft.com/">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-10-09T14:49:43.447Z">
+<meta property="og:updated_time" content="2019-11-26T11:24:12.919Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="windbg">
 <meta name="twitter:description" content="windbg配置符号表环境:winxp sp3/win7将安装windbg的目录添加进环境变量，默认安装路径是C:\Program Files\Debugging Tools for Windows (x86)，如果是默认安装，就把这个目录添加进path环境变量。新建环境变量_NT_SYMBOL_PATH，值为 1SRV*c:\Symbols* http://msdl.microsoft.com/">
@@ -82,7 +82,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/windbg/" data-id="ck35loze6001j9a3k1nga1r44" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/windbg/" data-id="ck3frub0b001d4n3kq2qifw54" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -92,7 +92,8 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SRV*c:\Symbols* http:<span class="comment">//msdl.microsoft.com/download/symbols</span></span><br></pre></td></tr></table></figure>
 <p>启动windbg载入可执行文件时，windbg就会在C盘下建立一个Symbols文件夹，从微软服务器获取相应符号表。也可以离线下载在Symbols文件夹里。<br><a href="https://developer.microsoft.com/en-us/windows/hardware/download-symbols" target="_blank" rel="noopener">Download-Symbol</a><br>尝试打开一个可执行文件，windbg显示如下信息</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Symbol search path is: SRV*c:\Symbols* http:<span class="comment">//msdl.microsoft.com/download/symbols</span></span><br></pre></td></tr></table></figure>
-<h2 id="windbg双机调试"><a href="#windbg双机调试" class="headerlink" title="windbg双机调试"></a>windbg双机调试</h2><p>google搜索或者必应国外版搜索ida windbg debug kernel就有文档提供参考，远程连接linux等主机使用的是网络链接的ip，而windbg调试内核则是使用的串口，网上也有很多这方面的资料。说一下自己是怎么调试的:<br>ida + VirtualKD + windbg:在主机安装VirtualKD，VirtualKD里的target目录复制到虚拟机下，启动target目录里的vminstall.exe，这时候虚拟机重启会有一个调试选项，打开主机安装VirtualKD的位置，启动vmmon或者vmmon64，选中对应的虚拟机，同时注意pipe名称，比如kd_winxp，一会儿会用到。<br>如果使用windbg调试，只需要发送windbg的快捷方式到桌面，修改属性-&gt;目标，windbg.exe后面加上 -k com:port=\.\pipe\kd_winxp,pipe，这个kd_winxp就是vmmon里的管道名称，运行windbg，连接即可成功，进入内核模式，ctrl + break中断，输入命令。<br>如果使用ida调试，打开ida，Debugger-&gt;attach-&gt;windbg debugger，管道名称同上，com:port=\.\pipe\kd_winxp,pipe，设置options，在specific options里面更换成kernel mode，同时指定windbg安装目录，新版ida要在ida目录下的cfg-&gt;ida.cfg的669行，更改信息如下(我的主机):  </p>
+<h2 id="windbg双机调试"><a href="#windbg双机调试" class="headerlink" title="windbg双机调试"></a>windbg双机调试</h2><p>google搜索或者必应国外版搜索ida windbg debug kernel就有文档提供参考，远程连接linux等主机使用的是网络链接的ip，而windbg调试内核则是使用的串口，网上也有很多这方面的资料。说一下自己是怎么调试的:<br>ida + VirtualKD + windbg:在主机安装VirtualKD，VirtualKD里的target目录复制到虚拟机下，启动target目录里的vminstall.exe，这时候虚拟机重启会有一个调试选项，打开主机安装VirtualKD的位置，启动vmmon或者vmmon64，选中对应的虚拟机，同时注意pipe名称，比如kd_winxp，一会儿会用到。<br>如果使用windbg调试，只需要发送windbg的快捷方式到桌面，修改属性-&gt;目标，windbg.exe后面加上 -k com:port=\\.\pipe\kd_winxp,pipe<br>这个kd_winxp就是vmmon里的管道名称，运行windbg，连接即可成功，进入内核模式，ctrl + break中断，输入命令。  </p>
+<p>如果使用ida调试，打开ida，Debugger-&gt;attach-&gt;windbg debugger，管道名称同上，com:port=\.\pipe\kd_winxp,pipe，设置options，在specific options里面更换成kernel mode，同时指定windbg安装目录，新版ida要在ida目录下的cfg-&gt;ida.cfg的669行，更改信息如下(我的主机):  </p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DBGTOOLS = <span class="string">"C:\\Program Files (x86)\\Debugging Tools for Windows (x86)"</span>; <span class="comment">//设置windbg安装的目录</span></span><br></pre></td></tr></table></figure>
 <p>以上都设置好以后，点击ok，等待一会就好了。如果长时间处于reconnect状态，连接不上，ida假死，就是串口设置的问题了，这个问题网上搜索一下就好，如果设置的是serial port1，串口是serial port2就会有问题，虚拟机就把打印机移除就好。  </p>
 <h2 id="windbg常用命令"><a href="#windbg常用命令" class="headerlink" title="windbg常用命令"></a>windbg常用命令</h2><p>g 运行</p>
