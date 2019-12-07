@@ -67,6 +67,93 @@
       <div id="main" class="wrapper">
         <div id="primary" class="site-content"><div id="content" role="main">
   
+    <article id="post-C++逆向随笔" class="post-C++逆向随笔 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2019/12/07/C++逆向随笔/">C++逆向随笔</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/12/07/C++逆向随笔/" data-id="ck3vpciim001vkg3kowokqob2" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h1 id="C-逆向随笔"><a href="#C-逆向随笔" class="headerlink" title="C++逆向随笔"></a>C++逆向随笔</h1><p>看到什么想到什么，就记录什么。</p>
+<h2 id="C-构造函数初始化对象"><a href="#C-构造函数初始化对象" class="headerlink" title="C++构造函数初始化对象"></a>C++构造函数初始化对象</h2><p>C++最具代表性的逆向点自然少不了类创建对象，类创建对象会自动调用其自身的构造函数，完成对象初始化，包括初始化赋值虚函数表，成员赋值等，用以下示例代码为例，示例代码摘自DirectX12龙书第四章Direct3D初始化。</p>
+<h3 id="分析的源代码"><a href="#分析的源代码" class="headerlink" title="分析的源代码"></a>分析的源代码</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//D3DApp 类</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">D3DApp</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line"></span><br><span class="line">    D3DApp(HINSTANCE hInstance);</span><br><span class="line">    D3DApp(<span class="keyword">const</span> D3DApp&amp; rhs) = <span class="keyword">delete</span>;</span><br><span class="line">    D3DApp&amp; <span class="keyword">operator</span>=(<span class="keyword">const</span> D3DApp&amp; rhs) = <span class="keyword">delete</span>;</span><br><span class="line">    <span class="keyword">virtual</span> ~D3DApp();</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> D3DApp* <span class="title">GetApp</span><span class="params">()</span></span>;</span><br><span class="line">    </span><br><span class="line">	<span class="function">HINSTANCE <span class="title">AppInst</span><span class="params">()</span><span class="keyword">const</span></span>;</span><br><span class="line">	<span class="function">HWND      <span class="title">MainWnd</span><span class="params">()</span><span class="keyword">const</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">float</span>     <span class="title">AspectRatio</span><span class="params">()</span><span class="keyword">const</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">Get4xMsaaState</span><span class="params">()</span><span class="keyword">const</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Set4xMsaaState</span><span class="params">(<span class="keyword">bool</span> value)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">Run</span><span class="params">()</span></span>;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">bool</span> <span class="title">Initialize</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> LRESULT <span class="title">MsgProc</span><span class="params">(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">CreateRtvAndDsvDescriptorHeaps</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">OnResize</span><span class="params">()</span></span>; </span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">Update</span><span class="params">(<span class="keyword">const</span> GameTimer&amp; gt)</span></span>=<span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">Draw</span><span class="params">(<span class="keyword">const</span> GameTimer&amp; gt)</span></span>=<span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Convenience overrides for handling mouse input.</span></span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">OnMouseDown</span><span class="params">(WPARAM btnState, <span class="keyword">int</span> x, <span class="keyword">int</span> y)</span></span>&#123; &#125;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">OnMouseUp</span><span class="params">(WPARAM btnState, <span class="keyword">int</span> x, <span class="keyword">int</span> y)</span>  </span>&#123; &#125;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">OnMouseMove</span><span class="params">(WPARAM btnState, <span class="keyword">int</span> x, <span class="keyword">int</span> y)</span></span>&#123; &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">bool</span> <span class="title">InitMainWindow</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">bool</span> <span class="title">InitDirect3D</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">CreateCommandObjects</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">CreateSwapChain</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">FlushCommandQueue</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="function">ID3D12Resource* <span class="title">CurrentBackBuffer</span><span class="params">()</span><span class="keyword">const</span></span>;</span><br><span class="line">	<span class="function">D3D12_CPU_DESCRIPTOR_HANDLE <span class="title">CurrentBackBufferView</span><span class="params">()</span><span class="keyword">const</span></span>;</span><br><span class="line">	<span class="function">D3D12_CPU_DESCRIPTOR_HANDLE <span class="title">DepthStencilView</span><span class="params">()</span><span class="keyword">const</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">CalculateFrameStats</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">LogAdapters</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">LogAdapterOutputs</span><span class="params">(IDXGIAdapter* adapter)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">LogOutputDisplayModes</span><span class="params">(IDXGIOutput* output, DXGI_FORMAT format)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> D3DApp* mApp;</span><br><span class="line"></span><br><span class="line">    HINSTANCE mhAppInst = <span class="literal">nullptr</span>; <span class="comment">// application instance handle</span></span><br><span class="line">    HWND      mhMainWnd = <span class="literal">nullptr</span>; <span class="comment">// main window handle</span></span><br><span class="line">	<span class="keyword">bool</span>      mAppPaused = <span class="literal">false</span>;  <span class="comment">// is the application paused?</span></span><br><span class="line">	<span class="keyword">bool</span>      mMinimized = <span class="literal">false</span>;  <span class="comment">// is the application minimized?</span></span><br><span class="line">	<span class="keyword">bool</span>      mMaximized = <span class="literal">false</span>;  <span class="comment">// is the application maximized?</span></span><br><span class="line">	<span class="keyword">bool</span>      mResizing = <span class="literal">false</span>;   <span class="comment">// are the resize bars being dragged?</span></span><br><span class="line">    <span class="keyword">bool</span>      mFullscreenState = <span class="literal">false</span>;<span class="comment">// fullscreen enabled</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// Set true to use 4X MSAA (?.1.8).  The default is false.</span></span><br><span class="line">    <span class="keyword">bool</span>      m4xMsaaState = <span class="literal">false</span>;    <span class="comment">// 4X MSAA enabled</span></span><br><span class="line">    UINT      m4xMsaaQuality = <span class="number">0</span>;      <span class="comment">// quality level of 4X MSAA</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// Used to keep track of the 揹elta-time?and game time (?.4).</span></span><br><span class="line">	GameTimer mTimer;</span><br><span class="line">	</span><br><span class="line">    Microsoft::WRL::ComPtr&lt;IDXGIFactory4&gt; mdxgiFactory;</span><br><span class="line">    Microsoft::WRL::ComPtr&lt;IDXGISwapChain&gt; mSwapChain;</span><br><span class="line">    Microsoft::WRL::ComPtr&lt;ID3D12Device&gt; md3dDevice;</span><br><span class="line"></span><br><span class="line">    Microsoft::WRL::ComPtr&lt;ID3D12Fence&gt; mFence;</span><br><span class="line">    UINT64 mCurrentFence = <span class="number">0</span>;</span><br><span class="line">	</span><br><span class="line">    Microsoft::WRL::ComPtr&lt;ID3D12CommandQueue&gt; mCommandQueue;</span><br><span class="line">    Microsoft::WRL::ComPtr&lt;ID3D12CommandAllocator&gt; mDirectCmdListAlloc;</span><br><span class="line">    Microsoft::WRL::ComPtr&lt;ID3D12GraphicsCommandList&gt; mCommandList;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">int</span> SwapChainBufferCount = <span class="number">2</span>;</span><br><span class="line">	<span class="keyword">int</span> mCurrBackBuffer = <span class="number">0</span>;</span><br><span class="line">    Microsoft::WRL::ComPtr&lt;ID3D12Resource&gt; mSwapChainBuffer[SwapChainBufferCount];</span><br><span class="line">    Microsoft::WRL::ComPtr&lt;ID3D12Resource&gt; mDepthStencilBuffer;</span><br><span class="line"></span><br><span class="line">    Microsoft::WRL::ComPtr&lt;ID3D12DescriptorHeap&gt; mRtvHeap;</span><br><span class="line">    Microsoft::WRL::ComPtr&lt;ID3D12DescriptorHeap&gt; mDsvHeap;</span><br><span class="line"></span><br><span class="line">    D3D12_VIEWPORT mScreenViewport; </span><br><span class="line">    D3D12_RECT mScissorRect;</span><br><span class="line"></span><br><span class="line">	UINT mRtvDescriptorSize = <span class="number">0</span>;</span><br><span class="line">	UINT mDsvDescriptorSize = <span class="number">0</span>;</span><br><span class="line">	UINT mCbvSrvUavDescriptorSize = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Derived class should set these in derived constructor to customize starting values.</span></span><br><span class="line">	<span class="built_in">std</span>::wstring mMainWndCaption = <span class="string">L"d3d App"</span>;</span><br><span class="line">	D3D_DRIVER_TYPE md3dDriverType = D3D_DRIVER_TYPE_HARDWARE;</span><br><span class="line">    DXGI_FORMAT mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;</span><br><span class="line">    DXGI_FORMAT mDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;</span><br><span class="line">	<span class="keyword">int</span> mClientWidth = <span class="number">800</span>;</span><br><span class="line">	<span class="keyword">int</span> mClientHeight = <span class="number">600</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//InitDirect3DApp类 继承自D3DApp类</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">InitDirect3DApp</span> :</span> <span class="keyword">public</span> D3DApp</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	InitDirect3DApp(HINSTANCE hInstance);</span><br><span class="line">	~InitDirect3DApp();</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">bool</span> <span class="title">Initialize</span><span class="params">()</span>override</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">OnResize</span><span class="params">()</span>override</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">Update</span><span class="params">(<span class="keyword">const</span> GameTimer&amp; gt)</span>override</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">Draw</span><span class="params">(<span class="keyword">const</span> GameTimer&amp; gt)</span>override</span>;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>InitDirect3DApp类创建theApp对象源代码</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> WINAPI <span class="title">WinMain</span><span class="params">(HINSTANCE hInstance, HINSTANCE prevInstance,</span></span></span><br><span class="line"><span class="function"><span class="params">				   PSTR cmdLine, <span class="keyword">int</span> showCmd)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">// Enable run-time memory check for debug builds.</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined(DEBUG) | defined(_DEBUG)</span></span><br><span class="line">	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function">InitDirect3DApp <span class="title">theApp</span><span class="params">(hInstance)</span></span>;</span><br><span class="line">        <span class="keyword">if</span>(!theApp.Initialize())</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> theApp.Run();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span>(DxException&amp; e)</span><br><span class="line">    &#123;</span><br><span class="line">        MessageBox(<span class="literal">nullptr</span>, e.ToString().c_str(), <span class="string">L"HR Failed"</span>, MB_OK);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="分析的伪代码"><a href="#分析的伪代码" class="headerlink" title="分析的伪代码"></a>分析的伪代码</h3><p>InitDirect3DApp类创建theApp对象伪代码片段</p>
+<p><img src="https://invicsfate.github.io/assert/DX12Init_1.png" alt="DX12Init_1"></p>
+<p>InitDirect3DObject中是InitDirect3DApp类的构造函数，在其内部调用了其父类D3DApp的构造函数：</p>
+<p><img src="https://invicsfate.github.io/assert/DX12Init_2.png" alt="DX12Init_2"></p>
+<p>D3DAppObject即为D3DApp的构造函数，*v6=0ff_14004CD58是将子类InitDirect3DApp的虚函数表地址覆盖掉了D3DApp父类的虚函数表。</p>
+<p><img src="https://invicsfate.github.io/assert/DX12Init_3.png" alt="DX12Init_3"></p>
+<p>如上图，在D3DApp类的构造函数中<em>(QWORD </em>)v8 = off_140048148，赋予的是父类D3DApp的虚函数表地址。</p>
+<p>父类D3DApp的虚函数表虚函数布局源代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">	......</span><br><span class="line">	<span class="keyword">virtual</span> ~D3DApp();</span><br><span class="line">	......</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	......</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">bool</span> <span class="title">Initialize</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> LRESULT <span class="title">MsgProc</span><span class="params">(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">CreateRtvAndDsvDescriptorHeaps</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">OnResize</span><span class="params">()</span></span>; </span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">Update</span><span class="params">(<span class="keyword">const</span> GameTimer&amp; gt)</span></span>=<span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">Draw</span><span class="params">(<span class="keyword">const</span> GameTimer&amp; gt)</span></span>=<span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Convenience overrides for handling mouse input.</span></span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">OnMouseDown</span><span class="params">(WPARAM btnState, <span class="keyword">int</span> x, <span class="keyword">int</span> y)</span></span>&#123; &#125;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">OnMouseUp</span><span class="params">(WPARAM btnState, <span class="keyword">int</span> x, <span class="keyword">int</span> y)</span>  </span>&#123; &#125;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">OnMouseMove</span><span class="params">(WPARAM btnState, <span class="keyword">int</span> x, <span class="keyword">int</span> y)</span></span>&#123; &#125;</span><br></pre></td></tr></table></figure>
+<p>父类D3DApp的虚函数表虚函数布局伪代码：</p>
+<p><img src="https://invicsfate.github.io/assert/DX12Init_4.png" alt="DX12Init_4"></p>
+<p>上图已经处理过命名，和源代码进行比对，布局和源代码完全一致。</p>
+<p>子类InitDirect3DApp的虚函数表虚函数布局源代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	InitDirect3DApp(HINSTANCE hInstance);</span><br><span class="line">	~InitDirect3DApp();</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">bool</span> <span class="title">Initialize</span><span class="params">()</span>override</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">OnResize</span><span class="params">()</span>override</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">Update</span><span class="params">(<span class="keyword">const</span> GameTimer&amp; gt)</span>override</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">Draw</span><span class="params">(<span class="keyword">const</span> GameTimer&amp; gt)</span>override</span>;</span><br></pre></td></tr></table></figure>
+<p>子类InitDirect3DApp的虚函数表虚函数布局伪代码：</p>
+<p><img src="https://invicsfate.github.io/assert/DX12Init_5.png" alt="DX12Init_5"></p>
+<p>子类中~InitDirect3DApp析构函数和父类~D3DApp析构函数不一致，函数地址不同。</p>
+<p>子类中Initialize，OnResize，Update，Draw四个函数后有override标志，确保该函数为虚函数并覆写来自基类的虚函数，函数地址不同。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">bool</span> InitDirect3DApp::Initialize()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(!D3DApp::Initialize())</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">		</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">bool</span> D3DApp::Initialize()</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span>(!InitMainWindow())</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(!InitDirect3D())</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Do the initial resize code.</span></span><br><span class="line">    OnResize();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>子类中InitDirect3DApp::Initialize()函数与D3DApp:Initialize()函数不同。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> InitDirect3DApp::OnResize()</span><br><span class="line">&#123;</span><br><span class="line">	D3DApp::OnResize();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>OnResize函数，子类调用了父类的OnResize函数。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> InitDirect3DApp::Update(<span class="keyword">const</span> GameTimer&amp; gt)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Update函数，子类中有定义，父类中无定义，仅有声明。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> InitDirect3DApp::Draw(<span class="keyword">const</span> GameTimer&amp; gt)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// Reuse the memory associated with command recording.</span></span><br><span class="line">    <span class="comment">// We can only reset when the associated command lists have finished execution on the GPU.</span></span><br><span class="line">	ThrowIfFailed(mDirectCmdListAlloc-&gt;Reset());</span><br><span class="line"></span><br><span class="line">	<span class="comment">// A command list can be reset after it has been added to the command queue via ExecuteCommandList.</span></span><br><span class="line">    <span class="comment">// Reusing the command list reuses memory.</span></span><br><span class="line">    ThrowIfFailed(mCommandList-&gt;Reset(mDirectCmdListAlloc.Get(), <span class="literal">nullptr</span>));</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Indicate a state transition on the resource usage.</span></span><br><span class="line">	mCommandList-&gt;ResourceBarrier(<span class="number">1</span>, &amp;CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),</span><br><span class="line">		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Set the viewport and scissor rect.  This needs to be reset whenever the command list is reset.</span></span><br><span class="line">    mCommandList-&gt;RSSetViewports(<span class="number">1</span>, &amp;mScreenViewport);</span><br><span class="line">    mCommandList-&gt;RSSetScissorRects(<span class="number">1</span>, &amp;mScissorRect);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Clear the back buffer and depth buffer.</span></span><br><span class="line">	mCommandList-&gt;ClearRenderTargetView(CurrentBackBufferView(), Colors::LightSteelBlue, <span class="number">0</span>, <span class="literal">nullptr</span>);</span><br><span class="line">	mCommandList-&gt;ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, <span class="number">1.0f</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="literal">nullptr</span>);</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// Specify the buffers we are going to render to.</span></span><br><span class="line">	mCommandList-&gt;OMSetRenderTargets(<span class="number">1</span>, &amp;CurrentBackBufferView(), <span class="literal">true</span>, &amp;DepthStencilView());</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// Indicate a state transition on the resource usage.</span></span><br><span class="line">	mCommandList-&gt;ResourceBarrier(<span class="number">1</span>, &amp;CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),</span><br><span class="line">		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Done recording commands.</span></span><br><span class="line">	ThrowIfFailed(mCommandList-&gt;Close());</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// Add the command list to the queue for execution.</span></span><br><span class="line">	ID3D12CommandList* cmdsLists[] = &#123; mCommandList.Get() &#125;;</span><br><span class="line">	mCommandQueue-&gt;ExecuteCommandLists(_countof(cmdsLists), cmdsLists);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// swap the back and front buffers</span></span><br><span class="line">	ThrowIfFailed(mSwapChain-&gt;Present(<span class="number">0</span>, <span class="number">0</span>));</span><br><span class="line">	mCurrBackBuffer = (mCurrBackBuffer + <span class="number">1</span>) % SwapChainBufferCount;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Wait until frame commands are complete.  This waiting is inefficient and is</span></span><br><span class="line">	<span class="comment">// done for simplicity.  Later we will show how to organize our rendering code</span></span><br><span class="line">	<span class="comment">// so we do not have to wait per frame.</span></span><br><span class="line">	FlushCommandQueue();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Draw函数，子类中有定义，父类中无定义。</p>
+<p>MsgProc，CreateDesHeaps，OnMouseDown，OnMouseUp，OnMouseMove五个函数，子类没有重定义，函数地址相同。</p>
+<p>————————————————————————-分界线————————————————————————-</p>
+<p>上面是说虚函数，下面是紧接着对应的对象成员布局，伪代码成员布局与源代码布局一致(一开始贴了)，成员和成员之间遵循内存对齐的原则，下图直观(看不清的话，f12打开console，查看原图)：</p>
+<p><img src="https://invicsfate.github.io/assert/DX12Init_6.png" alt="DX12Init_6"></p>
+<p>以上就是编译好的程序中对象的内存布局，所有的公有函数，保护函数，私有函数都是直接调用的形式，不占用对象的内存空间。</p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2019/12/07/C++逆向随笔/">
+    <time datetime="2019-12-07T14:54:40.000Z" class="entry-date">
+        2019-12-07
+    </time>
+</a>
+    
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/others/">others</a>
+  </div>
+
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reverse/">reverse</a></li></ul>
+
+    </footer>
+</article>
+
+
+
+
+
+
+  
     <article id="post-某游戏cg素材解包" class="post-某游戏cg素材解包 post type-post status-publish format-standard hentry">
     <!---->
 
@@ -82,7 +169,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/08/24/某游戏cg素材解包/" data-id="ck3frub0e001n4n3koj9yfnm6" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/08/24/某游戏cg素材解包/" data-id="ck3vpcijp002nkg3kigqwcpux" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -152,7 +239,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/05/31/打包小工具/" data-id="ck3frub1e002n4n3kk464fm31" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/05/31/打包小工具/" data-id="ck3vpcij7002ikg3krsyq3v8k" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -205,7 +292,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/绕过某摄像头校验机制软刷固件/" data-id="ck3frub0g001q4n3k1uwwpqx4" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/绕过某摄像头校验机制软刷固件/" data-id="ck3vpcii9001gkg3kvwefn5za" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -280,7 +367,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-unlink/" data-id="ck3frub05000u4n3k9bbawp0g" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-unlink/" data-id="ck3vpcijq002okg3k2bm15ekq" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -347,7 +434,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-house-of-spirit/" data-id="ck3frub04000s4n3khvstn7gp" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-house-of-spirit/" data-id="ck3vpcii1000skg3kqn8od2jv" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -405,7 +492,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-extend/" data-id="ck3frub02000n4n3kw8uf5h4l" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-extend/" data-id="ck3vpciir0024kg3kvk8tqccf" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -458,7 +545,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/23/CS1-6-透视分析/" data-id="ck3fruayz00004n3kz4k2g40x" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/23/CS1-6-透视分析/" data-id="ck3vpcigy0000kg3k72vuueyo" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -522,7 +609,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/12/Cheat-Engine/" data-id="ck3frub1f002p4n3kakvhumbv" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/12/Cheat-Engine/" data-id="ck3vpcih30001kg3kmlbm2s3b" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -593,7 +680,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/16/QCTF-xman/" data-id="ck3fruazr000b4n3kv42gplvm" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/16/QCTF-xman/" data-id="ck3vpcihr000bkg3ktj3h373x" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -646,67 +733,6 @@
 
 
   
-    <article id="post-WCTF2018" class="post-WCTF2018 post type-post status-publish format-standard hentry">
-    <!---->
-
-      <header class="entry-header">
-        
-        
-  
-    <h1 class="entry-title">
-      <a class="article-title" href="/2018/07/11/WCTF2018/">WCTF2018</a>
-    </h1>
-  
-
-        
-        <div class="comments-link">
-            
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/11/WCTF2018/" data-id="ck3fruazt000e4n3k0j9l2k3o" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
-
-    <div class="entry-content">
-      
-        <p>第一次近距离感受到了巨佬们的气场，产生了对大师赛巨佬们的敬佩之情，体会到了菜鸡和鹏鸟之间的差距，除了膜，似乎已经没有其他能描述我对巨佬们的敬佩。WCTF的赛题质量之高，设计思路巧妙，可以说每一道题目都能get到实实在在的东西，相当的有意思。本场比赛仅做出truth一题，简单记录一下学习笔记。</p>
-<h2 id="truth"><a href="#truth" class="headerlink" title="truth"></a>truth</h2><p>.net的程序逆向，静态分析三次矩阵求逆即可得到flag，然而Is it real flag?真的会这么简单么？</p>
-<p>正确的思路：</p>
-<ol>
-<li>resources中修改了func2中的代码，但是诸如dnspy之类调试工具无法调试代码。</li>
-<li>windbg调试.net程序，见微软官方的如何使用windbg调试托管代码 <a href="https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/debugging-managed-code" target="_blank" rel="noopener">Debugging Managed Code</a></li>
-<li>成功载入SOS debugging extension和mscordacwks.dll，去调试托管代码，!bmpd下断点，使用方法见!sos.help。</li>
-</ol>
-<p>以下操作均在windbg已经能够正确载入符号的前提下进行。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sxe ld:clr </span><br><span class="line">g</span><br><span class="line">.reload /f</span><br><span class="line">.cordll -ve -u -l</span><br><span class="line">!lmv -mclr</span><br><span class="line">!sos.help</span><br><span class="line">!bpmd WCTF2018Rev_Release.exe WCTF2018Rev.Properties.Resources..cctor <span class="comment">#执行时需要先让程序跑起来，g一下</span></span><br></pre></td></tr></table></figure>
-<p>成功下断点运行以后，都是以前windbg调试的方法了，撸汇编就行了，程序进行了两次代码的自解密，然后写逆算法，求到flag。</p>
-
-      
-    </div><!-- .entry-content -->
-
-    <footer class="entry-meta">
-    <a href="/2018/07/11/WCTF2018/">
-    <time datetime="2018-07-11T07:20:34.000Z" class="entry-date">
-        2018-07-11
-    </time>
-</a>
-    
-  <span class="article-delim">&#8226;</span>
-  <div class="article-category">
-  <a class="article-category-link" href="/categories/CTF/">CTF</a>
-  </div>
-
-    
-  <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reverse/">reverse</a></li></ul>
-
-    </footer>
-</article>
-
-
-
-
-
-
-  
   
     <nav id="pagination">
       <nav id="page-nav">
@@ -731,7 +757,7 @@
   <aside class="widget">
     <h3 class="widget-title">Categories</h3>
     <div class="widget-content">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GameSecurity/">GameSecurity</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/IOT/">IOT</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/others/">others</a><span class="category-list-count">8</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GameSecurity/">GameSecurity</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/IOT/">IOT</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/others/">others</a><span class="category-list-count">9</span></li></ul>
     </div>
   </aside>
 
@@ -741,6 +767,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget-content">
       <ul>
+        
+          <li>
+            <a href="/2019/12/07/C++逆向随笔/">C++逆向随笔</a>
+          </li>
         
           <li>
             <a href="/2019/08/24/某游戏cg素材解包/">某游戏cg素材解包</a>
@@ -758,10 +788,6 @@
             <a href="/2018/10/09/pwn-unlink/">pwn-unlink</a>
           </li>
         
-          <li>
-            <a href="/2018/10/09/pwn-house-of-spirit/">pwn-house of spirit</a>
-          </li>
-        
       </ul>
     </div>
   </aside>
@@ -771,7 +797,7 @@
   <aside class="widget">
     <h3 class="widget-title">Tags</h3>
     <div class="widget-content">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/PE/">PE</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firmware/">firmware</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reverse/">reverse</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/PE/">PE</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firmware/">firmware</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reverse/">reverse</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </aside>
 
