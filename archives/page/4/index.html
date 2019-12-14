@@ -13,19 +13,18 @@
   
   
   
-  <title>Play Rtsp Stream-opencv2 | Invicsfate</title>
+  <title>Archives | Invicsfate</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="windows平台利用开源python库opencv2实现播放rtsp视频流opencv2库安装在提供32 and 64-bit的python库下载opencv2需要的库，可以在opencv的官方文档里找到需要哪些库。分别是numpy，matplotlib，opencv。根据不同的python版本，windows版本下载相应的package,pip install即可。 Play Stream12">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Play Rtsp Stream-opencv2">
-<meta property="og:url" content="http://Invicsfate.github.io/2018/03/20/Play-Rtsp-Stream-opencv2/index.html">
+  <meta name="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Invicsfate">
+<meta property="og:url" content="http://Invicsfate.github.io/archives/page/4/index.html">
 <meta property="og:site_name" content="Invicsfate">
-<meta property="og:description" content="windows平台利用开源python库opencv2实现播放rtsp视频流opencv2库安装在提供32 and 64-bit的python库下载opencv2需要的库，可以在opencv的官方文档里找到需要哪些库。分别是numpy，matplotlib，opencv。根据不同的python版本，windows版本下载相应的package,pip install即可。 Play Stream12">
+<meta property="og:description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-10-09T14:55:04.574Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Play Rtsp Stream-opencv2">
-<meta name="twitter:description" content="windows平台利用开源python库opencv2实现播放rtsp视频流opencv2库安装在提供32 and 64-bit的python库下载opencv2需要的库，可以在opencv的官方文档里找到需要哪些库。分别是numpy，matplotlib，opencv。根据不同的python版本，windows版本下载相应的package,pip install即可。 Play Stream12">
+<meta name="twitter:title" content="Invicsfate">
+<meta name="twitter:description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
   
   
     <link rel="icon" href="/css/images/favicon.ico">
@@ -66,66 +65,48 @@
     </nav>
 </header>
       <div id="main" class="wrapper">
-        <div id="primary" class="site-content"><div id="content" role="main"><article id="post-Play-Rtsp-Stream-opencv2" class="post-Play-Rtsp-Stream-opencv2 post type-post status-publish format-standard hentry">
-    <!---->
-
-      <header class="entry-header">
-        
-        
+        <div id="primary" class="site-content"><div id="content" role="main">
   
-    <h1 class="entry-title article-title">
-      Play Rtsp Stream-opencv2
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2017" class="archive-year">2017</a>
+        </div>
+        <div class="archives">
+    
+    <article class="post type-post status-publish format-standard hentry archive-type-post">
+  <header class="entry-header">
+      
+  
+    <h1 class="entry-title">
+      <a class="archive-article-title" href="/2017/08/18/Git-Learning/">Git-Learing</a>
     </h1>
   
 
-        
-        <div class="comments-link">
-            
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/03/20/Play-Rtsp-Stream-opencv2/" data-id="ck45e40bp000bkk3kwndbnrad" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
-
-    <div class="entry-content">
-      
-        <h1 id="windows平台利用开源python库opencv2实现播放rtsp视频流"><a href="#windows平台利用开源python库opencv2实现播放rtsp视频流" class="headerlink" title="windows平台利用开源python库opencv2实现播放rtsp视频流"></a>windows平台利用开源python库opencv2实现播放rtsp视频流</h1><h2 id="opencv2库安装"><a href="#opencv2库安装" class="headerlink" title="opencv2库安装"></a>opencv2库安装</h2><p>在<a href="https://www.lfd.uci.edu/~gohlke/pythonlibs/" target="_blank" rel="noopener">提供32 and 64-bit的python库</a><br>下载opencv2需要的库，可以在opencv的官方文档里找到需要哪些库。分别是numpy，<br>matplotlib，opencv。根据不同的python版本，windows版本下载相应的package,pip install即可。</p>
-<h2 id="Play-Stream"><a href="#Play-Stream" class="headerlink" title="Play Stream"></a>Play Stream</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment">#-*- coding:utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"></span><br><span class="line">cap = cv2.VideoCapture(<span class="string">"[Your Rtsp url]"</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> cap.isOpened()</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span>(cap.isOpened()):</span><br><span class="line">	ret,frame = cap.read()</span><br><span class="line">	cv2.imshow(<span class="string">'frame'</span>,frame)</span><br><span class="line">	<span class="keyword">if</span> cv2.waitKey(<span class="number">1</span>) == ord(<span class="string">'q'</span>):</span><br><span class="line">		 <span class="keyword">break</span></span><br><span class="line">cap.release()</span><br><span class="line">cv2.destroyAllWindows()</span><br></pre></td></tr></table></figure>
-
-      
-    </div><!-- .entry-content -->
-
-    <footer class="entry-meta">
-    <a href="/2018/03/20/Play-Rtsp-Stream-opencv2/">
-    <time datetime="2018-03-20T11:57:34.000Z" class="entry-date">
-        2018-03-20
+  </header>
+  <footer class="entry-meta">
+    <a href="/2017/08/18/Git-Learning/">
+    <time datetime="2017-08-18T02:01:31.000Z" class="entry-date">
+        2017-08-18
     </time>
 </a>
     
   <span class="article-delim">&#8226;</span>
   <div class="article-category">
-  <a class="article-category-link" href="/categories/IOT/">IOT</a>
+  <a class="article-category-link" href="/categories/others/">others</a>
   </div>
 
     
     </footer>
 </article>
-
-
-    
-<nav class="nav-single">
-    <h3 class="assistive-text">文章导航</h3>
-    
-        <span class="nav-previous"><a href="/2018/04/13/HITBCTF2018-reverse-hex/" rel="prev"><span class="meta-nav">←</span> HITBCTF2018-reverse-hex</a></span>
-    
-    
-        <span class="nav-next"><a href="/2018/01/16/Mi-4C动态调试so库/" rel="next">Mi-4C动态调试so库 <span class="meta-nav">→</span></a></span>
-    
-</nav><!-- .nav-single -->
-
-
-
-
-
-
+  
+  
+    </div></section>
+  
 
 </div></div>
         <div id="secondary" class="widget-area" role="complementary">

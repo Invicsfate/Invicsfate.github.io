@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <meta name="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修" />
+  
+
+  
+  
+  
+  
+  
+  
+  <title>“绝对安全”的本地序列号验证方法 | Invicsfate</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="一种“绝对安全”的序列号验证方法声明： ​    所谓的“绝对安全”:只是在自己目前的知识范围内认为其“绝对安全”(其实也不是QAQ)，天下逆向破解大神何其之多，这种验证方法也只是分享出来，供大家学习交流。 从逆向系统序列号学到的一种“绝对安全”的本地序列号验证方法，不需要联网验证只需要本地，即可实现攻击者“无法破解”，使得序列号只能由开发者提供。下面介绍一下这种序列号验证的代码思想，有以下四个步">
+<meta name="keywords" content="reverse">
+<meta property="og:type" content="article">
+<meta property="og:title" content="“绝对安全”的本地序列号验证方法">
+<meta property="og:url" content="http://Invicsfate.github.io/2019/12/14/“绝对安全”的本地序列号验证方法/index.html">
+<meta property="og:site_name" content="Invicsfate">
+<meta property="og:description" content="一种“绝对安全”的序列号验证方法声明： ​    所谓的“绝对安全”:只是在自己目前的知识范围内认为其“绝对安全”(其实也不是QAQ)，天下逆向破解大神何其之多，这种验证方法也只是分享出来，供大家学习交流。 从逆向系统序列号学到的一种“绝对安全”的本地序列号验证方法，不需要联网验证只需要本地，即可实现攻击者“无法破解”，使得序列号只能由开发者提供。下面介绍一下这种序列号验证的代码思想，有以下四个步">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-12-14T09:44:16.115Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="“绝对安全”的本地序列号验证方法">
+<meta name="twitter:description" content="一种“绝对安全”的序列号验证方法声明： ​    所谓的“绝对安全”:只是在自己目前的知识范围内认为其“绝对安全”(其实也不是QAQ)，天下逆向破解大神何其之多，这种验证方法也只是分享出来，供大家学习交流。 从逆向系统序列号学到的一种“绝对安全”的本地序列号验证方法，不需要联网验证只需要本地，即可实现攻击者“无法破解”，使得序列号只能由开发者提供。下面介绍一下这种序列号验证的代码思想，有以下四个步">
+  
+  
+    <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+  
+  <!-- baidu webmaster push -->
+  <script src='//push.zhanzhang.baidu.com/push.js'></script>
+</head>
+<body class="home blog custom-background custom-font-enabled single-author">
+  <div id="page" class="hfeed site">
+      <header id="masthead" class="site-header" role="banner">
+    <hgroup>
+      <h1 class="site-title">
+        <a href="/" title="Invicsfate" rel="home">Invicsfate</a>
+      </h1>
+      
+        <h2 class="site-description">
+          <a href="/" id="subtitle">一个热爱游戏，想做好开发的逆向安全人员</a>
+        </h2>
+      
+    </hgroup>
+
+    <nav id="site-navigation" class="main-navigation" role="navigation">
+            <button class="menu-toggle">菜单</button>
+            <a class="assistive-text" href="/#content" title="跳至内容">跳至内容</a><!--TODO-->
+            <div class="menu-main-container">
+                <ul id="menu-main" class="nav-menu">
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/">Home</a></li>
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/archives">Archives</a></li>
+                
+                </ul>
+            </div>
+    </nav>
+</header>
+      <div id="main" class="wrapper">
+        <div id="primary" class="site-content"><div id="content" role="main"><article id="post-“绝对安全”的本地序列号验证方法" class="post-“绝对安全”的本地序列号验证方法 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title article-title">
+      “绝对安全”的本地序列号验证方法
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/12/14/“绝对安全”的本地序列号验证方法/" data-id="ck45e40ca001fkk3k1izzaou1" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h2 id="一种“绝对安全”的序列号验证方法"><a href="#一种“绝对安全”的序列号验证方法" class="headerlink" title="一种“绝对安全”的序列号验证方法"></a>一种“绝对安全”的序列号验证方法</h2><p>声明：</p>
+<p>​    所谓的“绝对安全”:只是在自己目前的知识范围内认为其“绝对安全”(其实也不是QAQ)，天下逆向破解大神何其之多，这种验证方法也只是分享出来，供大家学习交流。</p>
+<p>从逆向系统序列号学到的一种“绝对安全”的本地序列号验证方法，不需要联网验证只需要本地，即可实现攻击者“无法破解”，使得序列号只能由开发者提供。下面介绍一下这种序列号验证的代码思想，有以下四个步骤(顺序不固定)：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>使用单向hash算法作为验证的核心，比如sha512：</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(sha512(checkBytes) == 硬编码的哈希值):</span><br><span class="line">	subKey = checkBytes</span><br><span class="line"></span><br><span class="line">其中checkBytes应为大于等于<span class="number">8</span>字节的字节串，每个字节取值范围<span class="number">0</span><span class="number">-255</span>，一般由其他算法得到。</span><br><span class="line"></span><br><span class="line"><span class="number">2.</span>获取一些固定信息(如本计算机MAC地址)或者其他用户的输入(比如UserName),使用算法变换得到一组数据tmpData。</span><br><span class="line">举例：</span><br><span class="line">取sha512(The MAC Address of Computer)结果的<span class="number">16</span>/<span class="number">32</span>/etc字节作为流密码的密钥，流密码的输入可以固定，得到一组输出streamCipher</span><br><span class="line"></span><br><span class="line"><span class="number">3.</span>输入序列号变换算法随意，假定变换后得到的输出为serialNumber,checkBytes的来源如下：</span><br><span class="line"></span><br><span class="line">checkBytes = serialNumber ^ streamCipher</span><br><span class="line"></span><br><span class="line">将serialNumber和streamCipher进行变换得到checkBytes，例子中使用一个简单的异或算法，也没有任何问题。</span><br><span class="line"></span><br><span class="line"><span class="number">4.</span>经过上面三个步骤的，攻击者可能可以强制跳转绕过哈希算法的校验，下面最最最关键的核心部分来了，在哈希校验通过以后，checkBytes赋值给了subKey，在程序的某处运用subKey进行如下操作：</span><br><span class="line"></span><br><span class="line">decryptFinalKey = sha512(subKey + <span class="string">"00 00 00 01"</span>)</span><br><span class="line"></span><br><span class="line">decryptFinalKey可以根据自己的喜好，取decryptFinalKey中的<span class="number">16</span>/<span class="number">32</span>/<span class="number">48</span>/<span class="number">64</span>字节，解密校验的<span class="string">"最终的数据"</span>，<span class="string">"最终的数据"</span>可以是安装系统中最后加载的文件系统，也可以是软件序列号最终的校验代码，也可以是软件进行安装的安装代码等等。试想一下，如果攻击者强制通过哈希算法校验，那么其在这一步必然无法正确解密<span class="string">"最终的数据"</span>，前面逆向分析的成果都将无用，化作泡影。</span><br></pre></td></tr></table></figure>
+<p>以上四个步骤按照开发顺序一般是先2，3(3，2)，后1，4。每个步骤使用的算法自定，只要校验的核心思想没有产生变化，大概都是”无法破解”的吧，且确实符合一个UserName对应一个序列号这种序列号验证的基本思想。</p>
+<p>但是存在的问题还是有的，即如果攻击者买了一个序列号，那么不管序列号经过如何复杂的混淆，变换，加解密，解编码得到serialNumber，攻击者都可以通过调试得到serialNumber，而streamCipher的变换输入来源攻击者也是知道的(比如UserName)，那么攻击者即可通过调试获得checkBytes的正确值，程序自然也就破解了。</p>
+<p>解决办法：</p>
+<p>1.不断加强校验步骤中的混淆算法，逆向过程会让人十分头疼，将劝退一部分逆向人员。</p>
+<p>2.不断加强保护技术，包括但不限于虚拟机技术，反调试技术，混淆代码技术，新的壳算法等待，或者这些方法的混合使用，将劝退大部分逆向人员。</p>
+<p>但就算是这样，每年最新的游戏不还是照样被国外大神们破解了么(吐槽)。。。攻防之间，攻击者与防御者相互促进相互学习，可能这就是安全的独特魅力吧！</p>
+<p>​</p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2019/12/14/“绝对安全”的本地序列号验证方法/">
+    <time datetime="2019-12-14T09:37:38.000Z" class="entry-date">
+        2019-12-14
+    </time>
+</a>
+    
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/others/">others</a>
+  </div>
+
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reverse/">reverse</a></li></ul>
+
+    </footer>
+</article>
+
+
+    
+<nav class="nav-single">
+    <h3 class="assistive-text">文章导航</h3>
+    
+    
+        <span class="nav-next"><a href="/2019/12/07/C++逆向随笔/" rel="next">C++逆向随笔 <span class="meta-nav">→</span></a></span>
+    
+</nav><!-- .nav-single -->
+
+
+
+
+
+
+
+</div></div>
+        <div id="secondary" class="widget-area" role="complementary">
+  
+    <aside id="search" class="widget widget_search"><form role="search" method="get" accept-charset="utf-8" id="searchform" class="searchform" action="//google.com/search">
+    <div>
+        <input type="text" value="" name="s" id="s" />
+        <input type="submit" id="searchsubmit" value="搜索" />
+    </div>
+</form></aside>
+  
+    
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-content">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GameSecurity/">GameSecurity</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/IOT/">IOT</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/others/">others</a><span class="category-list-count">10</span></li></ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget-content">
+      <ul>
+        
+          <li>
+            <a href="/2019/12/14/“绝对安全”的本地序列号验证方法/">“绝对安全”的本地序列号验证方法</a>
+          </li>
+        
+          <li>
+            <a href="/2019/12/07/C++逆向随笔/">C++逆向随笔</a>
+          </li>
+        
+          <li>
+            <a href="/2019/08/24/某游戏cg素材解包/">某游戏cg素材解包</a>
+          </li>
+        
+          <li>
+            <a href="/2019/05/31/打包小工具/">打包解包小工具</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/09/绕过某摄像头校验机制软刷固件/">绕过某摄像头校验机制软刷固件</a>
+          </li>
+        
+      </ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-content">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/PE/">PE</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firmware/">firmware</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reverse/">reverse</a><span class="tag-list-count">17</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-content tagcloud">
+      <a href="/tags/PE/" style="font-size: 13.33px;">PE</a> <a href="/tags/firmware/" style="font-size: 13.33px;">firmware</a> <a href="/tags/pwn/" style="font-size: 16.67px;">pwn</a> <a href="/tags/reverse/" style="font-size: 20px;">reverse</a> <a href="/tags/web/" style="font-size: 10px;">web</a>
+    </div>
+  </aside>
+
+  
+</div>
+      </div>
+      <footer id="colophon" role="contentinfo">
+    <p>&copy; 2019 Invicsfate
+    All rights reserved.</p>
+    <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></p>
+</footer>
+    <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+<script src="/js/navigation.js"></script>
+
+<div id="bg"></div>
+
+  </div>
+</body>
+</html>
