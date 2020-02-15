@@ -67,6 +67,82 @@
       <div id="main" class="wrapper">
         <div id="primary" class="site-content"><div id="content" role="main">
   
+    <article id="post-nginx-https-CGI-post数据" class="post-nginx-https-CGI-post数据 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2020/02/15/nginx-https-CGI-post数据/">nginx-https-CGI-post数据</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2020/02/15/nginx-https-CGI-post数据/" data-id="ck6nf6645000ldk3klehyu20q" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h2 id="nginx-https-CGI-post数据"><a href="#nginx-https-CGI-post数据" class="headerlink" title="nginx-https-CGI-post数据"></a>nginx-https-CGI-post数据</h2><p>一个C语言编写的CGI脚本测试demo。</p>
+<h3 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h3><h4 id="中间件-nginx"><a href="#中间件-nginx" class="headerlink" title="中间件-nginx"></a>中间件-nginx</h4><p>从<a href="http://nginx.org/download/" target="_blank" rel="noopener">nginx-download</a>下载最新版本的nginx。安装openssl，也可以使用源代码进行安装，示例安装即为使用openssl源代码，–add-module添加其他模块，如–add-module=path/to/nginx_upload_module。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./configure --prefix=/usr/<span class="built_in">local</span>/nginx --with-http_stub_status_module --with-http_ssl_module --with-openssl=path/to/openssl <span class="comment">#https配置</span></span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<p>访问本地80端口能看到nginx的欢迎界面。</p>
+<h4 id="本地https搭建"><a href="#本地https搭建" class="headerlink" title="本地https搭建"></a>本地https搭建</h4><p>使用openssl生成共私钥，CA证书，客户端服务器证书。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成服务端私钥</span></span><br><span class="line">openssl genrsa -out server.key 2048</span><br><span class="line"><span class="comment"># 生成服务端公钥</span></span><br><span class="line">openssl rsa -<span class="keyword">in</span> server.key -pubout -out server.pem</span><br><span class="line"><span class="comment"># 生成客户端私钥</span></span><br><span class="line">openssl genrsa -out client.key 2048</span><br><span class="line"><span class="comment"># 生成客户端公钥</span></span><br><span class="line">openssl rsa -<span class="keyword">in</span> client.key -pubout -out client.pem</span><br><span class="line"><span class="comment"># 生成CA证书</span></span><br><span class="line">openssl genrsa -out ca.key 2048</span><br><span class="line">openssl req -new -key ca.key -out ca.csr</span><br><span class="line">openssl x509 -req -<span class="keyword">in</span> ca.csr -signkey ca.key -out  ca.crt</span><br><span class="line"><span class="comment"># 生成客户端服务端证书</span></span><br><span class="line"><span class="comment"># 服务端证书，向CA申请签名</span></span><br><span class="line">openssl req -new -key server.key -out server.csr</span><br><span class="line">openssl x509 -req -CA ca.crt -CAkey ca.key -CAcreateserial -<span class="keyword">in</span> server.csr -out server.crt</span><br><span class="line"><span class="comment"># 客户端证书，向CA申请签名</span></span><br><span class="line">openssl req -new -key client.key -out client.csr</span><br><span class="line">openssl x509 -req -CA ca.crt -CAkey ca.key -CAcreateserial -<span class="keyword">in</span> client.csr -out client.crt</span><br></pre></td></tr></table></figure>
+<p>生成完毕，在nginx安装目录下新建一个ssl目录，用于存放服务器证书和密钥，配置nginx.conf。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># HTTPS server</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">server &#123;</span><br><span class="line">    listen       443 ssl;</span><br><span class="line">    server_name  localhost;</span><br><span class="line"></span><br><span class="line">    ssl_certificate      ../ssl/server.crt;<span class="comment">#服务器证书</span></span><br><span class="line">    ssl_certificate_key  ../ssl/server.key;<span class="comment">#服务器私钥</span></span><br><span class="line"></span><br><span class="line">    ssl_session_cache    shared:SSL:1m;</span><br><span class="line">    ssl_session_timeout  5m;</span><br><span class="line"></span><br><span class="line">    ssl_ciphers  HIGH:!aNULL:!MD5;</span><br><span class="line">    ssl_prefer_server_ciphers  on;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        root   html;</span><br><span class="line">        index  index.html index.htm;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment"># CGI configure</span></span><br><span class="line">    location ~ \.cgi$ &#123;</span><br><span class="line">        root           /usr/<span class="built_in">local</span>/nginx/cgi-bin;</span><br><span class="line">        fastcgi_pass   unix:/var/run/fcgiwrap.socket;</span><br><span class="line">        fastcgi_index  index.php;</span><br><span class="line">        fastcgi_param  SCRIPT_FILENAME  <span class="variable">$document_root</span><span class="variable">$fastcgi_script_name</span>;</span><br><span class="line">        include        fastcgi_params;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>重启nginx，访问https//localhost:443/确定是否配置成功。</p>
+<h4 id="fcgiwrap运行CGI脚本"><a href="#fcgiwrap运行CGI脚本" class="headerlink" title="fcgiwrap运行CGI脚本"></a>fcgiwrap运行CGI脚本</h4><p>安装fcgiwrap用以启动C语言，php，bash等编写的应用。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libfcgi-dev</span><br><span class="line">sudo apt-get install spawn-fcgi</span><br><span class="line">sudo apt-get install fcgiwrap</span><br></pre></td></tr></table></figure>
+<p>服务会立即启动，查看服务状态。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl status fcgiwrap.service</span><br><span class="line">systemctl status fcgiwrap.socket</span><br></pre></td></tr></table></figure>
+<p>在nginx安装根目录下新建cgi-bin目录，编写一个测试demo，demo功能识别GET或POST方法，对POST方法的部分数据进行读，并写在本地服务器下，实现简单的数据上传。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;fcgi_stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="comment">//#include&lt;fcgi_config.h&gt;</span></span><br><span class="line"><span class="comment">//#include&lt;fcgiapp.h&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sayHello</span><span class="params">(<span class="keyword">char</span> *pQueryStr)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> *pName = <span class="literal">NULL</span>;</span><br><span class="line">	pName = <span class="built_in">strstr</span>(pQueryStr,<span class="string">"name"</span>);</span><br><span class="line">	<span class="keyword">if</span>(pName)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">char</span> *pTmp = pName + <span class="number">5</span>;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"Hello %s!\r\n"</span>,pTmp);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"No Name!\r\n"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">saveToFile</span><span class="params">(<span class="keyword">char</span> *pContent,<span class="keyword">int</span> contentLength)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	FILE *fp = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	fp = fopen(<span class="string">"fateStealData"</span>,<span class="string">"ab+"</span>);</span><br><span class="line">	<span class="keyword">if</span>(fp)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"Preparing to write sth!\r\n"</span>);</span><br><span class="line">		fwrite(pContent,<span class="keyword">sizeof</span>(<span class="keyword">char</span>),contentLength,fp);</span><br><span class="line">		fclose(fp);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"Opening file error!\r\n"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span>(FCGI_Accept() &gt;= <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">char</span> *pMethod = <span class="literal">NULL</span>;</span><br><span class="line">		<span class="keyword">char</span> *pQueryStr = <span class="literal">NULL</span>;</span><br><span class="line">		<span class="keyword">char</span> *pContentType = <span class="literal">NULL</span>;</span><br><span class="line">		<span class="keyword">char</span> *pPostContent = <span class="literal">NULL</span>;</span><br><span class="line">		<span class="comment">//http header</span></span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"Content-Type: text/plain\r\n\r\n"</span>);</span><br><span class="line"></span><br><span class="line">		<span class="comment">//content</span></span><br><span class="line">		pMethod = getenv(<span class="string">"REQUEST_METHOD"</span>);</span><br><span class="line">		<span class="keyword">if</span>(pMethod &amp;&amp; !<span class="built_in">strcmp</span>(pMethod,<span class="string">"GET"</span>))</span><br><span class="line">		&#123;</span><br><span class="line">			pQueryStr = getenv(<span class="string">"QUERY_STRING"</span>);</span><br><span class="line">			<span class="keyword">if</span>(pQueryStr)</span><br><span class="line">			&#123;</span><br><span class="line">				sayHello(pQueryStr);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(pMethod &amp;&amp; !<span class="built_in">strcmp</span>(pMethod,<span class="string">"POST"</span>))</span><br><span class="line">		&#123;</span><br><span class="line">			pContentType = getenv(<span class="string">"CONTENT_TYPE"</span>);</span><br><span class="line">			<span class="keyword">if</span>(pContentType)</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="keyword">if</span>(!<span class="built_in">strcmp</span>(pContentType,<span class="string">"application/x-www-form-urlencoded"</span>))</span><br><span class="line">				&#123;</span><br><span class="line">					<span class="keyword">int</span> contentLength = atoi(getenv(<span class="string">"CONTENT_LENGTH"</span>));</span><br><span class="line">					pPostContent = (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(contentLength + <span class="number">1</span>);</span><br><span class="line">					<span class="keyword">if</span>(pPostContent)</span><br><span class="line">					&#123;</span><br><span class="line">						<span class="built_in">memset</span>(pPostContent,<span class="number">0</span>,contentLength + <span class="number">1</span>);</span><br><span class="line">						fread(pPostContent,<span class="keyword">sizeof</span>(<span class="keyword">char</span>),contentLength,<span class="built_in">stdin</span>);</span><br><span class="line">						sayHello(pPostContent);</span><br><span class="line">						saveToFile(pPostContent,contentLength + <span class="number">1</span>);</span><br><span class="line">						<span class="built_in">free</span>(pPostContent);</span><br><span class="line">						pPostContent = <span class="literal">NULL</span>;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">else</span></span><br><span class="line">				&#123;</span><br><span class="line">					<span class="built_in">printf</span>(<span class="string">"CONTENT_TYPE not supported now!\r\n"</span>);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"\r\n"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​    编译。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc mycgi.c -o mycgi.cgi -lfcgi</span><br></pre></td></tr></table></figure>
+<p>​    放置在cgi-bin目录下。</p>
+<h4 id="demo测试"><a href="#demo测试" class="headerlink" title="demo测试"></a>demo测试</h4><p>​    demo测试，post一段数据到服务器上，由于需要写文件，需要cgi-bin目录拥有写权限。</p>
+<p>​    配置nginx.conf，重启。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">location ~ \.cgi$ &#123;</span><br><span class="line">    root           /usr/<span class="built_in">local</span>/nginx/cgi-bin;</span><br><span class="line">    fastcgi_pass   unix:/var/run/fcgiwrap.socket;</span><br><span class="line">    fastcgi_index  index.php;</span><br><span class="line">    fastcgi_param  SCRIPT_FILENAME  <span class="variable">$document_root</span><span class="variable">$fastcgi_script_name</span>;</span><br><span class="line">    include        fastcgi_params;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​    使用postman进行测试。post数据到https//ip/mycgi.cgi。</p>
+<p><img src="https://invicsfate.github.io/assert/nginx1.png" alt="nginx1"></p>
+<p>​    查看cgi-bin目录下是否生成了相应文件，测试完毕。</p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://www.nginx.com/resources/wiki/modules/upload/" target="_blank" rel="noopener">Upload | NGINX</a><br><a href="https://www.xiebruce.top/727.html" target="_blank" rel="noopener">Nginx配置Web服务器详解</a><br><a href="https://blog.seosiwei.com/detail/28" target="_blank" rel="noopener">已安装nginx支持https配置</a><br><a href="https://www.jianshu.com/p/57066821b863" target="_blank" rel="noopener">用Nginx搭建HTTPS服务器</a><br><a href="https://fastcgi-archives.github.io/FastCGI_Developers_Kit_FastCGI.html" target="_blank" rel="noopener">FastCGI Developer’s Kit</a><br><a href="http://chriswu.me/blog/writing-hello-world-in-fcgi-with-c-plus-plus/" target="_blank" rel="noopener">Writing Hello World in FCGI with C++</a><br><a href="https://blog.sleeplessbeastie.eu/2017/09/18/how-to-execute-cgi-scripts-using-fcgiwrap/" target="_blank" rel="noopener">How to execute CGI scripts using fcgiwrap</a><br><a href="https://tkstorm.com/posts-list/programming/spawn-fcgi/" target="_blank" rel="noopener">Spawns FastCGI Processes</a></p>
+<p>​    </p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2020/02/15/nginx-https-CGI-post数据/">
+    <time datetime="2020-02-15T08:21:55.000Z" class="entry-date">
+        2020-02-15
+    </time>
+</a>
+    
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/others/">others</a>
+  </div>
+
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web/">web</a></li></ul>
+
+    </footer>
+</article>
+
+
+
+
+
+
+  
     <article id="post-“绝对安全”的本地序列号验证方法" class="post-“绝对安全”的本地序列号验证方法 post type-post status-publish format-standard hentry">
     <!---->
 
@@ -82,7 +158,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/12/14/“绝对安全”的本地序列号验证方法/" data-id="ck45e40ca001fkk3k1izzaou1" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/12/14/“绝对安全”的本地序列号验证方法/" data-id="ck6nf664m001jdk3kkd4gl85i" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -143,7 +219,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/12/07/C++逆向随笔/" data-id="ck45e40d4002bkk3krmkzok2c" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/12/07/C++逆向随笔/" data-id="ck6nf665d0028dk3kzmfrte0q" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -230,7 +306,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/08/24/某游戏cg素材解包/" data-id="ck45e40ce001skk3k1y53izm4" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/08/24/某游戏cg素材解包/" data-id="ck6nf664o001qdk3k9ps63lf1" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -300,7 +376,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/05/31/打包小工具/" data-id="ck45e40dk002vkk3kzj9y9llx" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/05/31/打包小工具/" data-id="ck6nf665y002udk3krmx81gzb" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -353,7 +429,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/绕过某摄像头校验机制软刷固件/" data-id="ck45e40cg001vkk3k8wtmzmxk" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/绕过某摄像头校验机制软刷固件/" data-id="ck6nf664p001tdk3km615pop8" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -428,7 +504,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-unlink/" data-id="ck45e40c3000xkk3kyz3wf8wt" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-unlink/" data-id="ck6nf6648000rdk3khr8d7lyv" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -495,7 +571,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-house-of-spirit/" data-id="ck45e40c1000tkk3k5ojro9zn" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-house-of-spirit/" data-id="ck6nf6649000tdk3kev15g1f6" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -553,7 +629,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-extend/" data-id="ck45e40bz000rkk3kq5dthfhl" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-extend/" data-id="ck6nf6646000ndk3k8l0j6li3" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -606,7 +682,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/23/CS1-6-透视分析/" data-id="ck45e40b60000kk3kqhtr8k4l" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/23/CS1-6-透视分析/" data-id="ck6nf663j0000dk3kpxberu56" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -655,77 +731,6 @@
 
 
   
-    <article id="post-Cheat-Engine" class="post-Cheat-Engine post type-post status-publish format-standard hentry">
-    <!---->
-
-      <header class="entry-header">
-        
-        
-  
-    <h1 class="entry-title">
-      <a class="article-title" href="/2018/08/12/Cheat-Engine/">Cheat-Engine</a>
-    </h1>
-  
-
-        
-        <div class="comments-link">
-            
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/12/Cheat-Engine/" data-id="ck45e40ba0001kk3k8icubufy" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
-
-    <div class="entry-content">
-      
-        <h2 id="Cheat-Engine"><a href="#Cheat-Engine" class="headerlink" title="Cheat Engine"></a>Cheat Engine</h2><p>Cheat Engine能获取当前进程内存中的数据信息，并且定位其位置，在数据查找以及修改方面有很大的作用，可以在某些情况下辅助分析二进制程序，定位关键位置。从其配套的9个教程中来学习CE的简单应用吧。</p>
-<h3 id="step-1"><a href="#step-1" class="headerlink" title="step 1"></a>step 1</h3><p>直接修改内存地址处的值，将其修改为1000。第一次搜索Health=100，Hit me以后再次搜索，程序会反复从前一次搜索的地址中进行再次搜索，直至过滤出Health的地址(其实只要我们能确定其地址就好)</p>
-<p><img src="https://invicsfate.github.io/assert/step1.png" alt="step1"></p>
-<h3 id="step-2"><a href="#step-2" class="headerlink" title="step 2"></a>step 2</h3><p>由于生命值是以血条的方式存在，所以扫描时的Scan Type选择Unknown initial value，在扫描过程中的Scan Type选择Decrease value，多次查找，确定位置，然后修改为5000。</p>
-<p><img src="https://invicsfate.github.io/assert/step2.png" alt="step2"></p>
-<h3 id="step-3"><a href="#step-3" class="headerlink" title="step 3"></a>step 3</h3><p>Float和double类型的值修改，方法同step 1只是，value Type修改为Float类型以及double类型，最后均修改为5000，过关。</p>
-<p><img src="https://invicsfate.github.io/assert/step3.png" alt="step3"></p>
-<h3 id="step-4"><a href="#step-4" class="headerlink" title="step 4"></a>step 4</h3><p>题目目的是要我们找到造成damage的代码，然后nop掉。第一步同step1，找到数据地址，然后下硬件断点，确定其位置以后，nop掉原代码即可过关。</p>
-<p><img src="https://invicsfate.github.io/assert/step4.png" alt="step4"></p>
-<p>再次Change value</p>
-<p><img src="https://invicsfate.github.io/assert/step5.png" alt="step5"></p>
-<h3 id="step-5"><a href="#step-5" class="headerlink" title="step 5"></a>step 5</h3><p>这一关就是让我们认识一个一级指针。</p>
-<p><img src="https://invicsfate.github.io/assert/step6.png" alt="step6"></p>
-<p>New Scan，搜索十六进制017D37D0，手动添加一个指针，Add Address Manually，将601630位置处的指针冻结，勾选方框，然后Change Pointer过关。</p>
-<p><img src="https://invicsfate.github.io/assert/step7.png" alt="step7"></p>
-<h3 id="step-6"><a href="#step-6" class="headerlink" title="step 6"></a>step 6</h3><p>代码注入，将Health减1改为加2。同样的方法找到位置，Show disassembler以后，选择Tools-&gt;auto assemble-&gt;Template-&gt;Code Injection，修改代码即可：</p>
-<p><img src="https://invicsfate.github.io/assert/step8.png" alt="step8"></p>
-<p>修改以后，从汇编我们可以看到，程序是新申请了一块内存，然后将原代码位置处修改为了jmp到新内存，新的指令都在新内存上执行，执行完毕又回到原来的位置。</p>
-<p><img src="https://invicsfate.github.io/assert/step9.png" alt="step9"></p>
-<h3 id="step-7"><a href="#step-7" class="headerlink" title="step 7"></a>step 7</h3><p>寻找多级指针，找到数据位置，然后不断向前回溯查找，手动添加指针，冻结，修改值至5000，通关。</p>
-<p><img src="https://invicsfate.github.io/assert/step10.png" alt="step10"></p>
-<h3 id="step-8"><a href="#step-8" class="headerlink" title="step 8"></a>step 8</h3><p>该关有两个队伍，需要我们点击Restart game and autoplay以后自动消灭Player3和Player4，查看对这四个玩家造成伤害的代码是一样的，那么我们怎么修改呢？不同玩家自身结构体的属性是不一样的，通过Health(Float)，可以找到玩家的对象，比较4个对象间的不同，通过不同进行code Injection，达到自身无敌。[ebx+4]的位置是血量。通过compare structure，我们可以看到四个结构体的名字是不同的，id也是不同的，选择id进行code injection，id位于[ebx+10]</p>
-<p><img src="https://invicsfate.github.io/assert/step11.png" alt="step11"></p>
-<p>点击Restart game and autoplay过关。</p>
-
-      
-    </div><!-- .entry-content -->
-
-    <footer class="entry-meta">
-    <a href="/2018/08/12/Cheat-Engine/">
-    <time datetime="2018-08-12T07:30:34.000Z" class="entry-date">
-        2018-08-12
-    </time>
-</a>
-    
-  <span class="article-delim">&#8226;</span>
-  <div class="article-category">
-  <a class="article-category-link" href="/categories/GameSecurity/">GameSecurity</a>
-  </div>
-
-    
-    </footer>
-</article>
-
-
-
-
-
-
-  
   
     <nav id="pagination">
       <nav id="page-nav">
@@ -750,7 +755,7 @@
   <aside class="widget">
     <h3 class="widget-title">Categories</h3>
     <div class="widget-content">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GameSecurity/">GameSecurity</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/IOT/">IOT</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/others/">others</a><span class="category-list-count">10</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GameSecurity/">GameSecurity</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/IOT/">IOT</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/others/">others</a><span class="category-list-count">11</span></li></ul>
     </div>
   </aside>
 
@@ -760,6 +765,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget-content">
       <ul>
+        
+          <li>
+            <a href="/2020/02/15/nginx-https-CGI-post数据/">nginx-https-CGI-post数据</a>
+          </li>
         
           <li>
             <a href="/2019/12/14/“绝对安全”的本地序列号验证方法/">“绝对安全”的本地序列号验证方法</a>
@@ -777,10 +786,6 @@
             <a href="/2019/05/31/打包小工具/">打包解包小工具</a>
           </li>
         
-          <li>
-            <a href="/2018/10/09/绕过某摄像头校验机制软刷固件/">绕过某摄像头校验机制软刷固件</a>
-          </li>
-        
       </ul>
     </div>
   </aside>
@@ -790,7 +795,7 @@
   <aside class="widget">
     <h3 class="widget-title">Tags</h3>
     <div class="widget-content">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/PE/">PE</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firmware/">firmware</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reverse/">reverse</a><span class="tag-list-count">17</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/PE/">PE</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firmware/">firmware</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reverse/">reverse</a><span class="tag-list-count">17</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </aside>
 
@@ -807,7 +812,7 @@
 </div>
       </div>
       <footer id="colophon" role="contentinfo">
-    <p>&copy; 2019 Invicsfate
+    <p>&copy; 2020 Invicsfate
     All rights reserved.</p>
     <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></p>
 </footer>
