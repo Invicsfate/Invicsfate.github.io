@@ -13,18 +13,22 @@
   
   
   
-  <title>Category: IOT | Invicsfate</title>
+  <title>windows原始套接字sock_raw的使用限制 | Invicsfate</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Invicsfate">
-<meta property="og:url" content="http://Invicsfate.github.io/categories/IOT/index.html">
+  <meta name="description" content="windows原始套接字sock_raw的使用限制测试环境windows版本：Windows10 1903 限制总结​    分析ddos泛洪攻击的文章很多，本文记录下windows下原始套接字sock_raw的使用限制。    原始套接字能够让开发者自行解析和构造网络层和数据传输层的IP头，UDP头和TCP头等数据。笔者将能够在linux下测试成功的UDP Flood(使用原始套接字sock_r">
+<meta name="keywords" content="web">
+<meta property="og:type" content="article">
+<meta property="og:title" content="windows原始套接字sock_raw的使用限制">
+<meta property="og:url" content="http://Invicsfate.github.io/2020/04/20/windows原始套接字sock-raw的使用限制/index.html">
 <meta property="og:site_name" content="Invicsfate">
-<meta property="og:description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
+<meta property="og:description" content="windows原始套接字sock_raw的使用限制测试环境windows版本：Windows10 1903 限制总结​    分析ddos泛洪攻击的文章很多，本文记录下windows下原始套接字sock_raw的使用限制。    原始套接字能够让开发者自行解析和构造网络层和数据传输层的IP头，UDP头和TCP头等数据。笔者将能够在linux下测试成功的UDP Flood(使用原始套接字sock_r">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="https://invicsfate.github.io/assert/socket_raw1.png">
+<meta property="og:updated_time" content="2020-04-20T04:05:14.023Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Invicsfate">
-<meta name="twitter:description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
+<meta name="twitter:title" content="windows原始套接字sock_raw的使用限制">
+<meta name="twitter:description" content="windows原始套接字sock_raw的使用限制测试环境windows版本：Windows10 1903 限制总结​    分析ddos泛洪攻击的文章很多，本文记录下windows下原始套接字sock_raw的使用限制。    原始套接字能够让开发者自行解析和构造网络层和数据传输层的IP头，UDP头和TCP头等数据。笔者将能够在linux下测试成功的UDP Flood(使用原始套接字sock_r">
+<meta name="twitter:image" content="https://invicsfate.github.io/assert/socket_raw1.png">
   
   
     <link rel="icon" href="/css/images/favicon.ico">
@@ -65,120 +69,80 @@
     </nav>
 </header>
       <div id="main" class="wrapper">
-        <div id="primary" class="site-content"><div id="content" role="main">
+        <div id="primary" class="site-content"><div id="content" role="main"><article id="post-windows原始套接字sock-raw的使用限制" class="post-windows原始套接字sock-raw的使用限制 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
   
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="post type-post status-publish format-standard hentry archive-type-post">
-  <header class="entry-header">
-      
-  
-    <h1 class="entry-title">
-      <a class="archive-article-title" href="/2018/10/09/绕过某摄像头校验机制软刷固件/">绕过某摄像头校验机制软刷固件</a>
+    <h1 class="entry-title article-title">
+      windows原始套接字sock_raw的使用限制
     </h1>
   
 
-  </header>
-  <footer class="entry-meta">
-    <a href="/2018/10/09/绕过某摄像头校验机制软刷固件/">
-    <time datetime="2018-10-09T15:03:34.000Z" class="entry-date">
-        2018-10-09
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2020/04/20/windows原始套接字sock-raw的使用限制/" data-id="ck97ygd2e001kft3k043e27jf" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h2 id="windows原始套接字sock-raw的使用限制"><a href="#windows原始套接字sock-raw的使用限制" class="headerlink" title="windows原始套接字sock_raw的使用限制"></a>windows原始套接字sock_raw的使用限制</h2><h3 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h3><p>windows版本：Windows10 1903</p>
+<h3 id="限制总结"><a href="#限制总结" class="headerlink" title="限制总结"></a>限制总结</h3><p>​    分析ddos泛洪攻击的文章很多，本文记录下windows下原始套接字sock_raw的使用限制。<br>    原始套接字能够让开发者自行解析和构造网络层和数据传输层的IP头，UDP头和TCP头等数据。笔者将能够在linux下测试成功的UDP Flood(使用原始套接字sock_raw的)代码移植到windows下进行测试，失败，经过多次抓包对比IP头，UDP头，在MSDN上找到了答案，总结一下windows下的限制：</p>
+<ul>
+<li><p>windows下使用原始套接字sock_raw的程序需要以管理权权限启动</p>
+</li>
+<li><p>TCP数据无法通过原始套接字发送</p>
+</li>
+<li><p>源地址无效的UDP数据报不能通过原始套接字发送(微软为了限制恶意代码创建分布式拒绝服务攻击以及伪造源IP地址的TCP/IP数据包)</p>
+<p>附MSDN图：</p>
+</li>
+</ul>
+<p><img src="https://invicsfate.github.io/assert/socket_raw1.png" alt="socket_raw1"></p>
+<p>​    通过原始套接字发送的数据包，windows会检查你的源IP是否为本机IP(合法IP)，如果不是，那么发送不出去；修改源IP为本机才能正常发送，但是这样发送出去的数据包还不如直接发以<strong>SOCK_STREAM</strong>和<strong>SOCK_DGRAM</strong>类型的套接字建立的数据包。</p>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><p><a href="https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-socket" target="_blank" rel="noopener">TCP/IP Raw Sockets</a></p>
+<p>​    </p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2020/04/20/windows原始套接字sock-raw的使用限制/">
+    <time datetime="2020-04-20T04:00:00.000Z" class="entry-date">
+        2020-04-20
     </time>
 </a>
     
   <span class="article-delim">&#8226;</span>
   <div class="article-category">
-  <a class="article-category-link" href="/categories/IOT/">IOT</a>
+  <a class="article-category-link" href="/categories/others/">others</a>
   </div>
 
     
   <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/firmware/">firmware</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web/">web</a></li></ul>
 
     </footer>
 </article>
-  
-    
-    
-    <article class="post type-post status-publish format-standard hentry archive-type-post">
-  <header class="entry-header">
-      
-  
-    <h1 class="entry-title">
-      <a class="archive-article-title" href="/2018/03/20/Play-Rtsp-Stream-opencv2/">Play Rtsp Stream-opencv2</a>
-    </h1>
-  
 
-  </header>
-  <footer class="entry-meta">
-    <a href="/2018/03/20/Play-Rtsp-Stream-opencv2/">
-    <time datetime="2018-03-20T11:57:34.000Z" class="entry-date">
-        2018-03-20
-    </time>
-</a>
-    
-  <span class="article-delim">&#8226;</span>
-  <div class="article-category">
-  <a class="article-category-link" href="/categories/IOT/">IOT</a>
-  </div>
 
     
-    </footer>
-</article>
-  
+<nav class="nav-single">
+    <h3 class="assistive-text">文章导航</h3>
     
     
-      
-        </div></section>
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
+        <span class="nav-next"><a href="/2020/02/15/nginx-https-CGI-post数据/" rel="next">nginx-https-CGI-post数据 <span class="meta-nav">→</span></a></span>
     
-    <article class="post type-post status-publish format-standard hentry archive-type-post">
-  <header class="entry-header">
-      
-  
-    <h1 class="entry-title">
-      <a class="archive-article-title" href="/2017/12/28/qemu环境搭建/">qemu环境搭建</a>
-    </h1>
-  
+</nav><!-- .nav-single -->
 
-  </header>
-  <footer class="entry-meta">
-    <a href="/2017/12/28/qemu环境搭建/">
-    <time datetime="2017-12-28T00:53:57.000Z" class="entry-date">
-        2017-12-28
-    </time>
-</a>
-    
-  <span class="article-delim">&#8226;</span>
-  <div class="article-category">
-  <a class="article-category-link" href="/categories/IOT/">IOT</a>
-  </div>
 
-    
-  <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/firmware/">firmware</a></li></ul>
 
-    </footer>
-</article>
-  
-  
-    </div></section>
-  
+
+
+
 
 </div></div>
         <div id="secondary" class="widget-area" role="complementary">
