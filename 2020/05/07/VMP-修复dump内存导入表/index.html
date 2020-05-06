@@ -13,14 +13,15 @@
   
   
   
-  <title>Invicsfate</title>
+  <title>VMP-修复dump内存导入表 | Invicsfate</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="layout: posttitle: VMP-修复dump内存导入表date: 2020-5-7 00:04:33tags:  revcategories: reverse  VMP-“完美”修复dump内存导入表修复对应64位程序(ring3)，不能应用于32位，跳转指令含义不同。一些原理就不介绍了，主要说明一下修复dump内存导入表的步骤，使得可以直接使用IDA逆向，思路也是借鉴了前人，后附">
+  <meta name="description" content="VMP-“完美”修复dump内存导入表修复对应64位程序(ring3)，不能应用于32位，跳转指令含义不同。一些原理就不介绍了，主要说明一下修复dump内存导入表的步骤，使得可以直接使用IDA逆向，思路也是借鉴了前人，后附参考链接，先展示一下修复前后的效果吧。 下图是直接dump下来的内存，不过还是修改了SizeOfRawData和PointerToRawData的，并且进行过针对无壳程序dump">
+<meta name="keywords" content="rev">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Invicsfate">
+<meta property="og:title" content="VMP-修复dump内存导入表">
 <meta property="og:url" content="http://Invicsfate.github.io/2020/05/07/VMP-修复dump内存导入表/index.html">
 <meta property="og:site_name" content="Invicsfate">
-<meta property="og:description" content="layout: posttitle: VMP-修复dump内存导入表date: 2020-5-7 00:04:33tags:  revcategories: reverse  VMP-“完美”修复dump内存导入表修复对应64位程序(ring3)，不能应用于32位，跳转指令含义不同。一些原理就不介绍了，主要说明一下修复dump内存导入表的步骤，使得可以直接使用IDA逆向，思路也是借鉴了前人，后附">
+<meta property="og:description" content="VMP-“完美”修复dump内存导入表修复对应64位程序(ring3)，不能应用于32位，跳转指令含义不同。一些原理就不介绍了，主要说明一下修复dump内存导入表的步骤，使得可以直接使用IDA逆向，思路也是借鉴了前人，后附参考链接，先展示一下修复前后的效果吧。 下图是直接dump下来的内存，不过还是修改了SizeOfRawData和PointerToRawData的，并且进行过针对无壳程序dump">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://invicsfate.github.io/assert/VMP8.png">
 <meta property="og:image" content="https://invicsfate.github.io/assert/VMP9.png">
@@ -32,10 +33,10 @@
 <meta property="og:image" content="https://invicsfate.github.io/assert/VMP5.png">
 <meta property="og:image" content="https://invicsfate.github.io/assert/VMP6.png">
 <meta property="og:image" content="https://invicsfate.github.io/assert/VMP7.png">
-<meta property="og:updated_time" content="2020-05-06T16:04:48.137Z">
+<meta property="og:updated_time" content="2020-05-06T16:08:33.206Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Invicsfate">
-<meta name="twitter:description" content="layout: posttitle: VMP-修复dump内存导入表date: 2020-5-7 00:04:33tags:  revcategories: reverse  VMP-“完美”修复dump内存导入表修复对应64位程序(ring3)，不能应用于32位，跳转指令含义不同。一些原理就不介绍了，主要说明一下修复dump内存导入表的步骤，使得可以直接使用IDA逆向，思路也是借鉴了前人，后附">
+<meta name="twitter:title" content="VMP-修复dump内存导入表">
+<meta name="twitter:description" content="VMP-“完美”修复dump内存导入表修复对应64位程序(ring3)，不能应用于32位，跳转指令含义不同。一些原理就不介绍了，主要说明一下修复dump内存导入表的步骤，使得可以直接使用IDA逆向，思路也是借鉴了前人，后附参考链接，先展示一下修复前后的效果吧。 下图是直接dump下来的内存，不过还是修改了SizeOfRawData和PointerToRawData的，并且进行过针对无壳程序dump">
 <meta name="twitter:image" content="https://invicsfate.github.io/assert/VMP8.png">
   
   
@@ -82,20 +83,23 @@
 
       <header class="entry-header">
         
+        
+  
+    <h1 class="entry-title article-title">
+      VMP-修复dump内存导入表
+    </h1>
+  
+
+        
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2020/05/07/VMP-修复dump内存导入表/" data-id="ck9vj9qm7000eho3klyhwmdpj" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2020/05/07/VMP-修复dump内存导入表/" data-id="ck9vjdo7t000ew73kerr4s79p" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
     <div class="entry-content">
       
-        <hr>
-<p>layout: post<br>title: VMP-修复dump内存导入表<br>date: 2020-5-7 00:04:33<br>tags:</p>
-<ul>
-<li>rev<br>categories: reverse</li>
-</ul>
-<h1 id="VMP-“完美”修复dump内存导入表"><a href="#VMP-“完美”修复dump内存导入表" class="headerlink" title="VMP-“完美”修复dump内存导入表"></a>VMP-“完美”修复dump内存导入表</h1><p>修复对应64位程序(ring3)，不能应用于32位，跳转指令含义不同。一些原理就不介绍了，主要说明一下修复dump内存导入表的步骤，使得可以直接使用IDA逆向，思路也是借鉴了前人，后附参考链接，先展示一下修复前后的效果吧。</p>
+        <h1 id="VMP-“完美”修复dump内存导入表"><a href="#VMP-“完美”修复dump内存导入表" class="headerlink" title="VMP-“完美”修复dump内存导入表"></a>VMP-“完美”修复dump内存导入表</h1><p>修复对应64位程序(ring3)，不能应用于32位，跳转指令含义不同。一些原理就不介绍了，主要说明一下修复dump内存导入表的步骤，使得可以直接使用IDA逆向，思路也是借鉴了前人，后附参考链接，先展示一下修复前后的效果吧。</p>
 <p>下图是直接dump下来的内存，不过还是修改了SizeOfRawData和PointerToRawData的，并且进行过针对无壳程序dump内存IAT修复方式处理过。</p>
 <p><img src="https://invicsfate.github.io/assert/VMP8.png" alt="VMP8"></p>
 <p>下图是修复dump内存IAT过后的，放两张图。</p>
@@ -153,12 +157,20 @@
 
     <footer class="entry-meta">
     <a href="/2020/05/07/VMP-修复dump内存导入表/">
-    <time datetime="2020-05-06T16:04:48.153Z" class="entry-date">
+    <time datetime="2020-05-06T16:04:33.000Z" class="entry-date">
         2020-05-07
     </time>
 </a>
     
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/reverse/">reverse</a>
+  </div>
+
     
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rev/">rev</a></li></ul>
+
     </footer>
 </article>
 
@@ -194,7 +206,7 @@
   <aside class="widget">
     <h3 class="widget-title">Categories</h3>
     <div class="widget-content">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GameSecurity/">GameSecurity</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/IOT/">IOT</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/others/">others</a><span class="category-list-count">12</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GameSecurity/">GameSecurity</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/IOT/">IOT</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/others/">others</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">1</span></li></ul>
     </div>
   </aside>
 
@@ -206,7 +218,7 @@
       <ul>
         
           <li>
-            <a href="/2020/05/07/VMP-修复dump内存导入表/">(no title)</a>
+            <a href="/2020/05/07/VMP-修复dump内存导入表/">VMP-修复dump内存导入表</a>
           </li>
         
           <li>
@@ -234,7 +246,7 @@
   <aside class="widget">
     <h3 class="widget-title">Tags</h3>
     <div class="widget-content">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/PE/">PE</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firmware/">firmware</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reverse/">reverse</a><span class="tag-list-count">17</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/PE/">PE</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firmware/">firmware</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rev/">rev</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reverse/">reverse</a><span class="tag-list-count">17</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </aside>
 
@@ -243,7 +255,7 @@
   <aside class="widget">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget-content tagcloud">
-      <a href="/tags/PE/" style="font-size: 13.33px;">PE</a> <a href="/tags/firmware/" style="font-size: 13.33px;">firmware</a> <a href="/tags/pwn/" style="font-size: 16.67px;">pwn</a> <a href="/tags/reverse/" style="font-size: 20px;">reverse</a> <a href="/tags/web/" style="font-size: 10px;">web</a>
+      <a href="/tags/PE/" style="font-size: 15px;">PE</a> <a href="/tags/firmware/" style="font-size: 15px;">firmware</a> <a href="/tags/pwn/" style="font-size: 17.5px;">pwn</a> <a href="/tags/rev/" style="font-size: 10px;">rev</a> <a href="/tags/reverse/" style="font-size: 20px;">reverse</a> <a href="/tags/web/" style="font-size: 12.5px;">web</a>
     </div>
   </aside>
 
