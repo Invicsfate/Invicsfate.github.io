@@ -67,6 +67,61 @@
       <div id="main" class="wrapper">
         <div id="primary" class="site-content"><div id="content" role="main">
   
+    <article id="post-getKernel32" class="post-getKernel32 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2017/10/26/getKernel32/">获取kernel32基地址</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/10/26/getKernel32/" data-id="ck9vj8y7x000m873koao6jm8p" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <p>从InMemoryOrderModuleList地址上获取kernel32.dll的基地址，原理如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">xor ebx, ebx </span><br><span class="line">mov ebx, fs:[ <span class="number">0x30</span> ]       ;PEB</span><br><span class="line">mov ebx, [ ebx + <span class="number">0x0C</span> ]    ;PEB-&gt;Ldr</span><br><span class="line">mov ebx, [ ebx + <span class="number">0x14</span> ]    ;PEB-&gt;Ldr.InMemoryOrderModuleList.Flink (<span class="number">1</span>st entry)</span><br><span class="line">mov ebx, [ ebx ]           ;<span class="function">next <span class="title">entry</span> <span class="params">(<span class="number">2</span>nd entry)</span></span></span><br><span class="line">mov ebx, [ ebx ]           ;entry (3rd entry)</span><br><span class="line">mov ebx, [ ebx + <span class="number">0x10</span> ]    ;<span class="function">base <span class="title">address</span> <span class="params">(kernel32.dll)</span></span></span><br></pre></td></tr></table></figure>
+<p>需要注意的是不同操作系统可能寻找方式有少许不同，32和64位程序也是不一样的，需要使用windbg具体情况具体分析。</p>
+<p>获取kernel32基地址以后，就可以从EAT获取GetProcAddress地址以及其他函数地址，下面程序以获得FindFirstFile地址为例，在EAT中搜索FindFirstFile地址的时候没有采用直接比较字符串名称的方法，而是对字符串名称作运算，根据运算结果来进行比较。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;Windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> win10x64 1</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> win10x64</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> kernel32Value 0x6E2BCA17</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">elif</span> defined(win7x64)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> kernel32Value 0x8FECD63F</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">HANDLE</span> <span class="params">(*myFindFirstFile)</span><span class="params">(LPCTSTR lpFileName,LPWIN32_FIND_DATA lpFindFileData)</span></span>; </span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">findPEB</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD pebValue;</span><br><span class="line">	__asm</span><br><span class="line">	&#123;</span><br><span class="line">		mov eax,fs:[<span class="number">0x30</span>]</span><br><span class="line">		mov pebValue,eax</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> pebValue;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">calValue1</span><span class="params">(WORD *a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD v1,v3;</span><br><span class="line">	v3 = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span>(*a1)</span><br><span class="line">	&#123;</span><br><span class="line">		v1 = (WORD)*a1;</span><br><span class="line">		++a1;</span><br><span class="line">		v3 = v1 + ((v3 &lt;&lt; <span class="number">19</span>) | ((<span class="keyword">unsigned</span> __int64)v3 &gt;&gt; <span class="number">13</span>));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> v3;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">calValue2</span><span class="params">(BYTE *a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD v1,v3;</span><br><span class="line">	v3 = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span>(*a1)</span><br><span class="line">	&#123;</span><br><span class="line">		v1 = *a1++;</span><br><span class="line">		v3 = v1 + ((v3 &lt;&lt; <span class="number">19</span>) | ((<span class="keyword">unsigned</span> __int64)v3 &gt;&gt; <span class="number">13</span>));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> v3;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">findKernel32</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD pebValue = findPEB();</span><br><span class="line">	</span><br><span class="line">	DWORD v1 = *(DWORD *)(pebValue + <span class="number">12</span>);</span><br><span class="line">	DWORD *v3 = *(DWORD **)(v1 + <span class="number">20</span>);</span><br><span class="line">	DWORD *v4 = *(DWORD **)(v1 + <span class="number">20</span>);</span><br><span class="line">	<span class="keyword">do</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(calValue1((WORD *)v3[<span class="number">10</span>]) == kernel32Value)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">return</span> v3[<span class="number">4</span>];</span><br><span class="line">		&#125;</span><br><span class="line">		v3 = (DWORD *)*v3;</span><br><span class="line">	&#125; <span class="keyword">while</span> (v3 &amp;&amp; v3 != v4);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD <span class="title">findGetProcAddress</span><span class="params">(DWORD kernel32Addr,DWORD funcValue)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD exportTable,addressOfFunctions,addressOfNames,addressOfNameOrdinals,numberOfNames;</span><br><span class="line">	exportTable = (*(DWORD *)(*(DWORD *)(kernel32Addr + <span class="number">60</span>) + kernel32Addr + <span class="number">120</span>) + kernel32Addr);</span><br><span class="line">	addressOfFunctions = *(DWORD *)(exportTable + <span class="number">0x1c</span>) + kernel32Addr;</span><br><span class="line">	addressOfNames = *(DWORD *)(exportTable + <span class="number">0x20</span>) + kernel32Addr;</span><br><span class="line">	addressOfNameOrdinals = *(DWORD *)(exportTable + <span class="number">0x24</span>) + kernel32Addr;</span><br><span class="line"></span><br><span class="line">	numberOfNames = *(DWORD *)(exportTable + <span class="number">0x18</span>);</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;numberOfNames;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(calValue2((BYTE *)(*(DWORD *)(addressOfNames + <span class="number">4</span> * i) + kernel32Addr)) == funcValue)</span><br><span class="line">			<span class="keyword">return</span> *(DWORD *)(addressOfFunctions + <span class="number">4</span> * *(WORD *)(addressOfNameOrdinals + <span class="number">2</span> * i)) + kernel32Addr;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc,<span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD kernel32Addr;</span><br><span class="line">	myFindFirstFile findFirstFileAddr;</span><br><span class="line">	kernel32Addr = findKernel32();</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"kernel32Addr:%X\n"</span>,kernel32Addr);</span><br><span class="line">	HMODULE hKernel32 = GetModuleHandleA(<span class="string">"kernel32.dll"</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"hKernel32:%X\n"</span>,hKernel32);</span><br><span class="line">	findFirstFileAddr = (myFindFirstFile)findGetProcAddress(kernel32Addr,<span class="number">0x63D6C065</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"findFirstFileAddr:%p\n"</span>,findFirstFileAddr);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"FindFirstFile:%p\n"</span>,GetProcAddress(hKernel32,<span class="string">"FindFirstFileA"</span>));</span><br><span class="line">	system(<span class="string">"pause"</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2017/10/26/getKernel32/">
+    <time datetime="2017-10-26T02:52:57.000Z" class="entry-date">
+        2017-10-26
+    </time>
+</a>
+    
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/others/">others</a>
+  </div>
+
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PE/">PE</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reverse/">reverse</a></li></ul>
+
+    </footer>
+</article>
+
+
+
+
+
+
+  
     <article id="post-几种可作为工具使用常用注入姿势" class="post-几种可作为工具使用常用注入姿势 post type-post status-publish format-standard hentry">
     <!---->
 
@@ -82,7 +137,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/10/02/几种可作为工具使用常用注入姿势/" data-id="ck97yisdu002jrr3kg87p0295" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/10/02/几种可作为工具使用常用注入姿势/" data-id="ck9vj8ycf002h873k4y758ysh" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -139,7 +194,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/30/Win7x64-DLL-Remote-Injection-Hide-Process/" data-id="ck97yisds002hrr3kcjpn6f1x" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/30/Win7x64-DLL-Remote-Injection-Hide-Process/" data-id="ck9vj8yc8002f873kd8nixmaq" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -191,7 +246,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/18/whctf2018/" data-id="ck97yiscd001arr3klkxt3d5b" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/18/whctf2018/" data-id="ck9vj8y92001b873k6xpnasle" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -258,7 +313,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/18/reversing-kr/" data-id="ck97yisee002yrr3k1s6b4jnp" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/18/reversing-kr/" data-id="ck9vj8ydh002w873kivmd1paw" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -376,7 +431,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/12/babyvm/" data-id="ck97yisbt000grr3kq164t5wm" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/12/babyvm/" data-id="ck9vj8y7v000k873ky8tgp1yu" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -439,7 +494,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/02/简单的基于壳的变形壳工具/" data-id="ck97yisdv002mrr3kzm8s3taj" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/02/简单的基于壳的变形壳工具/" data-id="ck9vj8ych002k873kdudkeh1o" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -493,7 +548,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/win32和MFC逆向总结/" data-id="ck97yiscf001err3ktae4t42o" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/win32和MFC逆向总结/" data-id="ck9vj8y99001f873kkdipkvws" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -554,7 +609,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/windbg/" data-id="ck97yiscg001irr3kwoxosciy" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/09/01/windbg/" data-id="ck9vj8y9p001p873kx8ov0kce" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -623,7 +678,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/23/pwnable-tw-hacknote/" data-id="ck97yisc7000zrr3kmvy0oz7v" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/23/pwnable-tw-hacknote/" data-id="ck9vj8y8k000y873ksapdlz1p" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -652,77 +707,6 @@
   <span class="article-delim">&#8226;</span>
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
 
-    </footer>
-</article>
-
-
-
-
-
-
-  
-    <article id="post-PIL-python-imaging-library" class="post-PIL-python-imaging-library post type-post status-publish format-standard hentry">
-    <!---->
-
-      <header class="entry-header">
-        
-        
-  
-    <h1 class="entry-title">
-      <a class="article-title" href="/2017/08/20/PIL-python-imaging-library/">PIL-python-imaging-library</a>
-    </h1>
-  
-
-        
-        <div class="comments-link">
-            
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/08/20/PIL-python-imaging-library/" data-id="ck97yisbe000arr3k90f77r5g" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
-
-    <div class="entry-content">
-      
-        <p>越来越觉得PIL的重要性，决定认认真真地学上一两天，嗯~ o(<em>￣▽￣</em>)o!  </p>
-<h1 id="PIL"><a href="#PIL" class="headerlink" title="PIL"></a>PIL</h1><p>内容基本都是从文档上来的。<br><a href="http://effbot.org/imagingbook/introduction.htm" target="_blank" rel="noopener">文档链接</a><br>下面这个网站对PIL的介绍很详细，想了解更多可以看这个。<br><a href="http://blog.csdn.net/column/details/pythonpil.html" target="_blank" rel="noopener">PIL</a></p>
-<h2 id="使用Image类"><a href="#使用Image类" class="headerlink" title="使用Image类"></a>使用Image类</h2><h3 id="从文件载入-或者句柄载入"><a href="#从文件载入-或者句柄载入" class="headerlink" title="从文件载入,或者句柄载入"></a>从文件载入,或者句柄载入</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Image</span><br><span class="line">im = Image.open(<span class="string">"lena.ppm"</span>)</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Image</span><br><span class="line">fp = open(<span class="string">"lena.ppm"</span>,<span class="string">"rb"</span>)</span><br><span class="line">im = Image.open(fp)</span><br></pre></td></tr></table></figure>
-<h3 id="查看一些对象属性"><a href="#查看一些对象属性" class="headerlink" title="查看一些对象属性"></a>查看一些对象属性</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">print</span> im.format,im.size,im.mode</span><br><span class="line">PPM (<span class="number">512</span>,<span class="number">512</span>) RGB</span><br></pre></td></tr></table></figure>
-<p>mode如果是L，代表灰度图像，RGB是彩色图像，CMYK是pre-press图像，这个图像是啥，我还不太清楚。  </p>
-<h3 id="显示图像"><a href="#显示图像" class="headerlink" title="显示图像"></a>显示图像</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">im.show()</span><br></pre></td></tr></table></figure>
-<h2 id="对图像进行读写"><a href="#对图像进行读写" class="headerlink" title="对图像进行读写"></a>对图像进行读写</h2><h3 id="保存图像"><a href="#保存图像" class="headerlink" title="保存图像"></a>保存图像</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">im.save(outfile,format,options...)</span><br></pre></td></tr></table></figure>
-<p>format如果省略，则python自动按插件识别结果保存。如果没有安装扩展插件，需要明确保存格式。  </p>
-<h3 id="保存为jpeg格式"><a href="#保存为jpeg格式" class="headerlink" title="保存为jpeg格式"></a>保存为jpeg格式</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os,sys</span><br><span class="line"><span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> infile <span class="keyword">in</span> sys.argv[<span class="number">1</span>:]:</span><br><span class="line">	f,e = os.path.splitext(infile)</span><br><span class="line">	outfile = f + <span class="string">".jpg"</span></span><br><span class="line">	<span class="keyword">if</span> outfile != infile:</span><br><span class="line">		<span class="keyword">try</span>:</span><br><span class="line">			image.open(infile).save(outfile)</span><br><span class="line">		<span class="keyword">except</span> IOError:</span><br><span class="line">			<span class="keyword">print</span> <span class="string">"cannot convert"</span>,infile</span><br></pre></td></tr></table></figure>
-<p>上述代码将把命令行读入的所有指定文件保存为jpg格式，不能保存的抛出异常。  </p>
-<h3 id="图像缩放"><a href="#图像缩放" class="headerlink" title="图像缩放"></a>图像缩放</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">size = <span class="number">128</span>,<span class="number">128</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> infile <span class="keyword">in</span> sys.argv[<span class="number">1</span>:]:</span><br><span class="line">	outfile = os.path.splitext(infile)[<span class="number">0</span>] + <span class="string">".thumbnail"</span></span><br><span class="line">	<span class="keyword">try</span>:</span><br><span class="line">		im = Image.open(infile)</span><br><span class="line">		im.thumbnail(size)</span><br><span class="line">		im.save(outfile,<span class="string">"jpeg"</span>)</span><br><span class="line">	<span class="keyword">except</span>:</span><br><span class="line">		<span class="keyword">print</span> <span class="string">"cannot create thumbnail for"</span>,infile</span><br></pre></td></tr></table></figure>
-<h2 id="截取，粘贴，融合图像"><a href="#截取，粘贴，融合图像" class="headerlink" title="截取，粘贴，融合图像"></a>截取，粘贴，融合图像</h2><h3 id="截取图像的一部分"><a href="#截取图像的一部分" class="headerlink" title="截取图像的一部分"></a>截取图像的一部分</h3><p>使用crop方法从一张图片上截取子矩形  </p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">box = (<span class="number">100</span>,<span class="number">100</span>,<span class="number">400</span>,<span class="number">400</span>)</span><br><span class="line">region = im.crop(box)</span><br></pre></td></tr></table></figure>
-<p>从左上角到右下角  </p>
-<h3 id="旋转180，再贴回去"><a href="#旋转180，再贴回去" class="headerlink" title="旋转180，再贴回去"></a>旋转180，再贴回去</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">region = region.transpose(Image.ROTATE_180)</span><br><span class="line">im.paste(region,box)</span><br></pre></td></tr></table></figure>
-<h3 id="滚动图像-交换图像位置"><a href="#滚动图像-交换图像位置" class="headerlink" title="滚动图像(交换图像位置)"></a>滚动图像(交换图像位置)</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">roll</span><span class="params">(image,delta)</span>:</span></span><br><span class="line"></span><br><span class="line">	xsize,ysize = image.size</span><br><span class="line">	</span><br><span class="line">	delta = delta % xsize</span><br><span class="line">	<span class="keyword">if</span> delta == <span class="number">0</span>: <span class="keyword">return</span> image</span><br><span class="line">	</span><br><span class="line">	part1 = image.crop((<span class="number">0</span>,<span class="number">0</span>,delta,ysize))</span><br><span class="line">	part2 = image.crop((delta,<span class="number">0</span>,xsize,ysize))</span><br><span class="line">	image.paste(part2,(<span class="number">0</span>,<span class="number">0</span>,xsize - delta,ysize))</span><br><span class="line">	image.paste(part1,(xsize - delta,<span class="number">0</span>,xsize,ysize))</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> image</span><br></pre></td></tr></table></figure>
-<h3 id="分割RGB"><a href="#分割RGB" class="headerlink" title="分割RGB"></a>分割RGB</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">r,g,b = im.split()</span><br><span class="line">im = Image.merge(<span class="string">"RGB"</span>,(b,g,r))</span><br></pre></td></tr></table></figure>
-<h2 id="几何变换"><a href="#几何变换" class="headerlink" title="几何变换"></a>几何变换</h2><h3 id="简单变换"><a href="#简单变换" class="headerlink" title="简单变换"></a>简单变换</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">out = im.resize(<span class="number">128</span>,<span class="number">128</span>)</span><br><span class="line">out = im.rotate(<span class="number">45</span>) <span class="comment">#逆时针旋转</span></span><br></pre></td></tr></table></figure>
-<h3 id="变换图像"><a href="#变换图像" class="headerlink" title="变换图像"></a>变换图像</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">out = im.transpose(Image.FLIP_LEFT_RIGHT) <span class="comment">#水平翻转</span></span><br><span class="line">out = im.transpose(Image.FLIP_TOP_BOTTOM) <span class="comment">#垂直翻转</span></span><br><span class="line">out = im.transpose(Image.ROTATE_90)</span><br><span class="line">out = im.transpose(Image.ROTATE_180)</span><br><span class="line">out = im.transpose(Image.ROTATE_270)</span><br></pre></td></tr></table></figure>
-<h3 id="颜色变换-在不同mode下转换"><a href="#颜色变换-在不同mode下转换" class="headerlink" title="颜色变换(在不同mode下转换)"></a>颜色变换(在不同mode下转换)</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">im = Image.open(<span class="string">"lena.ppm"</span>).convert(<span class="string">"L"</span>)</span><br></pre></td></tr></table></figure>
-<h3 id="滤镜"><a href="#滤镜" class="headerlink" title="滤镜"></a>滤镜</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ImageFilter</span><br><span class="line">out = im.filter(ImageFilter.DETAIL)</span><br></pre></td></tr></table></figure>
-<p>有很多滤镜的功能，在ImageFilter模块里，具体可以参考文档。<br><a href="http://effbot.org/imagingbook/imagefilter.htm" target="_blank" rel="noopener">ImageFilter</a></p>
-<h3 id="点操作-提取不同通道像素"><a href="#点操作-提取不同通道像素" class="headerlink" title="点操作(提取不同通道像素)"></a>点操作(提取不同通道像素)</h3><h3 id="读取每一帧"><a href="#读取每一帧" class="headerlink" title="读取每一帧"></a>读取每一帧</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">im = Image.open(<span class="string">"animation.gif"</span>)</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">	im.seek(im.tell() + <span class="number">1</span>)</span><br><span class="line">	im.save(str(im.tell()) + <span class="string">".jpg"</span>)</span><br><span class="line"><span class="keyword">except</span> EOFError:</span><br><span class="line">	<span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div><!-- .entry-content -->
-
-    <footer class="entry-meta">
-    <a href="/2017/08/20/PIL-python-imaging-library/">
-    <time datetime="2017-08-20T14:10:11.000Z" class="entry-date">
-        2017-08-20
-    </time>
-</a>
-    
-  <span class="article-delim">&#8226;</span>
-  <div class="article-category">
-  <a class="article-category-link" href="/categories/others/">others</a>
-  </div>
-
-    
     </footer>
 </article>
 
@@ -768,6 +752,10 @@
       <ul>
         
           <li>
+            <a href="/2020/05/07/VMP-修复dump内存导入表/">(no title)</a>
+          </li>
+        
+          <li>
             <a href="/2020/04/20/windows原始套接字sock-raw的使用限制/">windows原始套接字sock_raw的使用限制</a>
           </li>
         
@@ -781,10 +769,6 @@
         
           <li>
             <a href="/2019/12/07/C++逆向随笔/">C++逆向随笔</a>
-          </li>
-        
-          <li>
-            <a href="/2019/08/24/某游戏cg素材解包/">某游戏cg素材解包</a>
           </li>
         
       </ul>
