@@ -1,20 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <meta name="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修" />
-  
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.7.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-  
-  
-  
-  
-  
-  
-  <title>hctf2017-level1Tolevel3-reverse | Invicsfate</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"invicsfate.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
   <meta name="description" content="level1-Evr_Q思路：程序有TLS反调试和NtQueryInformationProcess的反调试，过了就能动调了。首先是Check输入的UserName，接着Check输入的PassWord，长度要满足35，接着对PassWord统一进行了异或0x76，我将35长度的字符串分为5组，程序紧接着对中间三组分别进行了简单的操作，如下图，最后和硬编码的值比较。   Check_UserNam">
 <meta name="keywords" content="reverse">
 <meta property="og:type" content="article">
@@ -35,66 +40,178 @@
 <meta name="twitter:title" content="hctf2017-level1Tolevel3-reverse">
 <meta name="twitter:description" content="level1-Evr_Q思路：程序有TLS反调试和NtQueryInformationProcess的反调试，过了就能动调了。首先是Check输入的UserName，接着Check输入的PassWord，长度要满足35，接着对PassWord统一进行了异或0x76，我将35长度的字符串分为5组，程序紧接着对中间三组分别进行了简单的操作，如下图，最后和硬编码的值比较。   Check_UserNam">
 <meta name="twitter:image" content="https://invicsfate.github.io/assert/Evr_Q1.png">
-  
-  
-    <link rel="icon" href="/css/images/favicon.ico">
-  
-  <link rel="stylesheet" href="/css/style.css">
+
+<link rel="canonical" href="http://Invicsfate.github.io/2017/11/12/hctf2017-level1Tolevel3-reverse/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'default'
+  };
+</script>
+
+  <title>hctf2017-level1Tolevel3-reverse | Invicsfate</title>
   
 
-  
-  <!-- baidu webmaster push -->
-  <script src='//push.zhanzhang.baidu.com/push.js'></script>
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
 </head>
-<body class="home blog custom-background custom-font-enabled single-author">
-  <div id="page" class="hfeed site">
-      <header id="masthead" class="site-header" role="banner">
-    <hgroup>
-      <h1 class="site-title">
-        <a href="/" title="Invicsfate" rel="home">Invicsfate</a>
-      </h1>
-      
-        <h2 class="site-description">
-          <a href="/" id="subtitle">菜狗.jpg</a>
-        </h2>
-      
-    </hgroup>
 
-    <nav id="site-navigation" class="main-navigation" role="navigation">
-            <button class="menu-toggle">菜单</button>
-            <a class="assistive-text" href="/#content" title="跳至内容">跳至内容</a><!--TODO-->
-            <div class="menu-main-container">
-                <ul id="menu-main" class="nav-menu">
-                
-                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/">Home</a></li>
-                
-                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/archives">Archives</a></li>
-                
-                </ul>
-            </div>
-    </nav>
-</header>
-      <div id="main" class="wrapper">
-        <div id="primary" class="site-content"><div id="content" role="main"><article id="post-hctf2017-level1Tolevel3-reverse" class="post-hctf2017-level1Tolevel3-reverse post type-post status-publish format-standard hentry">
-    <!---->
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
 
-      <header class="entry-header">
-        
-        
-  
-    <h1 class="entry-title article-title">
-      hctf2017-level1Tolevel3-reverse
-    </h1>
-  
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
 
-        
-        <div class="comments-link">
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Invicsfate</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">菜狗.jpg</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
             
-            <a href="javascript:void(0);" data-url="http://Invicsfate.github.io/2017/11/12/hctf2017-level1Tolevel3-reverse/" data-id="ck9vjdoap0031w73kzl0k0inz" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
 
-    <div class="entry-content">
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://Invicsfate.github.io/2017/11/12/hctf2017-level1Tolevel3-reverse/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Invicsfate">
+      <meta itemprop="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Invicsfate">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          hctf2017-level1Tolevel3-reverse
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-11-12 20:56:34" itemprop="dateCreated datePublished" datetime="2017-11-12T20:56:34+08:00">2017-11-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2018-10-09 22:39:52" itemprop="dateModified" datetime="2018-10-09T22:39:52+08:00">2018-10-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
         <h1 id="level1-Evr-Q"><a href="#level1-Evr-Q" class="headerlink" title="level1-Evr_Q"></a>level1-Evr_Q</h1><p>思路：程序有TLS反调试和NtQueryInformationProcess的反调试，过了就能动调了。首先是Check输入的UserName，接着Check输入的PassWord，长度要满足35，接着对PassWord统一进行了异或0x76，我将35长度的字符串分为5组，程序紧接着对中间三组分别进行了简单的操作，如下图，最后和硬编码的值比较。  </p>
 <p>Check_UserName函数：</p>
@@ -130,138 +247,189 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;math.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;Windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> r=<span class="number">20</span>;  </span><br><span class="line"><span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> w=<span class="number">32</span>;  </span><br><span class="line"><span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> b=<span class="number">16</span>;  </span><br><span class="line"><span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> c=<span class="number">8</span>;  </span><br><span class="line"><span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> p=<span class="number">0xb7e15163</span>;  </span><br><span class="line"><span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> q=<span class="number">0x9e3779b9</span>;</span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">moveleft</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> x,<span class="keyword">unsigned</span> <span class="keyword">int</span> y)</span></span>;  </span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">moveright</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> x,<span class="keyword">unsigned</span> <span class="keyword">int</span> y)</span></span>;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">keyextend</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> *s,<span class="keyword">unsigned</span> <span class="keyword">int</span> *l)</span></span>;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">encryp</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> *A,<span class="keyword">unsigned</span> <span class="keyword">int</span> *B,<span class="keyword">unsigned</span> <span class="keyword">int</span> *C,<span class="keyword">unsigned</span> <span class="keyword">int</span> *D,<span class="keyword">unsigned</span> <span class="keyword">int</span> *S)</span></span>;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">decryp</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> *A,<span class="keyword">unsigned</span> <span class="keyword">int</span> *B,<span class="keyword">unsigned</span> <span class="keyword">int</span> *C,<span class="keyword">unsigned</span> <span class="keyword">int</span> *D,<span class="keyword">unsigned</span> <span class="keyword">int</span> *S)</span></span>; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">moveleft</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> x,<span class="keyword">unsigned</span> <span class="keyword">int</span> y)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> i,temp;  </span><br><span class="line">    <span class="keyword">if</span>(y/<span class="number">32</span>!=<span class="number">0</span>)  </span><br><span class="line">        y=y%<span class="number">32</span>;  </span><br><span class="line">    <span class="keyword">for</span> (i=<span class="number">0</span>; i&lt;y; i++)  </span><br><span class="line">    &#123;  </span><br><span class="line">        temp=x&amp;<span class="number">0x80000000</span>;  </span><br><span class="line">        x=x&lt;&lt;<span class="number">1</span>;  </span><br><span class="line">        x=x+((temp&gt;&gt;<span class="number">31</span>)&amp;<span class="number">0x00000001</span>);  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">return</span> x;  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">moveright</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> x,<span class="keyword">unsigned</span> <span class="keyword">int</span> y)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> i,temp;  </span><br><span class="line">    <span class="keyword">if</span>(y/<span class="number">32</span>!=<span class="number">0</span>)  </span><br><span class="line">        y=y%<span class="number">32</span>;  </span><br><span class="line">    <span class="keyword">for</span> (i=<span class="number">0</span>; i&lt;y; i++)  </span><br><span class="line">    &#123;  </span><br><span class="line">        temp=x&amp;<span class="number">0x00000001</span>;  </span><br><span class="line">        x=x&gt;&gt;<span class="number">1</span>;  </span><br><span class="line">        x=(x&amp;<span class="number">0x7fffffff</span>)+(temp&lt;&lt;<span class="number">31</span>);  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">return</span> x;  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">keyextend</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> *s,<span class="keyword">unsigned</span> <span class="keyword">int</span> *l)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> i,j,k,a,b;  </span><br><span class="line">    s[<span class="number">0</span>]=p;  </span><br><span class="line">    <span class="keyword">for</span> (i=<span class="number">1</span>; i&lt;=<span class="number">43</span>; i++)  </span><br><span class="line">        s[i]=s[i<span class="number">-1</span>]+q;  </span><br><span class="line">    a=<span class="number">0</span>;  </span><br><span class="line">    b=<span class="number">0</span>;  </span><br><span class="line">    i=<span class="number">0</span>;  </span><br><span class="line">    j=<span class="number">0</span>;  </span><br><span class="line">    <span class="keyword">for</span> (k=<span class="number">1</span>; k&lt;=<span class="number">132</span>; k++)  </span><br><span class="line">    &#123;  </span><br><span class="line">        s[i]=s[i]+a+b;  </span><br><span class="line">        s[i]=moveleft(s[i],<span class="number">3</span>);  </span><br><span class="line">        a=s[i];  </span><br><span class="line">        l[j]=l[j]+a+b;  </span><br><span class="line">        l[j]=moveleft(l[j],(a+b));  </span><br><span class="line">        b=l[j];  </span><br><span class="line">        i=(i+<span class="number">1</span>)%<span class="number">44</span>;  </span><br><span class="line">        j=(j+<span class="number">1</span>)%<span class="number">8</span>;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">encryp</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> *A,<span class="keyword">unsigned</span> <span class="keyword">int</span> *B,<span class="keyword">unsigned</span> <span class="keyword">int</span> *C,<span class="keyword">unsigned</span> <span class="keyword">int</span> *D,<span class="keyword">unsigned</span> <span class="keyword">int</span> *S)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="keyword">int</span> i,j,t,u,temp;  </span><br><span class="line">    *B=*B+S[<span class="number">0</span>];  </span><br><span class="line">    *D=*D+S[<span class="number">1</span>];  </span><br><span class="line">    j=(<span class="keyword">unsigned</span> <span class="keyword">int</span>)(<span class="number">5</span>);  <span class="comment">//log(w)/log(2)</span></span><br><span class="line">    <span class="keyword">for</span> (i=<span class="number">1</span>; i&lt;=r; i++)  </span><br><span class="line">    &#123;  </span><br><span class="line">        t=moveleft(((*B)*(<span class="number">2</span>*(*B)+<span class="number">1</span>)),j);  </span><br><span class="line">        u=moveleft(((*D)*(<span class="number">2</span>*(*D)+<span class="number">1</span>)),j);  </span><br><span class="line">        temp=moveleft(((*A)^t),u);  </span><br><span class="line">        *A=temp+S[<span class="number">2</span>*i];  </span><br><span class="line">        temp=moveleft(((*C)^u), t);  </span><br><span class="line">        *C=temp+S[<span class="number">2</span>*i+<span class="number">1</span>];  </span><br><span class="line">        temp=*A;  </span><br><span class="line">        *A=*B;  </span><br><span class="line">        *B=*C;  </span><br><span class="line">        *C=*D;  </span><br><span class="line">        *D=temp;  </span><br><span class="line">    &#125;  </span><br><span class="line">    *A=*A+S[<span class="number">2</span>*r+<span class="number">2</span>];  </span><br><span class="line">    *C=*C+S[<span class="number">2</span>*r+<span class="number">3</span>];  </span><br><span class="line">      </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">decryp</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> *A,<span class="keyword">unsigned</span> <span class="keyword">int</span> *B,<span class="keyword">unsigned</span> <span class="keyword">int</span> *C,<span class="keyword">unsigned</span> <span class="keyword">int</span> *D,<span class="keyword">unsigned</span> <span class="keyword">int</span> *S)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> i,j,u,t,temp;  </span><br><span class="line">    j=(<span class="keyword">unsigned</span> <span class="keyword">int</span>)(<span class="number">5</span>);  <span class="comment">//log(w)/log(2)</span></span><br><span class="line">    *C=*C-S[<span class="number">2</span>*r+<span class="number">3</span>];  </span><br><span class="line">    *A=*A-S[<span class="number">2</span>*r+<span class="number">2</span>];  </span><br><span class="line">    <span class="keyword">for</span> (i=r; i&gt;=<span class="number">1</span>; i--)  </span><br><span class="line">    &#123;  </span><br><span class="line">        temp=*D;  </span><br><span class="line">        *D=*C;  </span><br><span class="line">        *C=*B;  </span><br><span class="line">        *B=*A;  </span><br><span class="line">        *A=temp;  </span><br><span class="line">        u=moveleft(((*D)*(<span class="number">2</span>*(*D)+<span class="number">1</span>)),j);  </span><br><span class="line">        t=moveleft(((*B)*(<span class="number">2</span>*(*B)+<span class="number">1</span>)),j);  </span><br><span class="line">        temp=moveright(((*C)-S[<span class="number">2</span>*i+<span class="number">1</span>]),t);  </span><br><span class="line">        *C=temp^u;  </span><br><span class="line">        temp=moveright(((*A)-S[<span class="number">2</span>*i]), u);  </span><br><span class="line">        *A=temp^t;  </span><br><span class="line">    &#125;  </span><br><span class="line">    *D=*D-S[<span class="number">1</span>];  </span><br><span class="line">    *B=*B-S[<span class="number">0</span>];  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> A,B,C,D,S[<span class="number">2</span>*r+<span class="number">4</span>],L[c] =&#123;<span class="number">0</span>&#125;;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">char</span> plaintxt[<span class="number">17</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> keylen = c*<span class="number">4</span>,i,j,temp;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">char</span> key[] = &#123;<span class="string">"52Mi!R_u_MiFans?DO_u_like_me?Tha"</span>&#125;;</span><br><span class="line">	j = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>; i&lt;keylen;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		temp = (<span class="keyword">unsigned</span> <span class="keyword">int</span>)key[i];</span><br><span class="line">		<span class="keyword">if</span>(i%<span class="number">4</span>==<span class="number">3</span>)</span><br><span class="line">			temp = temp&lt;&lt;<span class="number">24</span>;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(i%<span class="number">4</span>==<span class="number">2</span>)</span><br><span class="line">			temp = temp&lt;&lt;<span class="number">16</span>;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(i%<span class="number">4</span>==<span class="number">1</span>)</span><br><span class="line">			temp = temp&lt;&lt;<span class="number">8</span>;</span><br><span class="line">		L[j] = L[j] + temp;</span><br><span class="line">		<span class="keyword">if</span>(i%<span class="number">4</span>==<span class="number">3</span>)</span><br><span class="line">			j++;</span><br><span class="line">	&#125;</span><br><span class="line">	keyextend(S,L); </span><br><span class="line">	A = <span class="number">0x7E5705E0</span>,B = <span class="number">0x154E206D</span>,C = <span class="number">0x0B66CB9B</span>,D = <span class="number">0x059C6CAB</span>;</span><br><span class="line">	decryp(&amp;A,&amp;B,&amp;C,&amp;D,S);</span><br><span class="line">	plaintxt[<span class="number">3</span>]=((A&amp;<span class="number">0xff000000</span>)&gt;&gt;<span class="number">24</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">2</span>]=((A&amp;<span class="number">0xff0000</span>)&gt;&gt;<span class="number">16</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">1</span>]=((A&amp;<span class="number">0xff00</span>)&gt;&gt;<span class="number">8</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">0</span>]=A&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">7</span>]=((B&amp;<span class="number">0xff000000</span>)&gt;&gt;<span class="number">24</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">6</span>]=((B&amp;<span class="number">0xff0000</span>)&gt;&gt;<span class="number">16</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">5</span>]=((B&amp;<span class="number">0xff00</span>)&gt;&gt;<span class="number">8</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">4</span>]=B&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">11</span>]=((C&amp;<span class="number">0xff000000</span>)&gt;&gt;<span class="number">24</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">10</span>]=((C&amp;<span class="number">0xff0000</span>)&gt;&gt;<span class="number">16</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">9</span>]=((C&amp;<span class="number">0xff00</span>)&gt;&gt;<span class="number">8</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">8</span>]=C&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">15</span>]=((D&amp;<span class="number">0xff000000</span>)&gt;&gt;<span class="number">24</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">14</span>]=((D&amp;<span class="number">0xff0000</span>)&gt;&gt;<span class="number">16</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">13</span>]=((D&amp;<span class="number">0xff00</span>)&gt;&gt;<span class="number">8</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">12</span>]=D&amp;<span class="number">0xff</span>;</span><br><span class="line">	plaintxt[16]='\x00';</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"%16s"</span>,plaintxt);</span><br><span class="line">	A = <span class="number">0x2C3D3B0E</span>,B = <span class="number">0x8D33D886</span>,C = <span class="number">0x198A6D51</span>,D = <span class="number">0x25D22C40</span>;</span><br><span class="line">	decryp(&amp;A,&amp;B,&amp;C,&amp;D,S);</span><br><span class="line">	plaintxt[<span class="number">3</span>]=((A&amp;<span class="number">0xff000000</span>)&gt;&gt;<span class="number">24</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">2</span>]=((A&amp;<span class="number">0xff0000</span>)&gt;&gt;<span class="number">16</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">1</span>]=((A&amp;<span class="number">0xff00</span>)&gt;&gt;<span class="number">8</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">0</span>]=A&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">7</span>]=((B&amp;<span class="number">0xff000000</span>)&gt;&gt;<span class="number">24</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">6</span>]=((B&amp;<span class="number">0xff0000</span>)&gt;&gt;<span class="number">16</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">5</span>]=((B&amp;<span class="number">0xff00</span>)&gt;&gt;<span class="number">8</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">4</span>]=B&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">11</span>]=((C&amp;<span class="number">0xff000000</span>)&gt;&gt;<span class="number">24</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">10</span>]=((C&amp;<span class="number">0xff0000</span>)&gt;&gt;<span class="number">16</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">9</span>]=((C&amp;<span class="number">0xff00</span>)&gt;&gt;<span class="number">8</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">8</span>]=C&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">15</span>]=((D&amp;<span class="number">0xff000000</span>)&gt;&gt;<span class="number">24</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">14</span>]=((D&amp;<span class="number">0xff0000</span>)&gt;&gt;<span class="number">16</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">13</span>]=((D&amp;<span class="number">0xff00</span>)&gt;&gt;<span class="number">8</span>)&amp;<span class="number">0xff</span>;  </span><br><span class="line">    plaintxt[<span class="number">12</span>]=D&amp;<span class="number">0xff</span>;</span><br><span class="line">	plaintxt[16]='\x00';</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"%16s\n"</span>,plaintxt);</span><br><span class="line">	system(<span class="string">"pause"</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//hctf&#123;p1ay_Wi7h_p7r4Ce_L0L_6f95e&#125;</span></span><br><span class="line"><span class="comment">//52Mi!R_u_MiFans?DO_u_like_me?Tha -&gt; L</span></span><br><span class="line"><span class="comment">/*cipher = </span></span><br><span class="line"><span class="comment">0xE0,0x05,0x57,0x7E</span></span><br><span class="line"><span class="comment">0x6D,0x20,0x4E,0x15</span></span><br><span class="line"><span class="comment">0x9B,0xCB,0x66,0x0B</span></span><br><span class="line"><span class="comment">0xAB,0x6C,0x9C,0x05</span></span><br><span class="line"><span class="comment">0x0E,0x3B,0x3D,0x2C</span></span><br><span class="line"><span class="comment">0x86,0xD8,0x33,0x8D</span></span><br><span class="line"><span class="comment">0x51,0x6D,0x8A,0x19</span></span><br><span class="line"><span class="comment">0x40,0x2C,0xD2,0x25</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
 <p>嗯，就酱！后面的层数没有出来，额，还要继续努力才行QAQ！</p>
 
-      
-    </div><!-- .entry-content -->
+    </div>
 
-    <footer class="entry-meta">
-    <a href="/2017/11/12/hctf2017-level1Tolevel3-reverse/">
-    <time datetime="2017-11-12T12:56:34.000Z" class="entry-date">
-        2017-11-12
-    </time>
-</a>
     
-  <span class="article-delim">&#8226;</span>
-  <div class="article-category">
-  <a class="article-category-link" href="/categories/CTF/">CTF</a>
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/reverse/" rel="tag"># reverse</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/10/26/getKernel32/" rel="prev" title="获取kernel32基地址">
+      <i class="fa fa-chevron-left"></i> 获取kernel32基地址
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/12/28/qemu环境搭建/" rel="next" title="qemu环境搭建">
+      qemu环境搭建 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
   </div>
 
-    
-  <span class="article-delim">&#8226;</span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reverse/">reverse</a></li></ul>
+  <aside class="sidebar">
+    <div class="sidebar-inner">
 
-    </footer>
-</article>
-
-
-    
-<nav class="nav-single">
-    <h3 class="assistive-text">文章导航</h3>
-    
-        <span class="nav-previous"><a href="/2017/12/28/qemu环境搭建/" rel="prev"><span class="meta-nav">←</span> qemu环境搭建</a></span>
-    
-    
-        <span class="nav-next"><a href="/2017/10/26/getKernel32/" rel="next">获取kernel32基地址 <span class="meta-nav">→</span></a></span>
-    
-</nav><!-- .nav-single -->
-
-
-
-
-
-
-
-</div></div>
-        <div id="secondary" class="widget-area" role="complementary">
-  
-    <aside id="search" class="widget widget_search"><form role="search" method="get" accept-charset="utf-8" id="searchform" class="searchform" action="//google.com/search">
-    <div>
-        <input type="text" value="" name="s" id="s" />
-        <input type="submit" id="searchsubmit" value="搜索" />
-    </div>
-</form></aside>
-  
-    
-  
-    
-  <aside class="widget">
-    <h3 class="widget-title">Categories</h3>
-    <div class="widget-content">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GameSecurity/">GameSecurity</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/IOT/">IOT</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/others/">others</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reverse/">reverse</a><span class="category-list-count">1</span></li></ul>
-    </div>
-  </aside>
-
-  
-    
-  <aside class="widget">
-    <h3 class="widget-title">Recents</h3>
-    <div class="widget-content">
-      <ul>
-        
-          <li>
-            <a href="/2020/05/07/VMP-修复dump内存导入表/">VMP-修复dump内存导入表</a>
-          </li>
-        
-          <li>
-            <a href="/2020/04/20/windows原始套接字sock-raw的使用限制/">windows原始套接字sock_raw的使用限制</a>
-          </li>
-        
-          <li>
-            <a href="/2020/02/15/nginx-https-CGI-post数据/">nginx-https-CGI-post数据</a>
-          </li>
-        
-          <li>
-            <a href="/2019/12/14/“绝对安全”的本地序列号验证方法/">“绝对安全”的本地序列号验证方法</a>
-          </li>
-        
-          <li>
-            <a href="/2019/12/07/C++逆向随笔/">C++逆向随笔</a>
-          </li>
-        
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
       </ul>
-    </div>
-  </aside>
 
-  
-    
-  <aside class="widget">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget-content">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/PE/">PE</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firmware/">firmware</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rev/">rev</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reverse/">reverse</a><span class="tag-list-count">17</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/">web</a><span class="tag-list-count">2</span></li></ul>
-    </div>
-  </aside>
-
-  
-    
-  <aside class="widget">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget-content tagcloud">
-      <a href="/tags/PE/" style="font-size: 15px;">PE</a> <a href="/tags/firmware/" style="font-size: 15px;">firmware</a> <a href="/tags/pwn/" style="font-size: 17.5px;">pwn</a> <a href="/tags/rev/" style="font-size: 10px;">rev</a> <a href="/tags/reverse/" style="font-size: 20px;">reverse</a> <a href="/tags/web/" style="font-size: 12.5px;">web</a>
-    </div>
-  </aside>
-
-  
-</div>
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#level1-Evr-Q"><span class="nav-number">1.</span> <span class="nav-text">level1-Evr_Q</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#level2-ez-crackme"><span class="nav-number">2.</span> <span class="nav-text">level2-ez_crackme</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#共三层变换"><span class="nav-number">2.1.</span> <span class="nav-text">共三层变换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一层"><span class="nav-number">2.1.1.</span> <span class="nav-text">第一层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二层"><span class="nav-number">2.1.2.</span> <span class="nav-text">第二层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三层"><span class="nav-number">2.1.3.</span> <span class="nav-text">第三层</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#level3-Are-U-OK"><span class="nav-number">3.</span> <span class="nav-text">level3-Are_U_OK</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#类rc4算法解密隐藏代码"><span class="nav-number">3.1.</span> <span class="nav-text">类rc4算法解密隐藏代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类rc6算法获取flag"><span class="nav-number">3.2.</span> <span class="nav-text">类rc6算法获取flag</span></a></li></ol></li></ol></div>
       </div>
-      <footer id="colophon" role="contentinfo">
-    <p>&copy; 2020 Invicsfate
-    All rights reserved.</p>
-    <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></p>
-</footer>
-    <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      <!--/noindex-->
 
-<script src="/js/jquery-2.0.3.min.js"></script>
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Invicsfate</p>
+  <div class="site-description" itemprop="description">如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
 
 
-<script src="/js/script.js"></script>
+      </div>
+    </main>
 
-<script src="/js/navigation.js"></script>
+    <footer class="footer">
+      <div class="footer-inner">
+        
 
-<div id="bg"></div>
+        
 
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Invicsfate</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
   </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
 </body>
 </html>
