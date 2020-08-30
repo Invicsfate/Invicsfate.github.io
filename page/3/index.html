@@ -149,6 +149,132 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://Invicsfate.github.io/2017/12/28/qemu环境搭建/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Invicsfate">
+      <meta itemprop="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Invicsfate">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/12/28/qemu环境搭建/" class="post-title-link" itemprop="url">qemu环境搭建</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-12-28 08:53:57" itemprop="dateCreated datePublished" datetime="2017-12-28T08:53:57+08:00">2017-12-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2018-10-09 22:42:25" itemprop="dateModified" datetime="2018-10-09T22:42:25+08:00">2018-10-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/IOT/" itemprop="url" rel="index"><span itemprop="name">IOT</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="qemu环境搭建"><a href="#qemu环境搭建" class="headerlink" title="qemu环境搭建"></a>qemu环境搭建</h1><h2 id="VMware的安装"><a href="#VMware的安装" class="headerlink" title="VMware的安装"></a>VMware的安装</h2><h2 id="固件分析利器binwalk"><a href="#固件分析利器binwalk" class="headerlink" title="固件分析利器binwalk"></a>固件分析利器binwalk</h2><p>Kali下自带的binwalk并不是具备完整功能的binwalk，从github上获得binwalk以后，按照INSTALL.md里的说明安装就好，最后执行 sudo python setup.py install。最好安装所有的binwalk依赖项，这样binwalk在解包固件的时候，才能辨别固件的文件格式。  </p>
+<p>首先，确保更新源(/etc/apt/sources.list)没有问题，如果无法update，多更换一下源:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install build-essential autoconf git</span><br></pre></td></tr></table></figure>
+<p>Debian/Ubuntu用户一键安装所有依赖:  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo ./deps.sh</span><br><span class="line">python setup.py install</span><br></pre></td></tr></table></figure>
+<p>这样binwalk的安装就完成了。安装过程中哪个安装包出现问题，去github上git clone对应安装包，安装INSTALL.md或者README.md安装好即可。</p>
+<h2 id="安装qemu"><a href="#安装qemu" class="headerlink" title="安装qemu"></a>安装qemu</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> git://git.qemu-project.org/qemu.git</span><br><span class="line">git submodule update --init dtc</span><br></pre></td></tr></table></figure>
+<p>由于相关的submodule pixman没有了，所以去github上下载后，按照INSTALL里的说明安装即可。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/servo/pixman.git</span><br><span class="line">./configure &amp;&amp; make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+<p>以上都安装成功以后，进行相关依赖文件的安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libglib2.0 libglib2.0-dev</span><br><span class="line">sudo apt-get install autoconf automake libtool</span><br><span class="line">sudo ./configure --static &amp;&amp;sudo make &amp;&amp;sudo make install</span><br></pre></td></tr></table></figure>
+<p>即可安装成功。</p>
+<h2 id="交叉编译环境Buildroot"><a href="#交叉编译环境Buildroot" class="headerlink" title="交叉编译环境Buildroot"></a>交叉编译环境Buildroot</h2><p>使用Buildroot搭建交叉编译环境，安装会有一个多小时，且每一次只能搭建一种交叉编译环境。比如一开始需要的是mips小端序的编译环境，如果后来需要mips大端序的编译环境，需要clean掉原环境，安装新环境。命令如下：  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">wget http://buildroot.uclibc.org/downloads/snapshots/buildroot-snapshot.tar.bz2</span><br><span class="line">tar -jxvf buildroot-snapshot.tar.bz2</span><br><span class="line"><span class="built_in">cd</span> buildroot</span><br><span class="line">sudo apt-get install libncurses5-dev patch</span><br><span class="line">make clean</span><br><span class="line">make menuconfig <span class="comment">#对要生成的编译环境进行配置，注意将"Kernel Headers"改成机器环境的Kernel版本或者低于机器环境的Kernel版本。</span></span><br><span class="line">sudo make <span class="comment">#开始漫长的等待</span></span><br></pre></td></tr></table></figure>
+<p>漫长的等待以后，在output目录下会生成所有的文件，在  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/output/host/usr/bin</span><br></pre></td></tr></table></figure>
+<p>目录下能找到编译成功的编译器mips-linux-gcc(以编译mips大端序环境为例)</p>
+<h2 id="qemu-user-mode下运行文件"><a href="#qemu-user-mode下运行文件" class="headerlink" title="qemu user-mode下运行文件"></a>qemu user-mode下运行文件</h2><h3 id="静态文件"><a href="#静态文件" class="headerlink" title="静态文件"></a>静态文件</h3><p>生成</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mips-linux-gcc -c test.c -o <span class="built_in">test</span> -static</span><br></pre></td></tr></table></figure>
+<p>运行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp $(<span class="built_in">which</span> qemu-mips) ./</span><br><span class="line">./qemu-mips <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+<h3 id="依赖动态库的文件"><a href="#依赖动态库的文件" class="headerlink" title="依赖动态库的文件"></a>依赖动态库的文件</h3><p>生成</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mips-linux-gcc -c test.c -o <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+<p>运行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp $(<span class="built_in">which</span> qemu-mips) ./</span><br><span class="line">sudo chroot . ./qemu-mips <span class="built_in">test</span> <span class="comment">#注意：当前目录应该是拥有相关嵌入式系统文件的根目录，因为依赖动态库文件的运行会根据当前系统环境变量去寻找依赖的动态库加载程序</span></span><br></pre></td></tr></table></figure>
+<p>解释一下$(which qemu-mips)是qemu安装好以后，相关bin文件的默认目录，可以看看其所在路径：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> $(<span class="built_in">which</span> qemu-mips) <span class="comment">#/usr/local/bin/qemu-mips</span></span><br></pre></td></tr></table></figure>
+<h2 id="qemu-system-mode"><a href="#qemu-system-mode" class="headerlink" title="qemu system-mode"></a>qemu system-mode</h2><p>这种模式下，就和VMware安装一个操作系统感觉一样，会运行一个独立的操作系统。首先我们下载mips虚拟机，访问<a href="http://people.debian.org/~aurel32/qemu/，选择内核文件vmlinux-2.6.32-5-4kc-malta和磁盘镜像debian_squeeze_mips_standard.qcow2" target="_blank" rel="noopener">http://people.debian.org/~aurel32/qemu/，选择内核文件vmlinux-2.6.32-5-4kc-malta和磁盘镜像debian_squeeze_mips_standard.qcow2</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo qemu-system-mips -kernel vmlinux-3.2.0-4-4kc-malta -hda debian_wheezy_mips_standard.qcow2 -append <span class="string">"root=/dev/sda1 console=ttyS0"</span> -nographic</span><br></pre></td></tr></table></figure>
+<p>即可启动mips虚拟机。用户名：root，密码：root。启动之前需要配置mips系统网络，qemu-system-mips命令和上面那个不同，具体的可以网上百度和参考资料。</p>
+<p>需要mips虚拟机启动的文件，需要通过scp命令上传到mips虚拟机上执行，或者在mips虚拟机上下载。</p>
+<h2 id="简单测试"><a href="#简单测试" class="headerlink" title="简单测试"></a>简单测试</h2><p>以D-link的固件为例，《揭秘家用路由器0day漏洞挖掘技术》一书资源在http:/<a href="http://www.boardview.com.cn/26392注册了即可下载。" target="_blank" rel="noopener">www.boardview.com.cn/26392注册了即可下载。</a></p>
+<h3 id="下载固件"><a href="#下载固件" class="headerlink" title="下载固件"></a>下载固件</h3><p>google搜索：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">inurl:dlink + (firmware or download) + (ftp or ftp2)</span><br></pre></td></tr></table></figure>
+<p>能搜到dlink官网，能在官网下载固件，也可以从ftp服务上下载。</p>
+<p>以<a href="ftp://ftp2.dlink.com/PRODUCTS/DIR-605L/REVA/DIR-605L_FIRMWARE_1.13.ZIP为例。" target="_blank" rel="noopener">ftp://ftp2.dlink.com/PRODUCTS/DIR-605L/REVA/DIR-605L_FIRMWARE_1.13.ZIP为例。</a></p>
+<h3 id="解包固件"><a href="#解包固件" class="headerlink" title="解包固件"></a>解包固件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">unzip DIR-605L_FIRMWARE_1.13.ZIP</span><br><span class="line">binwalk -e dir605L_FW_113.bin</span><br><span class="line"><span class="built_in">cd</span> _dir605L_FW_113.bin.extracted/</span><br><span class="line"><span class="built_in">cd</span> squashfs-root-0/</span><br></pre></td></tr></table></figure>
+<p>就来到了固件的系统根目录，ls一下能看到熟悉的根目录下的相关内容。</p>
+<p>嵌入式系统的系统命令均指向BusyBox的符号链接，BusyBox是一个经过裁剪的Shell。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file ./bin/busybox</span><br></pre></td></tr></table></figure>
+<p>可以看到解开固件的系统架构，以我的为例，是：<br>./bin/busybox: ELF 32-bit MSB  executable, MIPS, MIPS-I version 1 (SYSV), dynamically linked (uses shared libs), corrupted section header size  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp $(<span class="built_in">which</span> qemu-mips) ./</span><br><span class="line">sudo chroot . ./qemu-mips ./bin/ls <span class="comment">#示例</span></span><br></pre></td></tr></table></figure>
+<p>即可运行相关程序(不包括依赖硬件的程序)</p>
+<h3 id="运行web服务"><a href="#运行web服务" class="headerlink" title="运行web服务"></a>运行web服务</h3><p>在固件解包目录/bin/boa是启动80端口的web服务，根据每次运行时core dump，使用LD_PRELOAD环境变量hook相关函数的方式启动boa程序，这个示例是揭秘0day安全漏洞一书上的示例，故更详细的说明可以看此书。  </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MIB_IP_ADDR 170</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MIB_HW_VER 0x250</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MIB_CAPTCHA 0x2C1</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">apmib_init</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fork</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">apmib_get</span><span class="params">(<span class="keyword">int</span> code,<span class="keyword">int</span> *value)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="keyword">switch</span>(code)</span><br><span class="line">        &#123;</span><br><span class="line">                <span class="keyword">case</span> MIB_HW_VER:</span><br><span class="line">                        *value = <span class="number">0xF1</span>;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> MIB_IP_ADDR:</span><br><span class="line">                        *value = <span class="number">0x7F000001</span>;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> MIB_CAPTCHA:</span><br><span class="line">                        *value = <span class="number">1</span>;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./mips-linux-gcc -fPIC -shared apmib.c -o apmib-ld.so -ldl</span><br><span class="line">sudo chroot . ./qemu-mips -E LD_PRELOAD=<span class="string">"./apmib-ld.so"</span> ./bin/boa</span><br></pre></td></tr></table></figure>
+<p>运行以后</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps aux | grep 80</span><br></pre></td></tr></table></figure>
+<p>可以看到80端口服务已经开启，但是直连没有相应，问题还在进一步处理之中。</p>
+<h3 id="远程动态调试"><a href="#远程动态调试" class="headerlink" title="远程动态调试"></a>远程动态调试</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chroot . ./qemu-mips -E LD_PRELOAD=<span class="string">"./apmib-ld.so"</span> -g [port] ./bin/boa</span><br></pre></td></tr></table></figure>
+<p>ida 选择remote gdb debugger，debug options里和远程调试x86 x64linux文件一样的设置方法，确定以后，开始调试即可。</p>
+<h2 id="目前遇到的困难"><a href="#目前遇到的困难" class="headerlink" title="目前遇到的困难"></a>目前遇到的困难</h2><h3 id="80端口无响应"><a href="#80端口无响应" class="headerlink" title="80端口无响应"></a>80端口无响应</h3><p>正尝试从system-mode下运行，以及分析程序代码。</p>
+<h3 id="部分固件无法解开"><a href="#部分固件无法解开" class="headerlink" title="部分固件无法解开"></a>部分固件无法解开</h3><p>无法解开可能是文件格式或者其他方面（加密等）的原因</p>
+<h2 id="参考资料：《揭秘家用路由器0day漏洞挖掘技术》"><a href="#参考资料：《揭秘家用路由器0day漏洞挖掘技术》" class="headerlink" title="参考资料：《揭秘家用路由器0day漏洞挖掘技术》"></a>参考资料：《揭秘家用路由器0day漏洞挖掘技术》</h2>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
     <link itemprop="mainEntityOfPage" href="http://Invicsfate.github.io/2017/11/12/hctf2017-level1Tolevel3-reverse/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -962,98 +1088,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
-    <link itemprop="mainEntityOfPage" href="http://Invicsfate.github.io/2017/09/01/windbg/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Invicsfate">
-      <meta itemprop="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Invicsfate">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/09/01/windbg/" class="post-title-link" itemprop="url">windbg</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2017-09-01 17:46:11" itemprop="dateCreated datePublished" datetime="2017-09-01T17:46:11+08:00">2017-09-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-11-26 19:24:12" itemprop="dateModified" datetime="2019-11-26T19:24:12+08:00">2019-11-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/others/" itemprop="url" rel="index"><span itemprop="name">others</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="windbg配置符号表"><a href="#windbg配置符号表" class="headerlink" title="windbg配置符号表"></a>windbg配置符号表</h2><h3 id="环境-winxp-sp3-win7"><a href="#环境-winxp-sp3-win7" class="headerlink" title="环境:winxp sp3/win7"></a>环境:winxp sp3/win7</h3><p>将安装windbg的目录添加进环境变量，默认安装路径是C:\Program Files\Debugging Tools for Windows (x86)，如果是默认安装，就把这个目录添加进path环境变量。<br>新建环境变量_NT_SYMBOL_PATH，值为</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SRV*c:\Symbols* http:<span class="comment">//msdl.microsoft.com/download/symbols</span></span><br></pre></td></tr></table></figure>
-<p>启动windbg载入可执行文件时，windbg就会在C盘下建立一个Symbols文件夹，从微软服务器获取相应符号表。也可以离线下载在Symbols文件夹里。<br><a href="https://developer.microsoft.com/en-us/windows/hardware/download-symbols" target="_blank" rel="noopener">Download-Symbol</a><br>尝试打开一个可执行文件，windbg显示如下信息</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Symbol search path is: SRV*c:\Symbols* http:<span class="comment">//msdl.microsoft.com/download/symbols</span></span><br></pre></td></tr></table></figure>
-<h2 id="windbg双机调试"><a href="#windbg双机调试" class="headerlink" title="windbg双机调试"></a>windbg双机调试</h2><p>google搜索或者必应国外版搜索ida windbg debug kernel就有文档提供参考，远程连接linux等主机使用的是网络链接的ip，而windbg调试内核则是使用的串口，网上也有很多这方面的资料。说一下自己是怎么调试的:<br>ida + VirtualKD + windbg:在主机安装VirtualKD，VirtualKD里的target目录复制到虚拟机下，启动target目录里的vminstall.exe，这时候虚拟机重启会有一个调试选项，打开主机安装VirtualKD的位置，启动vmmon或者vmmon64，选中对应的虚拟机，同时注意pipe名称，比如kd_winxp，一会儿会用到。<br>如果使用windbg调试，只需要发送windbg的快捷方式到桌面，修改属性-&gt;目标，windbg.exe后面加上 -k com:port=\\.\pipe\kd_winxp,pipe<br>这个kd_winxp就是vmmon里的管道名称，运行windbg，连接即可成功，进入内核模式，ctrl + break中断，输入命令。  </p>
-<p>如果使用ida调试，打开ida，Debugger-&gt;attach-&gt;windbg debugger，管道名称同上，com:port=\.\pipe\kd_winxp,pipe，设置options，在specific options里面更换成kernel mode，同时指定windbg安装目录，新版ida要在ida目录下的cfg-&gt;ida.cfg的669行，更改信息如下(我的主机):  </p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DBGTOOLS = <span class="string">"C:\\Program Files (x86)\\Debugging Tools for Windows (x86)"</span>; <span class="comment">//设置windbg安装的目录</span></span><br></pre></td></tr></table></figure>
-<p>以上都设置好以后，点击ok，等待一会就好了。如果长时间处于reconnect状态，连接不上，ida假死，就是串口设置的问题了，这个问题网上搜索一下就好，如果设置的是serial port1，串口是serial port2就会有问题，虚拟机就把打印机移除就好。  </p>
-<h2 id="windbg常用命令"><a href="#windbg常用命令" class="headerlink" title="windbg常用命令"></a>windbg常用命令</h2><p>g 运行</p>
-<p>bp + address 设置断点<br>bl 显示已经设定的断点<br>bu DriverName!DriverEntry 驱动入口下断点<br>bc 清除断点<br>ba r/w 1/2/4 address 在address处下内存访问断点，读，写<br>bp $exentry 伪寄存器$exentry,记录程序入口点  </p>
-<p>ld kernel32 加载kernel32模块的符号<br>lm 显示所有模块<br>ln 显示最近操作过的模块  </p>
-<p>db/dw/dd/dq address 查看某地址处1,2,4,8字节<br>dd address L100 L100这种写法通用,查看从address开始的100个4字节<br>dt nt!_EPROCESS 查看结构  </p>
-<p>eb/ew/ed/eq/ef/ep address Values 修改某地址处值  </p>
-<p>.kill 杀死调试进程<br>.restart 重新调试  </p>
-<p>k(n) 显示调用堆栈  </p>
-<p>u 反汇编地址处代码  </p>
-<p>? 0x33 + 0x44 运行后将得到计算和  </p>
-<p>s -b/w/d/q/a/u range target 搜索内存，从某地址处搜索target<br>s -a 0x400000 L10000 “wrong” 搜索ascii的”wrong”  </p>
-<h2 id="windbg进入驱动入口"><a href="#windbg进入驱动入口" class="headerlink" title="windbg进入驱动入口"></a>windbg进入驱动入口</h2><p>对于无符号的驱动程序，bu DriverName!DriverEntry这种方法下断行不通，从nt!IopLoadDriver某处下断，然后进入DriverEntry，下断的位置因操作系统的不同而不同<br>Windows XP SP2：nt!IopLoadDriver+0x669<br>Windows XP SP3：nt!IopLoadDriver+0x66A<br>Win7 32 professional: nt!IopLoadDriver+0x7e9(不一定准确，本机某一次测试是这个位置)<br><a href="http://myvs01.blog.163.com/blog/static/1853340902011866365973/" target="_blank" rel="noopener">如何让WinDbg断在驱动的入口处</a>  </p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1123,7 +1157,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-count">35</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
