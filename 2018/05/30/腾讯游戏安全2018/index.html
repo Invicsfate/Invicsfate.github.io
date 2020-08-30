@@ -20,13 +20,13 @@
     var CONFIG = {"hostname":"invicsfate.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="腾讯游戏安全2018比赛赛题题解，一直放在本地，没有上传。题目应该在gslab上还可以下到。 第一轮资格赛PCMFC程序，根据xspy或者resource hacker寻找ID的方式找到验证函数逻辑：  sub_1245510函数处开始进行check，首先是checkUserName:  在checkUserName函数中确定userName长度为39，且会经过一个大写字母转化，而后对userNa">
+  <meta name="description" content="腾讯游戏安全2018比赛赛题题解，一直放在本地，没有上传。题目应该在gslab上还可以下到。  第一轮资格赛PCMFC程序，根据xspy或者resource hacker寻找ID的方式找到验证函数逻辑：  sub_1245510函数处开始进行check，首先是checkUserName:  在checkUserName函数中确定userName长度为39，且会经过一个大写字母转化，而后对userN">
 <meta name="keywords" content="reverse">
 <meta property="og:type" content="article">
 <meta property="og:title" content="腾讯游戏安全2018">
 <meta property="og:url" content="http://Invicsfate.github.io/2018/05/30/腾讯游戏安全2018/index.html">
 <meta property="og:site_name" content="Invicsfate">
-<meta property="og:description" content="腾讯游戏安全2018比赛赛题题解，一直放在本地，没有上传。题目应该在gslab上还可以下到。 第一轮资格赛PCMFC程序，根据xspy或者resource hacker寻找ID的方式找到验证函数逻辑：  sub_1245510函数处开始进行check，首先是checkUserName:  在checkUserName函数中确定userName长度为39，且会经过一个大写字母转化，而后对userNa">
+<meta property="og:description" content="腾讯游戏安全2018比赛赛题题解，一直放在本地，没有上传。题目应该在gslab上还可以下到。  第一轮资格赛PCMFC程序，根据xspy或者resource hacker寻找ID的方式找到验证函数逻辑：  sub_1245510函数处开始进行check，首先是checkUserName:  在checkUserName函数中确定userName长度为39，且会经过一个大写字母转化，而后对userN">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://invicsfate.github.io/assert/base_pc1.png">
 <meta property="og:image" content="https://invicsfate.github.io/assert/base_pc2.png">
@@ -59,10 +59,10 @@
 <meta property="og:image" content="https://invicsfate.github.io/assert/lua_game_6.png">
 <meta property="og:image" content="https://invicsfate.github.io/assert/lua_game_7.png">
 <meta property="og:image" content="https://invicsfate.github.io/assert/lua_game_8.png">
-<meta property="og:updated_time" content="2020-08-30T13:46:49.069Z">
+<meta property="og:updated_time" content="2020-08-30T13:51:29.961Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="腾讯游戏安全2018">
-<meta name="twitter:description" content="腾讯游戏安全2018比赛赛题题解，一直放在本地，没有上传。题目应该在gslab上还可以下到。 第一轮资格赛PCMFC程序，根据xspy或者resource hacker寻找ID的方式找到验证函数逻辑：  sub_1245510函数处开始进行check，首先是checkUserName:  在checkUserName函数中确定userName长度为39，且会经过一个大写字母转化，而后对userNa">
+<meta name="twitter:description" content="腾讯游戏安全2018比赛赛题题解，一直放在本地，没有上传。题目应该在gslab上还可以下到。  第一轮资格赛PCMFC程序，根据xspy或者resource hacker寻找ID的方式找到验证函数逻辑：  sub_1245510函数处开始进行check，首先是checkUserName:  在checkUserName函数中确定userName长度为39，且会经过一个大写字母转化，而后对userN">
 <meta name="twitter:image" content="https://invicsfate.github.io/assert/base_pc1.png">
 
 <link rel="canonical" href="http://Invicsfate.github.io/2018/05/30/腾讯游戏安全2018/">
@@ -214,7 +214,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-08-30 21:46:49" itemprop="dateModified" datetime="2020-08-30T21:46:49+08:00">2020-08-30</time>
+                <time title="Modified: 2020-08-30 21:51:29" itemprop="dateModified" datetime="2020-08-30T21:51:29+08:00">2020-08-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -237,7 +237,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>腾讯游戏安全2018比赛赛题题解，一直放在本地，没有上传。题目应该在gslab上还可以下到。</p>
+        <p>腾讯游戏安全2018比赛赛题题解，一直放在本地，没有上传。题目应该在gslab上还可以下到。 </p>
 <h2 id="第一轮资格赛PC"><a href="#第一轮资格赛PC" class="headerlink" title="第一轮资格赛PC"></a>第一轮资格赛PC</h2><p>MFC程序，根据xspy或者resource hacker寻找ID的方式找到验证函数逻辑：</p>
 <p><img src="https://invicsfate.github.io/assert/base_pc1.png" alt="函数逻辑"></p>
 <p>sub_1245510函数处开始进行check，首先是checkUserName:</p>
