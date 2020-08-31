@@ -20,18 +20,22 @@
     var CONFIG = {"hostname":"invicsfate.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Invicsfate">
-<meta property="og:url" content="http://Invicsfate.github.io/archives/2018/10/index.html">
+  <meta name="description" content="驱动环境搭建​    参考msdn官方文档，注意VS版本(Windows版本是否会影响不清楚，没试过)和SDK，WDK匹配的问题，SDK，WDK版本号一致，但是不匹配对应的VS版本都不行。    VS版本 Versions of Windows SDK版本 WDK版本     VS2019-Community Windows 10,version 1903 10.0.18362.0 10.0.18">
+<meta name="keywords" content="reverse">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VS编译汇编&#x2F;VS内核开发环境搭建">
+<meta property="og:url" content="http://Invicsfate.github.io/2020/04/24/VS2019-汇编asm/index.html">
 <meta property="og:site_name" content="Invicsfate">
-<meta property="og:description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
+<meta property="og:description" content="驱动环境搭建​    参考msdn官方文档，注意VS版本(Windows版本是否会影响不清楚，没试过)和SDK，WDK匹配的问题，SDK，WDK版本号一致，但是不匹配对应的VS版本都不行。    VS版本 Versions of Windows SDK版本 WDK版本     VS2019-Community Windows 10,version 1903 10.0.18362.0 10.0.18">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="https://invicsfate.github.io/assert/vs2019_configure.png">
+<meta property="og:updated_time" content="2020-08-31T03:40:23.816Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Invicsfate">
-<meta name="twitter:description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
+<meta name="twitter:title" content="VS编译汇编&#x2F;VS内核开发环境搭建">
+<meta name="twitter:description" content="驱动环境搭建​    参考msdn官方文档，注意VS版本(Windows版本是否会影响不清楚，没试过)和SDK，WDK匹配的问题，SDK，WDK版本号一致，但是不匹配对应的VS版本都不行。    VS版本 Versions of Windows SDK版本 WDK版本     VS2019-Community Windows 10,version 1903 10.0.18362.0 10.0.18">
+<meta name="twitter:image" content="https://invicsfate.github.io/assert/vs2019_configure.png">
 
-<link rel="canonical" href="http://Invicsfate.github.io/archives/2018/10/">
+<link rel="canonical" href="http://Invicsfate.github.io/2020/04/24/VS2019-汇编asm/">
 
 
 <script id="page-configurations">
@@ -39,12 +43,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'default'
   };
 </script>
 
-  <title>Archive | Invicsfate</title>
+  <title>VS编译汇编/VS内核开发环境搭建 | Invicsfate</title>
   
 
 
@@ -143,111 +147,141 @@
         <div class="content-wrap">
           
 
-          <div class="content archive">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        
-        <span class="collection-header">OK! 37 posts in total. 不入流的随笔，客官，看看就好，如若能有所帮助甚好，如若不然，切莫动怒</span>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://Invicsfate.github.io/2020/04/24/VS2019-汇编asm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Invicsfate">
+      <meta itemprop="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Invicsfate">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          VS编译汇编/VS内核开发环境搭建
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-04-24 10:30:22" itemprop="dateCreated datePublished" datetime="2020-04-24T10:30:22+08:00">2020-04-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-08-31 11:40:23" itemprop="dateModified" datetime="2020-08-31T11:40:23+08:00">2020-08-31</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/others/" itemprop="url" rel="index"><span itemprop="name">others</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2018</span>
-    </div>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-10-09T23:03:34+08:00"
-              content="2018-10-09">
-          10-09
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2018/10/09/绕过某摄像头校验机制软刷固件/" itemprop="url">
-            <span itemprop="name">绕过某摄像头校验机制软刷固件</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-10-09T22:52:31+08:00"
-              content="2018-10-09">
-          10-09
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2018/10/09/pwn-unlink/" itemprop="url">
-            <span itemprop="name">pwn-unlink</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-10-09T22:48:25+08:00"
-              content="2018-10-09">
-          10-09
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2018/10/09/pwn-house-of-spirit/" itemprop="url">
-            <span itemprop="name">pwn-house of spirit</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2018-10-09T22:44:58+08:00"
-              content="2018-10-09">
-          10-09
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2018/10/09/pwn-extend/" itemprop="url">
-            <span itemprop="name">pwn-extend</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
+        <h2 id="驱动环境搭建"><a href="#驱动环境搭建" class="headerlink" title="驱动环境搭建"></a>驱动环境搭建</h2><p>​    参考msdn官方文档，注意VS版本(Windows版本是否会影响不清楚，没试过)和SDK，WDK匹配的问题，SDK，WDK版本号一致，但是不匹配对应的VS版本都不行。</p>
+<table>
+<thead>
+<tr>
+<th>VS版本</th>
+<th>Versions of Windows</th>
+<th>SDK版本</th>
+<th>WDK版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VS2019-Community</td>
+<td>Windows 10,version 1903</td>
+<td>10.0.18362.0</td>
+<td>10.0.18362.1</td>
+</tr>
+<tr>
+<td>VS2019-Community</td>
+<td>Windows 10,version 2004</td>
+<td>10.0.19041.0</td>
+<td>10.0.19041.1</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>​    配置好后，还需要安装spectre缓解的单个组件，在VS修复里面找到单个组件项，搜索spectre安装(MSVC开头的)。将警告视为错误关闭，然后就可以愉快的开发了。</p>
+<p><img src="https://invicsfate.github.io/assert/vs2019_configure.png" alt="vs2019_configure"></p>
+<h2 id="VS2019-汇编asm"><a href="#VS2019-汇编asm" class="headerlink" title="VS2019+汇编asm"></a>VS2019+汇编asm</h2><p>编写单独的asm文件，而不是使用内嵌汇编的方式，记录一下编写方法：</p>
+<ul>
+<li>新建cpp文件，修改文件后缀为asm</li>
+<li>工程右键-&gt;生成依赖项-&gt;生成自定义，勾选masm，点确定</li>
+<li>右键asm文件-&gt;属性-&gt;常规，项内容修改为Microsoft Macro Assembler</li>
+</ul>
+<p>此时asm文件便可编译了，asm文件中函数的声明可以放到头文件中。</p>
+<p>asm编译生成的函数一般是按照C语言的规范去解析的，这一点需要注意。如果在链接时出现找不到定义，一般就是这种情况，同一个项目中存在按cpp解析生成的obj，以及按C解析生成的obj，二者在寻找函数名或者对象名这些时，会受C/C++各自编译的规则去寻找对象，当不一致时，就会产生找不到定义的情况。此时的解决方法根据项目内容一般有两种：</p>
+<ol>
+<li>此时一般使用extern “C”将cpp类型按照C语言规则解析</li>
+<li>或者将c文件后缀改成cpp即可解决。</li>
+</ol>
 
     </div>
-  </div>
-  
-  
-  
 
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/reverse/" rel="tag"># reverse</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/20/windows原始套接字sock-raw的使用限制/" rel="prev" title="windows原始套接字sock_raw的使用限制">
+      <i class="fa fa-chevron-left"></i> windows原始套接字sock_raw的使用限制
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/05/07/VMP-修复dump内存导入表/" rel="next" title="VMP-修复dump内存导入表">
+      VMP-修复dump内存导入表 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
   
 
 
@@ -300,6 +334,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#驱动环境搭建"><span class="nav-number">1.</span> <span class="nav-text">驱动环境搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VS2019-汇编asm"><span class="nav-number">2.</span> <span class="nav-text">VS2019+汇编asm</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

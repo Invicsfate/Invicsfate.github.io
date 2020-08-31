@@ -149,6 +149,158 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://Invicsfate.github.io/2018/03/20/Play-Rtsp-Stream-opencv2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Invicsfate">
+      <meta itemprop="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Invicsfate">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/03/20/Play-Rtsp-Stream-opencv2/" class="post-title-link" itemprop="url">Play Rtsp Stream-opencv2</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-03-20 19:57:34" itemprop="dateCreated datePublished" datetime="2018-03-20T19:57:34+08:00">2018-03-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2018-10-09 22:55:04" itemprop="dateModified" datetime="2018-10-09T22:55:04+08:00">2018-10-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/IOT/" itemprop="url" rel="index"><span itemprop="name">IOT</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="windows平台利用开源python库opencv2实现播放rtsp视频流"><a href="#windows平台利用开源python库opencv2实现播放rtsp视频流" class="headerlink" title="windows平台利用开源python库opencv2实现播放rtsp视频流"></a>windows平台利用开源python库opencv2实现播放rtsp视频流</h1><h2 id="opencv2库安装"><a href="#opencv2库安装" class="headerlink" title="opencv2库安装"></a>opencv2库安装</h2><p>在<a href="https://www.lfd.uci.edu/~gohlke/pythonlibs/" target="_blank" rel="noopener">提供32 and 64-bit的python库</a><br>下载opencv2需要的库，可以在opencv的官方文档里找到需要哪些库。分别是numpy，<br>matplotlib，opencv。根据不同的python版本，windows版本下载相应的package,pip install即可。</p>
+<h2 id="Play-Stream"><a href="#Play-Stream" class="headerlink" title="Play Stream"></a>Play Stream</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment">#-*- coding:utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"></span><br><span class="line">cap = cv2.VideoCapture(<span class="string">"[Your Rtsp url]"</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> cap.isOpened()</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span>(cap.isOpened()):</span><br><span class="line">	ret,frame = cap.read()</span><br><span class="line">	cv2.imshow(<span class="string">'frame'</span>,frame)</span><br><span class="line">	<span class="keyword">if</span> cv2.waitKey(<span class="number">1</span>) == ord(<span class="string">'q'</span>):</span><br><span class="line">		 <span class="keyword">break</span></span><br><span class="line">cap.release()</span><br><span class="line">cv2.destroyAllWindows()</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://Invicsfate.github.io/2018/01/16/Mi-4C动态调试so库/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Invicsfate">
+      <meta itemprop="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Invicsfate">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/01/16/Mi-4C动态调试so库/" class="post-title-link" itemprop="url">Mi-4C动态调试so库</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-01-16 14:48:34" itemprop="dateCreated datePublished" datetime="2018-01-16T14:48:34+08:00">2018-01-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2018-10-09 22:34:24" itemprop="dateModified" datetime="2018-10-09T22:34:24+08:00">2018-10-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/others/" itemprop="url" rel="index"><span itemprop="name">others</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>调试环境：IDA6.8<br>手机：小米4C<br>系统版本：android 7.0</p>
+<p>小米4C稳定版刷成开发版后，开启安全中心-&gt;应用管理-&gt;授权-&gt;开启root权限，ida远程attach要调试的程序，出现：<br>The debugger could not attach to the selected process.<br>This can perhaps indicate the process was just terminated,or that you don’t have the necessary privileges.</p>
+<p>解决办法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">getenforce <span class="comment">#查看selinux状态</span></span><br><span class="line">setenforce 0 <span class="comment">#临时关闭selinux</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
     <link itemprop="mainEntityOfPage" href="http://Invicsfate.github.io/2017/12/28/qemu环境搭建/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -927,167 +1079,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
-    <link itemprop="mainEntityOfPage" href="http://Invicsfate.github.io/2017/09/02/简单的基于壳的变形壳工具/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Invicsfate">
-      <meta itemprop="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Invicsfate">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/09/02/简单的基于壳的变形壳工具/" class="post-title-link" itemprop="url">简单的基于壳的变形壳工具</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2017-09-02 19:28:34" itemprop="dateCreated datePublished" datetime="2017-09-02T19:28:34+08:00">2017-09-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2018-10-09 22:51:25" itemprop="dateModified" datetime="2018-10-09T22:51:25+08:00">2018-10-09</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Tools/" itemprop="url" rel="index"><span itemprop="name">Tools</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>起初写这个简单工具的想法是由原来出一道CTF题目时，对upx壳进行简单变形后，让peid和exeinfoPe无法识别，从而对逆向者在静态分析上增加一定难度写的。但是在写的过程中发现，其实对专业的逆向从业者似乎并不能产生很好的作用，对于熟悉一些基本壳的大牛们，这个工具写了和没写没什么太大的区别。但是由于已经写了那么一点了，索性就写完再说，本来一开始的想法是从静态库中提取多种基本壳的签名，然后对一类壳进行一种变换，这样每一种基本壳也就都有了一种简单的变形壳的，发现价值不大，最终也就写了一个识别upx然后变形的壳，丢上来，哪天代码不见了，也好找，2333，至少也是花了一星期时间的呢！<br>工具思路：1.识别基本壳的类型 2.根据壳类型，选择不同的变换方式(只写了upx壳)  </p>
-<p>upx变换方式：1.抹去dos stub Program 2.含有upx的字符串全部替代 3.节表的节名称均修改为正常的.text.rdata等 4.抹去upx特征码 5.增加一个节区(相应地，也要增加一个节表)，将入口地址引向新节区，在新节区添加代码，最后实现跳转。(仅用于测试，所以新节区代码很简单，没有反调试，混淆，花指令之类的东西)  </p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//main.cpp</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;Windows.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">"compare.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">PBYTE realEntryPoint;</span><br><span class="line"></span><br><span class="line"><span class="comment">//**************copy file****************</span></span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">myCopyFile</span><span class="params">(<span class="keyword">char</span> *pExistingFile,<span class="keyword">char</span> *pNewFile)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> *pFileName = pNewFile;</span><br><span class="line">	<span class="built_in">strcpy</span>(pFileName, pExistingFile);</span><br><span class="line">	<span class="built_in">strcat</span>(pFileName, <span class="string">"_new"</span>);</span><br><span class="line">	CopyFileA(pExistingFile, pFileName, FALSE);</span><br><span class="line">	<span class="keyword">return</span> pFileName;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//**************copy file****************</span></span><br><span class="line"></span><br><span class="line"><span class="function">BOOL <span class="title">isPEFormat</span><span class="params">(PBYTE pFile)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	PBYTE my_PE = pFile;</span><br><span class="line">	<span class="keyword">if</span> (my_PE[<span class="number">0</span>] == <span class="string">'M'</span> &amp;&amp; my_PE[<span class="number">1</span>] == <span class="string">'Z'</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		my_PE += <span class="number">0x3C</span>;</span><br><span class="line">		my_PE = pFile + *(DWORD *)my_PE;</span><br><span class="line">		<span class="keyword">if</span> (my_PE[<span class="number">0</span>] == <span class="string">'P'</span> &amp;&amp; my_PE[<span class="number">1</span>] == <span class="string">'E'</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			wprintf(<span class="string">L"GOOD! This is a PE File!\n"</span>);</span><br><span class="line">			<span class="keyword">return</span> TRUE;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> FALSE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">editWays</span><span class="params">(<span class="keyword">int</span> packMethods, PBYTE pFile)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">/***************move PEHeader to dosHeader**************/</span></span><br><span class="line">	<span class="keyword">char</span> *sectionName[<span class="number">9</span>] = &#123; <span class="string">".text"</span>,<span class="string">".rdata"</span>,<span class="string">".data"</span>,<span class="string">".idata"</span>,<span class="string">".pdata"</span>,<span class="string">".tls"</span>,<span class="string">".gfids"</span>,<span class="string">".rsrc"</span>,<span class="string">".reloc"</span> &#125;;</span><br><span class="line">	PBYTE dosHeader = pFile + <span class="number">0x40</span>;</span><br><span class="line">	PBYTE my_PE = pFile + *(DWORD *)(pFile + <span class="number">0x3C</span>);</span><br><span class="line">	WORD numOfSectionTable = *(WORD *)(my_PE + <span class="number">4</span> + <span class="number">2</span>);</span><br><span class="line">	DWORD peHeaderSize = <span class="number">4</span> + <span class="number">0x14</span> + +<span class="number">0xE0</span> + <span class="number">0x28</span> * numOfSectionTable;</span><br><span class="line">	<span class="built_in">memcpy</span>(dosHeader, my_PE, peHeaderSize);</span><br><span class="line">	PBYTE sectionTable = my_PE + <span class="number">4</span> + <span class="number">0x14</span> + <span class="number">0xE0</span>;</span><br><span class="line">	PBYTE firstSectionPosition = pFile + *(DWORD *)(sectionTable + <span class="number">20</span>);</span><br><span class="line">	PBYTE newPosition = dosHeader + peHeaderSize;</span><br><span class="line">	PBYTE newSectionTable;</span><br><span class="line">	<span class="keyword">do</span></span><br><span class="line">	&#123;</span><br><span class="line">		newPosition[<span class="number">0</span>] = <span class="string">'\0'</span>;</span><br><span class="line">		newPosition += <span class="number">1</span>;</span><br><span class="line">	&#125; <span class="keyword">while</span> (firstSectionPosition != newPosition);</span><br><span class="line">	<span class="comment">/***************move PEHeader to dosHeader**************/</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*edit mark that directs to PE*/</span></span><br><span class="line">	*(DWORD *)(pFile + <span class="number">0x3C</span>) = (DWORD)<span class="number">0x40</span>;</span><br><span class="line">	<span class="comment">/*edit mark that directs to PE*/</span></span><br><span class="line">	my_PE = pFile + *(DWORD *)(pFile + <span class="number">0x3C</span>);</span><br><span class="line">	sectionTable = my_PE + <span class="number">4</span> + <span class="number">0x14</span> + <span class="number">0xE0</span>;</span><br><span class="line">	DWORD addressOfEntryPoint;</span><br><span class="line">	DWORD newRVA;</span><br><span class="line">	DWORD newRawOffset;</span><br><span class="line">	BYTE dynamicMark;</span><br><span class="line">	<span class="keyword">switch</span> (packMethods)</span><br><span class="line">	&#123;</span><br><span class="line">	<span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">		<span class="comment">/*edit section name*/</span></span><br><span class="line">		newSectionTable = sectionTable - <span class="number">0x28</span>;</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numOfSectionTable; i++)</span><br><span class="line">		&#123;</span><br><span class="line">			newSectionTable += <span class="number">0x28</span>;</span><br><span class="line">			<span class="built_in">memcpy</span>(newSectionTable, sectionName[i], <span class="built_in">strlen</span>(sectionName[i]));</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">/*edit section name*/</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">/*edit entrypoint signature*/</span></span><br><span class="line">		realEntryPoint[<span class="number">0</span>] = <span class="number">0x90</span>;</span><br><span class="line">		<span class="comment">/*edit entrypoint signature*/</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">/********************set characters******************/</span></span><br><span class="line">		newRVA = *(DWORD *)(newSectionTable + <span class="number">12</span>) + *(DWORD *)(newSectionTable + <span class="number">8</span>);</span><br><span class="line">		newRawOffset = *(DWORD *)(newSectionTable + <span class="number">16</span>) + *(DWORD *)(newSectionTable + <span class="number">20</span>);</span><br><span class="line">		newSectionTable += <span class="number">0x28</span>;</span><br><span class="line">		<span class="built_in">memcpy</span>(newSectionTable, sectionName[<span class="number">7</span>], <span class="built_in">strlen</span>(sectionName[<span class="number">7</span>]));</span><br><span class="line">		*(DWORD *)(newSectionTable + <span class="number">8</span>) = (DWORD)<span class="number">0x1000</span>;</span><br><span class="line">		*(DWORD *)(newSectionTable + <span class="number">12</span>) = (DWORD)newRVA;</span><br><span class="line">		*(DWORD *)(newSectionTable + <span class="number">16</span>) = (DWORD)<span class="number">0x200</span>;</span><br><span class="line">		*(DWORD *)(newSectionTable + <span class="number">20</span>) = (DWORD)newRawOffset;</span><br><span class="line">		*(DWORD *)(newSectionTable + <span class="number">24</span>) = *(DWORD *)(newSectionTable + <span class="number">28</span>) = *(DWORD *)(newSectionTable + <span class="number">32</span>) = (DWORD)<span class="number">0x0</span>;</span><br><span class="line">		*(DWORD *)(newSectionTable + <span class="number">36</span>) = (DWORD)<span class="number">0xE0000020</span>;</span><br><span class="line">		<span class="comment">/*increase a section*/</span></span><br><span class="line">		*(WORD *)(my_PE + <span class="number">4</span> + <span class="number">2</span>) = numOfSectionTable + <span class="number">1</span>;</span><br><span class="line">		<span class="comment">/*increase a section*/</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">/*edit size of image*/</span></span><br><span class="line">		*(DWORD *)(my_PE + <span class="number">4</span> + <span class="number">0x14</span> + <span class="number">0x38</span>) = *(DWORD *)(newSectionTable + <span class="number">12</span>) + *(DWORD *)(newSectionTable + <span class="number">8</span>);</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"size of image:%X\n"</span>, *(DWORD *)(my_PE + <span class="number">4</span> + <span class="number">0x14</span> + <span class="number">0x38</span>));</span><br><span class="line">		<span class="comment">/*edit size of image*/</span></span><br><span class="line">		<span class="comment">/********************set characters******************/</span></span><br><span class="line">		addressOfEntryPoint = *(DWORD *)(my_PE + <span class="number">4</span> + <span class="number">0x14</span> + <span class="number">0x10</span>) + *(DWORD *)(my_PE + <span class="number">4</span> + <span class="number">0x14</span> + <span class="number">0x1c</span>);</span><br><span class="line">		<span class="built_in">memcpy</span>(entryCode + <span class="number">12</span>, (DWORD *)&amp;addressOfEntryPoint, <span class="number">4</span>);</span><br><span class="line">		<span class="built_in">memcpy</span>((pFile + newRawOffset), entryCode, <span class="number">17</span>);</span><br><span class="line">		<span class="comment">/*Reset addressOfEntryPoint*/</span></span><br><span class="line">		*(DWORD *)(my_PE + <span class="number">4</span> + <span class="number">0x14</span> + <span class="number">0x10</span>) = (DWORD)newRVA;</span><br><span class="line">		dynamicMark = *(BYTE *)(my_PE + <span class="number">4</span> + <span class="number">0x14</span> + <span class="number">0x46</span>);</span><br><span class="line">		<span class="keyword">if</span> (dynamicMark == <span class="number">0x40</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			*(BYTE *)(my_PE + 4 + 0x14 + 0x46) = '\x00';</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">comparePackWays</span><span class="params">(PBYTE pEntryPoint)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> method,i,j;</span><br><span class="line">	method = i = j = <span class="number">0</span>;</span><br><span class="line">	BOOL find = FALSE;</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; numOfPackMethod; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; pack[i].signature_Length; j++)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> (!(pEntryPoint[j] == pack[i].signature[j] || pack[i].signature[j] == <span class="string">'?'</span>))</span><br><span class="line">			&#123;</span><br><span class="line">				wprintf(<span class="string">L"Not the %s\n"</span>, pack[i].packName);</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (j == pack[i].signature_Length)</span><br><span class="line">		&#123;</span><br><span class="line">			wprintf(<span class="string">L"%s packing!\n"</span>, pack[i].packName);</span><br><span class="line">			method = i;</span><br><span class="line">			find = TRUE;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (!find)</span><br><span class="line">	&#123;</span><br><span class="line">		wprintf(<span class="string">L"Can't find packing match with this program!\n"</span>);</span><br><span class="line">		method = <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> method;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">checkPackWays</span><span class="params">(PBYTE pFile)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	PBYTE my_PE = pFile;</span><br><span class="line">	my_PE += <span class="number">0x3C</span>;</span><br><span class="line">	my_PE = pFile + *(DWORD *)my_PE;</span><br><span class="line">	<span class="comment">/*PE*/</span></span><br><span class="line">	DWORD adddressOfEntryPoint = *(DWORD *)(my_PE + <span class="number">4</span> + <span class="number">0x14</span> + <span class="number">16</span>);</span><br><span class="line">	<span class="comment">/*address of entry point*/</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"addressOfEntryPoint:%X\n"</span>, adddressOfEntryPoint);</span><br><span class="line">	WORD numOfSectionTable = *(WORD *)(my_PE + <span class="number">4</span> + <span class="number">2</span>);</span><br><span class="line">	<span class="comment">/*num of Section Table*/</span></span><br><span class="line"></span><br><span class="line">	PBYTE sectionTable = my_PE + <span class="number">4</span> + <span class="number">0x14</span> + <span class="number">0xE0</span>;</span><br><span class="line">	<span class="comment">/*the position of sectionTable*/</span></span><br><span class="line"></span><br><span class="line">	DWORD RVA1,RVA2,fileOffset,rawEntryPoint;</span><br><span class="line">	RVA1 = RVA2 = fileOffset = rawEntryPoint = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= numOfSectionTable; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		RVA1 = *(DWORD *)(sectionTable + <span class="number">12</span>);</span><br><span class="line">		RVA2 = *(DWORD *)(sectionTable + <span class="number">0x28</span> + <span class="number">12</span>);</span><br><span class="line">		<span class="keyword">if</span> (adddressOfEntryPoint &gt;= RVA1 &amp;&amp; adddressOfEntryPoint &lt; RVA2)</span><br><span class="line">		&#123;</span><br><span class="line">			fileOffset = adddressOfEntryPoint - RVA1;</span><br><span class="line">			rawEntryPoint = fileOffset + *(DWORD *)(sectionTable + <span class="number">20</span>);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		sectionTable += <span class="number">0x28</span>;</span><br><span class="line">		<span class="keyword">if</span> (i == (numOfSectionTable - <span class="number">1</span>))</span><br><span class="line">		&#123;</span><br><span class="line">			RVA1 = *(DWORD *)(sectionTable + <span class="number">12</span>);</span><br><span class="line">			fileOffset = adddressOfEntryPoint - RVA1;</span><br><span class="line">			rawEntryPoint = fileOffset + *(DWORD *)(sectionTable + <span class="number">20</span>);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"rawEntryPoint:%X\n"</span>, rawEntryPoint);</span><br><span class="line">	realEntryPoint = rawEntryPoint + pFile;</span><br><span class="line">	<span class="keyword">int</span> ways = comparePackWays(realEntryPoint);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"packWays:%d\n"</span>, ways);</span><br><span class="line">	<span class="keyword">return</span> ways;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**************MappingFileToMemory*******/</span></span><br><span class="line"><span class="function"><span class="keyword">int</span>  <span class="title">myMappingFileToMemory</span><span class="params">(<span class="keyword">char</span> *pFileName)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	HANDLE hNewFile = <span class="literal">NULL</span>;</span><br><span class="line">	HANDLE hFileMap = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	hNewFile = CreateFileA(pFileName, GENERIC_READ | GENERIC_WRITE, <span class="number">0</span>, <span class="literal">NULL</span>, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (hNewFile == INVALID_HANDLE_VALUE)</span><br><span class="line">	&#123;</span><br><span class="line">		wprintf(<span class="string">L"CreateFileA Failed! Error code(%d)\n"</span>, GetLastError());</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	DWORD dwFileSize = GetFileSize(hNewFile, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">	hFileMap = CreateFileMappingA(hNewFile, <span class="literal">NULL</span>, PAGE_READWRITE, <span class="number">0</span>, dwFileSize+<span class="number">0x200</span>, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (hFileMap == <span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		wprintf(<span class="string">L"CreateFileMappingA Failed! Error code(%d)\n"</span>, GetLastError());</span><br><span class="line">		CloseHandle(hNewFile);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	PBYTE pFile = (PBYTE)MapViewOfFile(hFileMap, FILE_MAP_WRITE, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (pFile == <span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		wprintf(<span class="string">L"MapViewOfFile Failed! Error code(%d)\n"</span>, GetLastError());</span><br><span class="line">		CloseHandle(hFileMap);</span><br><span class="line">		CloseHandle(hNewFile);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="comment">/**************MappingFileToMemory*******/</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/************************Check PE Format*******************/</span></span><br><span class="line">	BOOL isPE = isPEFormat(pFile);</span><br><span class="line">	<span class="keyword">if</span> (!isPE)</span><br><span class="line">	&#123;</span><br><span class="line">		wprintf(<span class="string">L"Please choose a PE format file!\n"</span>);</span><br><span class="line">		UnmapViewOfFile(pFile);</span><br><span class="line">		CloseHandle(hFileMap);</span><br><span class="line">		CloseHandle(hNewFile);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">/************************Check PE Format*******************/</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/************************Check packing methods****************/</span></span><br><span class="line">	<span class="keyword">int</span> packMethods = checkPackWays(pFile);</span><br><span class="line">	<span class="comment">/************************Check packing methods****************/</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*******************edit shell******************/</span></span><br><span class="line">	editWays(packMethods, pFile);</span><br><span class="line">	<span class="comment">/*******************edit shell******************/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//	BYTE test[] = "Congratulations!hhhhhh";</span></span><br><span class="line"><span class="comment">//	memcpy(pFile, test, sizeof(test));</span></span><br><span class="line"></span><br><span class="line">	UnmapViewOfFile(pFile);</span><br><span class="line">	CloseHandle(hFileMap);</span><br><span class="line">	CloseHandle(hNewFile);</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, TCHAR *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (argc != <span class="number">2</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		wprintf(<span class="string">L"Please input two Parameters,one is the Pragram,another is the path which will be packed!\n"</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">char</span> pFileName[MAX_PATH] = &#123; <span class="number">0</span>, &#125;;</span><br><span class="line"><span class="comment">//	strcpy(pFileName, (char *)argv[1]);</span></span><br><span class="line"><span class="comment">//	strcat(pFileName, "_new");</span></span><br><span class="line"><span class="comment">//	CopyFileA((char *)argv[1], pFileName, FALSE);</span></span><br><span class="line">	myCopyFile((<span class="keyword">char</span> *)argv[<span class="number">1</span>],pFileName);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"%s\n"</span>, pFileName);</span><br><span class="line">	myMappingFileToMemory(pFileName);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//compare.h</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> len 0x200</span></span><br><span class="line"><span class="keyword">int</span> numOfPackMethod = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	TCHAR *packName;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">char</span> signature[<span class="number">50</span>];</span><br><span class="line">	<span class="keyword">int</span> signature_Length;</span><br><span class="line">&#125;packMethod;</span><br><span class="line"></span><br><span class="line">packMethod pack[] = &#123; &#123; <span class="string">L"upx"</span>,&#123; <span class="number">0x60</span>,<span class="number">0xBE</span>,<span class="string">'?'</span>,<span class="string">'?'</span>,<span class="string">'?'</span>,<span class="number">0x00</span>,<span class="number">0x8D</span>,<span class="number">0xBE</span>,<span class="string">'?'</span>,<span class="string">'?'</span>,<span class="string">'?'</span>,<span class="number">0xFF</span> &#125;,<span class="number">12</span> &#125; &#125;;</span><br><span class="line">BYTE entryCode[len] = &#123; <span class="number">0x53</span>, <span class="number">0x53</span>, <span class="number">0x53</span>, <span class="number">0x5B</span>, <span class="number">0x5B</span>, <span class="number">0x83</span>, <span class="number">0xC4</span>, <span class="number">0x01</span>, <span class="number">0x83</span>, <span class="number">0xC4</span>, <span class="number">0xFF</span>, <span class="number">0x68</span> ,<span class="string">'?'</span>,<span class="string">'?'</span>, <span class="string">'?'</span>, <span class="string">'?'</span>, <span class="number">0xC3</span>&#125;;</span><br></pre></td></tr></table></figure>
-<p>23333，简陋的工具，仅作个人想法的纪念！</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
-    <link itemprop="mainEntityOfPage" href="http://Invicsfate.github.io/2017/09/01/win32和MFC逆向总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Invicsfate">
-      <meta itemprop="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Invicsfate">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/09/01/win32和MFC逆向总结/" class="post-title-link" itemprop="url">win32和MFC逆向总结</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2017-09-01 21:21:24" itemprop="dateCreated datePublished" datetime="2017-09-01T21:21:24+08:00">2017-09-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2018-10-09 22:43:19" itemprop="dateModified" datetime="2018-10-09T22:43:19+08:00">2018-10-09</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/others/" itemprop="url" rel="index"><span itemprop="name">others</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>win32和MFC的程序逆向已经是以前的东西，这次翻出来，进行一下总结，理论性的东西也快忘了，hhhhh，熟悉下也好。<br>前提:程序既没有加壳，也没有混淆，就是直接使用(正常)编译器编译好的程序。  </p>
-<h2 id="win32程序"><a href="#win32程序" class="headerlink" title="win32程序"></a>win32程序</h2><p>先说一下win32程序逆向，win32程序分为两种：1.CUI控制台类型 2.GUI窗口类型。  </p>
-<h3 id="CUI控制台类型"><a href="#CUI控制台类型" class="headerlink" title="CUI控制台类型"></a>CUI控制台类型</h3><p>这类的题目，程序的关键代码一般都比较好定位，由于ida打开就是main函数，只要找到输入输出，确定程序流，一步一步逆向下就好。常用手段:1.根据程序的输入和输出的字符串，使用字符串进行定位，ida的alt + A可以切换搜索字符串类型，比如ascii和unicode。 2.在导入表里寻找类似scanf和printf的输入输出函数。  </p>
-<h3 id="GUI窗口类型"><a href="#GUI窗口类型" class="headerlink" title="GUI窗口类型"></a>GUI窗口类型</h3><p>GUI类型的题目，比CUI控制台定位要复杂些。手段:1.同CUI程序，搜索字符串 2.定位导入表的函数，如果有弹窗，定位MessageBox;如果有文本框，定位GetDlgItem，GetDlgItemText，GetWindowText等函数; 3.当然了，前面的方法都只能治标不治本，最重要的就是对WM_COMMAND消息下断，WM_COMMAND = 0x111，即273，ida使用alt + I搜索0x111。因为win32的窗口程序是自己自定义的，窗口函数也是由自己来写的，所有的按钮点击等操作的msg = WM_COMMAND,后面的参数诸如wParam保存的是控件的ID。下面是win32程序的一个大概框架:  </p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> WINAPI <span class="title">WinMain</span><span class="params">(HINSTANCE hInstance,HINSTANCE hPreInstance,LPSTR CmdLine,<span class="keyword">int</span> nCmdShow)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	WNDCLASSEX wc = &#123; &#125;;  </span><br><span class="line">    wc.cbSize = <span class="keyword">sizeof</span>(WNDCLASSEX);  </span><br><span class="line">    wc.hbrBackground = (HBRUSH)COLOR_WINDOW;  </span><br><span class="line">    wc.hInstance = hInstance;  </span><br><span class="line">    wc.lpfnWndProc = (WNDPROC)WindowProc;  </span><br><span class="line">    wc.lpszClassName = lps_cl;  </span><br><span class="line">    wc.style = CS_HREDRAW | CS_VREDRAW;  </span><br><span class="line">    RegisterClassEx(&amp;wc); </span><br><span class="line">	hwnd=CreateWindowEx(WS_EX_WINDOWEDGE,  </span><br><span class="line">                    lps_cl,  </span><br><span class="line">                    wd_text,  </span><br><span class="line">                    WS_OVERLAPPEDWINDOW,  </span><br><span class="line">                    <span class="number">700</span>,  </span><br><span class="line">                    <span class="number">500</span>,  </span><br><span class="line">                    <span class="number">500</span>,  </span><br><span class="line">                    <span class="number">100</span>,  </span><br><span class="line">                    <span class="literal">NULL</span>,  </span><br><span class="line">                    <span class="literal">NULL</span>,  </span><br><span class="line">                    hInstance,  </span><br><span class="line">                    <span class="literal">NULL</span>);  </span><br><span class="line">	<span class="keyword">if</span>(hwnd == <span class="literal">NULL</span>) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">	ShowWindow(hwnd,nCmdShow);</span><br><span class="line">	UpdateWindow(hwnd); </span><br><span class="line">	hg_app = hInstance;</span><br><span class="line">	<span class="comment">//上面的示例代码是窗口的创建</span></span><br><span class="line"></span><br><span class="line">	MSG msg;</span><br><span class="line">	<span class="keyword">while</span>(GetMessage(&amp;msg,<span class="literal">NULL</span>,<span class="number">0</span>,<span class="number">0</span>))</span><br><span class="line">	&#123;</span><br><span class="line">		TranslateMessage(&amp;msg);</span><br><span class="line">		DispatchMessage(&amp;msg);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	<span class="comment">//上面是win32消息处理的三个必须且固定的函数，消息Dispatch给对应的窗口处理函数(回调函数)</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**************窗口回调函数***********/</span></span><br><span class="line"><span class="function">LRESULT CALLBACK <span class="title">WindowProc</span><span class="params">(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="keyword">switch</span>(msg)  </span><br><span class="line">    &#123;  </span><br><span class="line">    <span class="keyword">case</span> WM_DESTROY:  </span><br><span class="line">        PostQuitMessage(<span class="number">0</span>);  </span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;  </span><br><span class="line">    <span class="keyword">case</span> WM_CREATE:  </span><br><span class="line">        &#123;  </span><br><span class="line">			edit_input=CreateWindow(<span class="string">L"edit"</span>,<span class="literal">NULL</span>, WS_CHILD | WS_VISIBLE | WS_BORDER,  </span><br><span class="line">            <span class="number">35</span>, <span class="number">20</span>, <span class="number">350</span>, <span class="number">25</span>, hwnd, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">            check_Button=CreateWindow(<span class="string">L"Button"</span>, <span class="string">L"check"</span>, WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,  </span><br><span class="line">                <span class="number">400</span>, <span class="number">20</span>, <span class="number">50</span>, <span class="number">25</span>, hwnd, (HMENU)IDB_ONE, hg_app, <span class="literal">NULL</span>);   </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;  </span><br><span class="line">	<span class="keyword">case</span> WM_COMMAND:</span><br><span class="line">        &#123;  </span><br><span class="line">            <span class="keyword">switch</span>(LOWORD(wParam))  </span><br><span class="line">            &#123;  </span><br><span class="line">            <span class="keyword">case</span> IDB_ONE:  </span><br><span class="line">				hThread=(HANDLE)_beginthreadex(<span class="literal">NULL</span>,<span class="number">0</span>,&amp;FirstThreadFunc,<span class="literal">NULL</span>,<span class="number">0</span>,&amp;threadID1);</span><br><span class="line">                <span class="keyword">break</span>;  </span><br><span class="line">            <span class="keyword">case</span> IDB_TWO:  </span><br><span class="line">				MessageBox(hwnd,<span class="string">L"You are failed!"</span>,<span class="string">L"FAIL"</span>,MB_OK | MB_ICONINFORMATION);</span><br><span class="line">				exit_fun();</span><br><span class="line">                <span class="keyword">break</span>;  </span><br><span class="line">            <span class="keyword">case</span> IDB_THREE:  </span><br><span class="line">				MessageBox(hwnd,<span class="string">L"Only a little!"</span>,<span class="string">L"FAIL"</span>,MB_OK | MB_ICONINFORMATION);</span><br><span class="line">				exit_fun();</span><br><span class="line">                <span class="keyword">break</span>; </span><br><span class="line">			<span class="keyword">case</span> IDB_FOUR:</span><br><span class="line">				MessageBox(hwnd,<span class="string">L"Just a little bit!"</span>,<span class="string">L"FAIL"</span>,MB_OK | MB_ICONINFORMATION);</span><br><span class="line">				exit_fun();</span><br><span class="line">			<span class="keyword">case</span> IDB_FIVE:	</span><br><span class="line">				MessageBox(hwnd,<span class="string">L"Succeed!"</span>,<span class="string">L"Congratulation!"</span>,MB_OK | MB_ICONINFORMATION);</span><br><span class="line">            <span class="keyword">default</span>:  </span><br><span class="line">                <span class="keyword">break</span>;  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;  </span><br><span class="line">    <span class="keyword">default</span>:  </span><br><span class="line">        <span class="keyword">return</span> DefWindowProc(hwnd,msg,wParam,lParam);  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>有兴趣进一步学习的同学可以看看windows系统的消息机制相关内容，参考书籍《windows核心编程》《深入浅出MFC》。</p>
-<h2 id="MFC程序"><a href="#MFC程序" class="headerlink" title="MFC程序"></a>MFC程序</h2><p>这几个链接我觉得讲MFC程序逆向讲的很好了，原理什么的也讲的很清楚。<br><a href="http://blog.csdn.net/SilverMagic/article/details/40621107" target="_blank" rel="noopener">使用IDA定位基于MFC的CrackMe的按钮函数—–理论篇</a><br><a href="http://blog.csdn.net/SilverMagic/article/details/40622413" target="_blank" rel="noopener">使用IDA定位基于MFC的CrackMe的按钮函数—–实践篇(一)</a><br><a href="http://blog.csdn.net/SilverMagic/article/details/40623299" target="_blank" rel="noopener">使用IDA定位基于MFC的CrackMe的按钮函数—–实践篇(二)</a><br>我总结的大概也不会比这个好了，233333。在win32中窗口过程标准的消息处理变成了找消息映射表，对，就是这个消息映射表，我们来看一下它的结构。  </p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">AFX_MSGMAP</span>  </span></span><br><span class="line"><span class="class">&#123;</span>  </span><br><span class="line">    <span class="keyword">const</span> AFX_MSGMAP* (PASCAL* pfnGetBaseMap)();  </span><br><span class="line">    <span class="keyword">const</span> AFX_MSGMAP_ENTRY* lpEntries;  </span><br><span class="line">&#125;;  </span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">AFX_MSGMAP_ENTRY</span>  </span></span><br><span class="line"><span class="class">&#123;</span>  </span><br><span class="line">    UINT nMessage;  </span><br><span class="line">    UINT nCode;  </span><br><span class="line">    UINT nID;  </span><br><span class="line">    UINT nLastID;  </span><br><span class="line">    UINT_PTR nSig;  </span><br><span class="line">    AFX_PMSG pfn;  </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>实际上，MFC程序的每个按钮怎么处理，都有一个函数控制，写过MFC程序的应该都知道，这个处理函数就是AFX_PMSG pfn，指向对应消息，对应控件ID的消息处理函数，而一个MFC程序有很多这样的消息处理函数，我们只要找到AFX_MSGMAP消息映射表，然后定位lpEntries指针所指位置，这个位置一般就在指针下面，hhhhh，紧接着就是数个AFX_MSGMAP_ENTRY结构，我们只要根据控件的ID，找到相应的消息处理函数，进入就是关键代码了。<br>说了这么多，还不如耐心看上面的三个链接，看了就懂了，大概就是这么个道理。因此，我一般定位MFC程序，先使用Resource_hacker打开程序，查看相应控件的ID，在ida里alt + I，输入ID值，查看所有出现的位置，可能会有很多地方，千万别被吓到了，那个关键位置其实一眼就看出来啦，找到.rdata段的地方，自己试试就知道了。定位关键代码也就完成了。<br>当然了，你也可以选择使用工具来定位，xspy，相信不少伙伴都在用这个工具，我习惯使用资源查找的方法了，所以就没用了。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我知道的大概就那么多，许多地方可能含糊不清，仅仅是一个总结，有兴趣的朋友可以查阅相关资料进行学习，我的总结只是起个抛砖引玉的作用罢了！</p>
-<p>-</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1157,7 +1148,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-count">37</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>

