@@ -405,7 +405,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-08-31 11:40:23" itemprop="dateModified" datetime="2020-08-31T11:40:23+08:00">2020-08-31</time>
+                <time title="Modified: 2020-08-31 11:51:21" itemprop="dateModified" datetime="2020-08-31T11:51:21+08:00">2020-08-31</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -428,7 +428,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="驱动环境搭建"><a href="#驱动环境搭建" class="headerlink" title="驱动环境搭建"></a>驱动环境搭建</h2><p>​    参考msdn官方文档，注意VS版本(Windows版本是否会影响不清楚，没试过)和SDK，WDK匹配的问题，SDK，WDK版本号一致，但是不匹配对应的VS版本都不行。</p>
+          <h2 id="驱动开发环境搭建"><a href="#驱动开发环境搭建" class="headerlink" title="驱动开发环境搭建"></a>驱动开发环境搭建</h2><p>​    参考msdn官方文档，注意VS版本(Windows版本是否会影响不清楚，没试过)和SDK，WDK匹配的问题，SDK，WDK版本号一致，但是不匹配对应的VS版本都不行。</p>
 <table>
 <thead>
 <tr>
@@ -459,7 +459,6 @@
 </tbody>
 </table>
 <p>​    配置好后，还需要安装spectre缓解的单个组件，在VS修复里面找到单个组件项，搜索spectre安装(MSVC开头的)。将警告视为错误关闭，然后就可以愉快的开发了。</p>
-<p><img src="https://invicsfate.github.io/assert/vs2019_configure.png" alt="vs2019_configure"></p>
 <h2 id="VS2019-汇编asm"><a href="#VS2019-汇编asm" class="headerlink" title="VS2019+汇编asm"></a>VS2019+汇编asm</h2><p>编写单独的asm文件，而不是使用内嵌汇编的方式，记录一下编写方法：</p>
 <ul>
 <li>新建cpp文件，修改文件后缀为asm</li>

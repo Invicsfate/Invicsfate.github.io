@@ -20,20 +20,18 @@
     var CONFIG = {"hostname":"invicsfate.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="驱动环境搭建​    参考msdn官方文档，注意VS版本(Windows版本是否会影响不清楚，没试过)和SDK，WDK匹配的问题，SDK，WDK版本号一致，但是不匹配对应的VS版本都不行。    VS版本 Versions of Windows SDK版本 WDK版本     VS2019-Community Windows 10,version 1903 10.0.18362.0 10.0.18">
+  <meta name="description" content="驱动开发环境搭建​    参考msdn官方文档，注意VS版本(Windows版本是否会影响不清楚，没试过)和SDK，WDK匹配的问题，SDK，WDK版本号一致，但是不匹配对应的VS版本都不行。    VS版本 Versions of Windows SDK版本 WDK版本     VS2019-Community Windows 10,version 1903 10.0.18362.0 10.0.">
 <meta name="keywords" content="reverse">
 <meta property="og:type" content="article">
 <meta property="og:title" content="VS编译汇编&#x2F;VS内核开发环境搭建">
 <meta property="og:url" content="http://Invicsfate.github.io/2020/04/24/VS2019-汇编asm/index.html">
 <meta property="og:site_name" content="Invicsfate">
-<meta property="og:description" content="驱动环境搭建​    参考msdn官方文档，注意VS版本(Windows版本是否会影响不清楚，没试过)和SDK，WDK匹配的问题，SDK，WDK版本号一致，但是不匹配对应的VS版本都不行。    VS版本 Versions of Windows SDK版本 WDK版本     VS2019-Community Windows 10,version 1903 10.0.18362.0 10.0.18">
+<meta property="og:description" content="驱动开发环境搭建​    参考msdn官方文档，注意VS版本(Windows版本是否会影响不清楚，没试过)和SDK，WDK匹配的问题，SDK，WDK版本号一致，但是不匹配对应的VS版本都不行。    VS版本 Versions of Windows SDK版本 WDK版本     VS2019-Community Windows 10,version 1903 10.0.18362.0 10.0.">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="https://invicsfate.github.io/assert/vs2019_configure.png">
-<meta property="og:updated_time" content="2020-08-31T03:40:23.816Z">
+<meta property="og:updated_time" content="2020-08-31T03:51:21.297Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="VS编译汇编&#x2F;VS内核开发环境搭建">
-<meta name="twitter:description" content="驱动环境搭建​    参考msdn官方文档，注意VS版本(Windows版本是否会影响不清楚，没试过)和SDK，WDK匹配的问题，SDK，WDK版本号一致，但是不匹配对应的VS版本都不行。    VS版本 Versions of Windows SDK版本 WDK版本     VS2019-Community Windows 10,version 1903 10.0.18362.0 10.0.18">
-<meta name="twitter:image" content="https://invicsfate.github.io/assert/vs2019_configure.png">
+<meta name="twitter:description" content="驱动开发环境搭建​    参考msdn官方文档，注意VS版本(Windows版本是否会影响不清楚，没试过)和SDK，WDK匹配的问题，SDK，WDK版本号一致，但是不匹配对应的VS版本都不行。    VS版本 Versions of Windows SDK版本 WDK版本     VS2019-Community Windows 10,version 1903 10.0.18362.0 10.0.">
 
 <link rel="canonical" href="http://Invicsfate.github.io/2020/04/24/VS2019-汇编asm/">
 
@@ -184,7 +182,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-08-31 11:40:23" itemprop="dateModified" datetime="2020-08-31T11:40:23+08:00">2020-08-31</time>
+                <time title="Modified: 2020-08-31 11:51:21" itemprop="dateModified" datetime="2020-08-31T11:51:21+08:00">2020-08-31</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -207,7 +205,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="驱动环境搭建"><a href="#驱动环境搭建" class="headerlink" title="驱动环境搭建"></a>驱动环境搭建</h2><p>​    参考msdn官方文档，注意VS版本(Windows版本是否会影响不清楚，没试过)和SDK，WDK匹配的问题，SDK，WDK版本号一致，但是不匹配对应的VS版本都不行。</p>
+        <h2 id="驱动开发环境搭建"><a href="#驱动开发环境搭建" class="headerlink" title="驱动开发环境搭建"></a>驱动开发环境搭建</h2><p>​    参考msdn官方文档，注意VS版本(Windows版本是否会影响不清楚，没试过)和SDK，WDK匹配的问题，SDK，WDK版本号一致，但是不匹配对应的VS版本都不行。</p>
 <table>
 <thead>
 <tr>
@@ -238,7 +236,6 @@
 </tbody>
 </table>
 <p>​    配置好后，还需要安装spectre缓解的单个组件，在VS修复里面找到单个组件项，搜索spectre安装(MSVC开头的)。将警告视为错误关闭，然后就可以愉快的开发了。</p>
-<p><img src="https://invicsfate.github.io/assert/vs2019_configure.png" alt="vs2019_configure"></p>
 <h2 id="VS2019-汇编asm"><a href="#VS2019-汇编asm" class="headerlink" title="VS2019+汇编asm"></a>VS2019+汇编asm</h2><p>编写单独的asm文件，而不是使用内嵌汇编的方式，记录一下编写方法：</p>
 <ul>
 <li>新建cpp文件，修改文件后缀为asm</li>
@@ -334,7 +331,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#驱动环境搭建"><span class="nav-number">1.</span> <span class="nav-text">驱动环境搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VS2019-汇编asm"><span class="nav-number">2.</span> <span class="nav-text">VS2019+汇编asm</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#驱动开发环境搭建"><span class="nav-number">1.</span> <span class="nav-text">驱动开发环境搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VS2019-汇编asm"><span class="nav-number">2.</span> <span class="nav-text">VS2019+汇编asm</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
