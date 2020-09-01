@@ -174,7 +174,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2020-09-01 00:41:11 / Modified: 09:44:42" itemprop="dateCreated datePublished" datetime="2020-09-01T00:41:11+08:00">2020-09-01</time>
+              <time title="Created: 2020-09-01 00:41:11 / Modified: 10:02:49" itemprop="dateCreated datePublished" datetime="2020-09-01T00:41:11+08:00">2020-09-01</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -198,7 +198,7 @@
 
       
           <h1 id="minhook源码简析"><a href="#minhook源码简析" class="headerlink" title="minhook源码简析"></a>minhook源码简析</h1><p>minhook的一般使用：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">......</span><br><span class="line">if (MH_Initialize() != MH_OK)</span><br><span class="line">&#123;</span><br><span class="line">return 0;</span><br><span class="line">&#125;</span><br><span class="line">......</span><br><span class="line">if (MH_CreateHook(pTarget, pDetour, ppOriginal) != MH_OK) return 0;</span><br><span class="line">......</span><br><span class="line">if (MH_EnableHook(addressOfCreateProcessA) != MH_OK) return 0;</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">......</span><br><span class="line"><span class="keyword">if</span> (MH_Initialize() != MH_OK)</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line">......</span><br><span class="line"><span class="keyword">if</span> (MH_CreateHook(pTarget, pDetour, ppOriginal) != MH_OK) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">......</span><br><span class="line"><span class="keyword">if</span> (MH_EnableHook(pTarget) != MH_OK) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
 <p>本文简单分析了32位minhook源代码在实现hook时的一些关键核心点，主要分析的也是上述三个函数，主要核心点如下(一些关键性注释已经在源码中使用中说明)：</p>
 <ul>
 <li>minhook中的数据结构使用</li>
