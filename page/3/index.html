@@ -149,96 +149,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
-    <link itemprop="mainEntityOfPage" href="http://Invicsfate.github.io/2018/04/13/HITBCTF2018-reverse-hex/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Invicsfate">
-      <meta itemprop="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Invicsfate">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/04/13/HITBCTF2018-reverse-hex/" class="post-title-link" itemprop="url">HITBCTF2018-reverse-hex</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2018-04-13 17:21:34" itemprop="dateCreated datePublished" datetime="2018-04-13T17:21:34+08:00">2018-04-13</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2018-10-09 22:44:36" itemprop="dateModified" datetime="2018-10-09T22:44:36+08:00">2018-10-09</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="reverse"><a href="#reverse" class="headerlink" title="reverse"></a>reverse</h1><h2 id="hex"><a href="#hex" class="headerlink" title="hex"></a>hex</h2><p>下载hex文件，file一下，发现是文本文件，打开看了一下，暂时看不懂，binwalk一下，显示Intel hex file，google Intel hex 文件，根据<a href="https://en.wikipedia.org/wiki/Intel_HEX" target="_blank" rel="noopener">hex</a>维基百科，明白了文本文件的内容。之后各种google，发现了hex2bin这个windows hex转bin的工具。strings一下bin文件，发现关键内容arduino micro。</p>
-<p>然后又是一顿google，确定了arduino micro板子使用的是atmega32u4，编译器是arduino avr，于是乎，加载进ida，由于ida没有atmega32u4，我选择的是atmega32_L，阅读atmega32 datasheet指令集开始看代码。各种call表示看不懂啊，特别是关键的setup()和Loop函数。</p>
-<p>后来又是一顿google，找到了<a href="https://www.cybrary.it/0p3n/hacking-arduino-build-usb-payload/" target="_blank" rel="noopener">badusb</a>，了解了原来这是badusb，尝试着使用Arduino IDE自己编译文件来和题目二进制文件进行对比。理解了关键的函数Keyboard_Press，Keyboard_release和delay。于是乎，我们的目的只要搞懂这个badusb插上电脑以后，做了什么，大概就能得到flag了吧。</p>
-<p>附上部分关键处的汇编：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line">ROM:09F0 ldi     r22, 0x20 ; <span class="string">' '</span></span><br><span class="line">ROM:09F1 ldi     r24, 0x77 ; <span class="string">'w'</span></span><br><span class="line">ROM:09F2 ldi     r25, 1</span><br><span class="line">ROM:09F3 call    Keyboard_press</span><br><span class="line">ROM:09F5 ldi     r22, 0xF4</span><br><span class="line">ROM:09F6 ldi     r23, 1</span><br><span class="line">ROM:09F7 ldi     r24, 0</span><br><span class="line">ROM:09F8 ldi     r25, 0</span><br><span class="line">ROM:09F9 call    delay</span><br><span class="line">ROM:09FB ldi     r22, 0x20 ; <span class="string">' '</span></span><br><span class="line">ROM:09FC ldi     r24, 0x77 ; <span class="string">'w'</span></span><br><span class="line">ROM:09FD ldi     r25, 1</span><br><span class="line">ROM:09FE call    Keyboard_release</span><br><span class="line">ROM:0A00 ldi     r22, 0x88</span><br><span class="line">ROM:0A01 ldi     r23, 0x13</span><br><span class="line">ROM:0A02 ldi     r24, 0</span><br><span class="line">ROM:0A03 ldi     r25, 0</span><br><span class="line">ROM:0A04 call    delay</span><br><span class="line">ROM:0A06 ldi     r22, 0x20 ; <span class="string">' '</span></span><br><span class="line">ROM:0A07 ldi     r24, 0x77 ; <span class="string">'w'</span></span><br><span class="line">ROM:0A08 ldi     r25, 1</span><br><span class="line">ROM:0A09 call    Keyboard_press</span><br><span class="line">ROM:0A0B ldi     r22, 0xF4</span><br><span class="line">ROM:0A0C ldi     r23, 1</span><br><span class="line">ROM:0A0D ldi     r24, 0</span><br><span class="line">ROM:0A0E ldi     r25, 0</span><br><span class="line">ROM:0A0F call    delay</span><br><span class="line">ROM:0A11 ldi     r22, 0x20 ; <span class="string">' '</span></span><br><span class="line">ROM:0A12 ldi     r24, 0x77 ; <span class="string">'w'</span></span><br><span class="line">ROM:0A13 ldi     r25, 1</span><br><span class="line">ROM:0A14 call    Keyboard_release</span><br><span class="line">ROM:0A16 ldi     r22, 0x88</span><br><span class="line">ROM:0A17 ldi     r23, 0x13</span><br><span class="line">ROM:0A18 ldi     r24, 0</span><br><span class="line">ROM:0A19 ldi     r25, 0</span><br><span class="line">ROM:0A1A call    delay</span><br><span class="line">ROM:0A1C ldi     r22, 0x24 ; <span class="string">'$'</span></span><br><span class="line">ROM:0A1D ldi     r24, 0x77 ; <span class="string">'w'</span></span><br><span class="line">ROM:0A1E ldi     r25, 1</span><br><span class="line">ROM:0A1F call    Keyboard_press</span><br><span class="line">ROM:0A21 ldi     r22, 0xF4</span><br><span class="line">ROM:0A22 ldi     r23, 1</span><br><span class="line">ROM:0A23 ldi     r24, 0</span><br><span class="line">ROM:0A24 ldi     r25, 0</span><br><span class="line">ROM:0A25 call    delay</span><br><span class="line">ROM:0A27 ldi     r22, 0x24 ; <span class="string">'$'</span></span><br><span class="line">ROM:0A28 ldi     r24, 0x77 ; <span class="string">'w'</span></span><br><span class="line">ROM:0A29 ldi     r25, 1</span><br><span class="line">ROM:0A2A call    Keyboard_release</span><br><span class="line">ROM:0A2C ldi     r22, 0x88</span><br><span class="line">ROM:0A2D ldi     r23, 0x13</span><br><span class="line">ROM:0A2E ldi     r24, 0</span><br><span class="line">ROM:0A2F ldi     r25, 0</span><br><span class="line">ROM:0A30 call    delay</span><br><span class="line">ROM:0A32 ldi     r22, 0x23 ; <span class="string">'#'</span></span><br><span class="line">ROM:0A33 ldi     r24, 0x77 ; <span class="string">'w'</span></span><br><span class="line">ROM:0A34 ldi     r25, 1</span><br><span class="line">ROM:0A35 call    Keyboard_press</span><br><span class="line">ROM:0A37 ldi     r22, 0xF4</span><br><span class="line">ROM:0A38 ldi     r23, 1</span><br><span class="line">ROM:0A39 ldi     r24, 0</span><br><span class="line">ROM:0A3A ldi     r25, 0</span><br><span class="line">ROM:0A3B call    delay</span><br><span class="line">ROM:0A3D ldi     r22, 0x23 ; <span class="string">'#'</span></span><br><span class="line">ROM:0A3E ldi     r24, 0x77 ; <span class="string">'w'</span></span><br><span class="line">ROM:0A3F ldi     r25, 1</span><br><span class="line">ROM:0A40 call    Keyboard_release</span><br><span class="line">ROM:0A42 ldi     r22, 0x88</span><br><span class="line">ROM:0A43 ldi     r23, 0x13</span><br><span class="line">ROM:0A44 ldi     r24, 0</span><br><span class="line">ROM:0A45 ldi     r25, 0</span><br><span class="line">ROM:0A46 call    delay</span><br><span class="line">ROM:0A48 ldi     r22, 0x23 ; <span class="string">'#'</span></span><br><span class="line">ROM:0A49 ldi     r24, 0x77 ; <span class="string">'w'</span></span><br><span class="line">ROM:0A4A ldi     r25, 1</span><br><span class="line">ROM:0A4B call    Keyboard_press</span><br><span class="line">ROM:0A4D ldi     r22, 0xF4</span><br><span class="line">ROM:0A4E ldi     r23, 1</span><br><span class="line">ROM:0A4F ldi     r24, 0</span><br><span class="line">ROM:0A50 ldi     r25, 0</span><br><span class="line">ROM:0A51 call    delay</span><br><span class="line">ROM:0A53 ldi     r22, 0x23 ; <span class="string">'#'</span></span><br><span class="line">ROM:0A54 ldi     r24, 0x77 ; <span class="string">'w'</span></span><br><span class="line">ROM:0A55 ldi     r25, 1</span><br><span class="line">ROM:0A56 call    Keyboard_rel</span><br></pre></td></tr></table></figure>
-<p>直接获取所有的操作太累了，我选择idapython获取所有打印的字符，脚本如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment">#-*- coding:utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> idautils</span><br><span class="line"><span class="keyword">import</span> idaapi</span><br><span class="line"><span class="keyword">import</span> idc</span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">start = idc.SelStart()</span></span><br><span class="line"><span class="string">end = idc.SelEnd()</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">cur_addr = 0x94C</span></span><br><span class="line"><span class="string">for disass_addr in list(idautils.FuncItems(func)):</span></span><br><span class="line"><span class="string">	if idc.GetMnem(disass_addr) == 'ldi':</span></span><br><span class="line"><span class="string">		if idc.GetOpnd(disass_addr,1) == ' ':</span></span><br><span class="line"><span class="string">			</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line">str1 = <span class="string">''</span></span><br><span class="line">count = <span class="number">0</span></span><br><span class="line">cur_addr = <span class="number">0x94C</span></span><br><span class="line"><span class="keyword">for</span> disass_addr <span class="keyword">in</span> list(idautils.FuncItems(cur_addr)):</span><br><span class="line">	<span class="keyword">if</span> idc.GetMnem(disass_addr) == <span class="string">'ldi'</span>:</span><br><span class="line">		tmp = idc.GetOperandValue(disass_addr,<span class="number">1</span>)</span><br><span class="line">		<span class="keyword">if</span> tmp == ord(<span class="string">' '</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">' '</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">'$'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">'$'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">'#'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">'#'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">'&amp;'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">'&amp;'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">':'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">':'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">'|'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">'|'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">'!'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">'!'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">';'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">';'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">'@'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">'@'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">'.'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">'.'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">'%'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">'%'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == ord(<span class="string">'`'</span>):</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				str1 += <span class="string">'`'</span></span><br><span class="line">				count = <span class="number">0</span></span><br><span class="line">		<span class="keyword">elif</span> tmp == <span class="number">0xB0</span>:</span><br><span class="line">			count += <span class="number">1</span></span><br><span class="line">			<span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">				<span class="keyword">print</span> str1</span><br><span class="line">				str1 = <span class="string">''</span></span><br><span class="line">				count = <span class="number">0</span></span><br></pre></td></tr></table></figure>
-<p>最后得到打印出来的flag:flag{520}</p>
-<p><img src="https://invicsfate.github.io/assert/hex_flag.png" alt="flag"></p>
-<p>emmmmm，这个我实在是看不懂画了什么，从出图到得到flag，有差不多9个小时，感谢看出flag的@pinko大佬(第一行右移两位)，同时感谢客服大佬@Swing的耐心解答(还是想吐槽一下下:-( )</p>
-<p>google中的关键连接：</p>
-<p><a href="http://blog.leanote.com/post/sherlly/pwnhub-%E3%80%8A%E8%A1%80%E6%9C%88%E5%BD%92%E6%9D%A5%E3%80%8B-key-writeup" target="_blank" rel="noopener">pwnhub-key</a></p>
-<p><a href="https://www.cybrary.it/0p3n/hacking-arduino-build-usb-payload/" target="_blank" rel="noopener">badusb</a></p>
-<p><a href="https://www.arduino.cc/en/Main/Software" target="_blank" rel="noopener">arduino-IDE</a></p>
-<p><a href="https://github.com/Xyntax/BadUSB-code" target="_blank" rel="noopener">baduse-code</a></p>
-<p><a href="https://github.com/hak5darren/USB-Rubber-Ducky/wiki" target="_blank" rel="noopener">USB-Rubber-Ducky</a></p>
-<p><a href="http://bluereader.org/article/262324852" target="_blank" rel="noopener">pwnhub-key-bluereader</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
     <link itemprop="mainEntityOfPage" href="http://Invicsfate.github.io/2018/03/20/Play-Rtsp-Stream-opencv2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1083,6 +993,92 @@
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://Invicsfate.github.io/2017/09/12/babyvm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Invicsfate">
+      <meta itemprop="description" content="如果你喜欢，就把这一切当作是荣耀，而不是炫耀--by 叶修">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Invicsfate">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/09/12/babyvm/" class="post-title-link" itemprop="url">0ctf2018</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-09-12 17:21:34" itemprop="dateCreated datePublished" datetime="2017-09-12T17:21:34+08:00">2017-09-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2018-10-09 22:39:19" itemprop="dateModified" datetime="2018-10-09T22:39:19+08:00">2018-10-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="babyvm"><a href="#babyvm" class="headerlink" title="babyvm"></a>babyvm</h2><p>第一次做类似的题，记录一下解题思路：</p>
+<p>既然是vm，必须要找到dispatcher，找到dispatcher之后，先看其初始化的过程，即dispatcher往上的内容<br>尽量理解。而后便是分发函数的部分，从case0-case1F逐次慢慢理解，可以先跳过case2。在长时间的理解<br>之后，我们发现初始化的两个函数得到的值在相与3，以及右移2位相与8之后得到两个变量，记为tmp1,tmp2<br>。通过tmp1,和tmp2我们可以索引到一个值，这个值和程序的处理十分重要，或者说程序的处理就是由这个<br>值确定的。联系堆栈式虚拟机的操作，我们可以得到一下猜想：</p>
+<ol>
+<li>v229是esp</li>
+<li>每一次从while(1)开始的包含那两个函数的整套操作就是一次取栈顶值，并且v229–操作就是pop操作</li>
+<li>0x13FD132C0处的函数就是push操作</li>
+<li>0-0xffff的空间就是vm.bin的范围</li>
+<li>v225是pc<br>根据我们的猜想，我们得到程序每次pop出栈顶的值，进行分析，根据分析的结果进行相关操作。<br>从而我们得到case0-case1f的猜想：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> 0:</span><br><span class="line">	<span class="built_in">exit</span></span><br><span class="line"><span class="keyword">case</span> 1:</span><br><span class="line">	pop eax;push 2;jmp (eax&amp;0x3fffffff)+1</span><br><span class="line"><span class="keyword">case</span> 2:</span><br><span class="line">	进行函数调用，得到flag</span><br><span class="line"><span class="keyword">case</span> 5:</span><br><span class="line">	pop eax;jmp (eax&amp;0x3fffffff)+1</span><br><span class="line"><span class="keyword">case</span> 6:</span><br><span class="line">	pop eax;pop ebx;jmp (ebx&amp;0x3fffffff)+1</span><br><span class="line"><span class="keyword">case</span> 7:</span><br><span class="line">	push 0</span><br><span class="line"><span class="keyword">case</span> 8:</span><br><span class="line">	push 1</span><br><span class="line"><span class="keyword">case</span> 0xD:</span><br><span class="line">	push offset;offset = 4 || 2 || 1 byte</span><br><span class="line"><span class="keyword">case</span> 0xE:</span><br><span class="line">	push offset;offset = 4 || 2 || 1 byte no | 0x80000000</span><br><span class="line"><span class="keyword">case</span> 0xF:</span><br><span class="line">	v10 = eax;pop eax</span><br><span class="line"><span class="keyword">case</span> 0x10:</span><br><span class="line">	push [esp]</span><br><span class="line"><span class="keyword">case</span> 0x11:</span><br><span class="line">	push(~[esp])</span><br><span class="line"><span class="keyword">case</span> 0x12:</span><br><span class="line">	pop eax;pop ebx;push eax+ebx pc+=1</span><br><span class="line"><span class="keyword">case</span> 0x13:</span><br><span class="line">	pop eax;pop ebx;push eax-ebx pc+=1</span><br><span class="line"><span class="keyword">case</span> 0x14:</span><br><span class="line">	pop eax;pop ebx;push eax*ebx pc+=1</span><br><span class="line"><span class="keyword">case</span> 0x15:</span><br><span class="line">	pop eax;pop ebx;push eax/ebx pc+=1</span><br><span class="line"><span class="keyword">case</span> 0x16:</span><br><span class="line">	pop eax;pop ebx;push eax%ebx pc+=1</span><br><span class="line"><span class="keyword">case</span> 0x17:</span><br><span class="line">	pop eax;pop ebx;push 3 pc+=1</span><br><span class="line"><span class="keyword">case</span> 0x18:</span><br><span class="line">	pop eax;pop ebx;push eax&amp;ebx pc+=1</span><br><span class="line"><span class="keyword">case</span> 0x19:</span><br><span class="line">	pop eax;pop ebx;push eax|ebx pc+=1</span><br><span class="line"><span class="keyword">case</span> 0x1A:</span><br><span class="line"><span class="keyword">case</span> 0x1B:</span><br><span class="line"><span class="keyword">case</span> 0x1C:</span><br><span class="line"><span class="keyword">case</span> 0x1D:</span><br><span class="line"><span class="keyword">case</span> 0x1E:</span><br><span class="line">	pop eax;pop ebx;push 3 pc+=1</span><br><span class="line"><span class="keyword">case</span> 0x1F:</span><br><span class="line">	pop eax;pop ebx;push 3 pc+=1</span><br><span class="line">default:</span><br><span class="line">	next_instruction</span><br></pre></td></tr></table></figure>
+<p>根据CreateFile，ReadFile，puts的顺序写如下shellcode(右侧伪代码):</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">8D 50 00 00 00 //push 0x80000050</span><br><span class="line">0E 03 //push 3</span><br><span class="line">0E ff // push 0xff</span><br><span class="line">8D 50 00 00 00 //push 0x80000050</span><br><span class="line">0E 80 // push 0x80</span><br><span class="line">8E 01 00 00 00 //push 0x00000001</span><br><span class="line">8D 40 00 00 00 //push 0x80000040</span><br><span class="line">07 // push 0</span><br><span class="line">02 // CreateFile pop 0;pop 0x80000040;pop 0x00000001;pop 0x80</span><br><span class="line">08 // push 1</span><br><span class="line">02 // ReadFile pop 1;pop hFile;pop 0x80000050;pop 0xff</span><br><span class="line">02 // puts pop 3;pop 0x80000050</span><br><span class="line">00 // <span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
+<p>得到flag<br><img src="https://invicsfate.github.io/assert/babyvm_flag.png" alt="flag"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
   <nav class="pagination">
@@ -1152,7 +1148,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-count">37</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
